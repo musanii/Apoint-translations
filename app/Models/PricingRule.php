@@ -13,6 +13,7 @@ class PricingRule extends Model
         'source_language_id',
         'target_language_id',
         'pricing_type',
+        'unit',
         'rate',
         'minimum_charge',
         'description',
