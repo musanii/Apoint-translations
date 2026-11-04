@@ -62,4 +62,9 @@ class QuoteRequest extends Model
     {
         return $this->hasMany(QuoteRequestDocument::class);
     }
+
+    public function quotes(): HasMany
+{
+    return $this->hasMany(Quote::class);
+}
 }
