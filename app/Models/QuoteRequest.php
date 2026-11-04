@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Override;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class QuoteRequest extends Model
 {
@@ -56,5 +56,10 @@ class QuoteRequest extends Model
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(QuoteRequestDocument::class);
     }
 }
