@@ -141,3 +141,15 @@
         @apply bg-background text-foreground;
     }
 }
+
+/*Apoint Translations brand palette*/
+:root {
+    --apoint-plum:#3A091A;
+    --apoint-wine: #4A1525;
+    --apoint-blush: #E8B4B8;
+    --apoint-rose: #F4C2C2;
+    --apoint-cream: #FAF6F0;
+    --apoint-gold: #D4AF37;
+    --font-apoint-heading: 'Playfair Display', Georgia, serif;
+    --font-apoint-body: 'Plus Jakarta Sans', sans-serif;
+}
