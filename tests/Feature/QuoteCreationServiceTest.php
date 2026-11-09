@@ -7,6 +7,7 @@ use App\Models\Service;
 use App\Models\User;
 use App\Services\QuoteCreationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use InvalidArgumentException;
 
 uses(RefreshDatabase::class);
 
@@ -95,4 +96,83 @@ test('it defaults optional fees to zero', function () {
         ->and($quote->certification_fee)->toBe('0.00')
         ->and($quote->courier_fee)->toBe('0.00')
         ->and($quote->total)->toBe('750.00');
+});
+
+it('rejects negative fees', function () {
+    expect(fn () => $this->quoteCreationService->create(
+        quoteRequest: $this->quoteRequest,
+        pricingType: 'fixed',
+        quantity: null,
+        unit: null,
+        rate: null,
+        subtotal: 100,
+        expressFee: -1,
+    ))->toThrow(InvalidArgumentException::class);
+});
+
+it('rejects negative quantity', function () {
+    expect(fn () => $this->quoteCreationService->create(
+        quoteRequest: $this->quoteRequest,
+        pricingType: 'per_word',
+        quantity: -10,
+        unit: 'word',
+        rate: 2.50,
+        subtotal: 25,
+    ))->toThrow(InvalidArgumentException::class);
+});
+
+
+it('rejects zero quantity', function () {
+    expect(fn () => $this->quoteCreationService->create(
+        quoteRequest: $this->quoteRequest,
+        pricingType: 'per_word',
+        quantity: 0,
+        unit: 'word',
+        rate: 2.50,
+        subtotal: 0,
+    ))->toThrow(InvalidArgumentException::class);
+});
+
+it('rejects unsupported pricing types', function () {
+    expect(fn () => $this->quoteCreationService->create(
+        quoteRequest: $this->quoteRequest,
+        pricingType: 'per_hour',
+        quantity: 10,
+        unit: 'hour',
+        rate: 100,
+        subtotal: 1000,
+    ))->toThrow(InvalidArgumentException::class);
+});
+
+it('requires quantity for per word pricing', function () {
+    expect(fn () => $this->quoteCreationService->create(
+        quoteRequest: $this->quoteRequest,
+        pricingType: 'per_word',
+        quantity: null,
+        unit: 'word',
+        rate: 2.50,
+        subtotal: 100,
+    ))->toThrow(InvalidArgumentException::class);
+});
+
+it('requires quantity for per page pricing', function () {
+    expect(fn () => $this->quoteCreationService->create(
+        quoteRequest: $this->quoteRequest,
+        pricingType: 'per_page',
+        quantity: null,
+        unit: 'page',
+        rate: 100,
+        subtotal: 500,
+    ))->toThrow(InvalidArgumentException::class);
+});
+
+it('rejects quantity fields for fixed pricing', function () {
+    expect(fn () => $this->quoteCreationService->create(
+        quoteRequest: $this->quoteRequest,
+        pricingType: 'fixed',
+        quantity: 10,
+        unit: 'word',
+        rate: 2.50,
+        subtotal: 25,
+    ))->toThrow(InvalidArgumentException::class);
 });
