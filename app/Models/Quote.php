@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Quote extends Model
 {
+    use HasFactory; 
+
     public const STATUS_DRAFT = 'draft';
 
     public const STATUS_SENT = 'sent';
@@ -33,6 +36,7 @@ class Quote extends Model
         'admin_notes',
         'customer_notes',
         'status',
+        'sent_at',
         'valid_until',
         'accepted_at',
         'rejected_at',
@@ -51,6 +55,7 @@ class Quote extends Model
             'valid_until' => 'datetime',
             'accepted_at' => 'datetime',
             'rejected_at' => 'datetime',
+            'sent_at'=>'datetime'
         ];
     }
 
