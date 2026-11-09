@@ -19,12 +19,18 @@ class QuoteRequest extends Model
         'delivery_date',
         'instructions',
         'status',
+        'delivery_method',
+        'recipient_name',
+        'recipient_phone',
+        'delivery_country',
+        'delivery_address',
+        'delivery_postal_code',
     ];
 
 
-  protected $attributes = [
-    'status'=>'pending'
-  ];
+    protected $attributes = [
+        'status' => 'pending'
+    ];
     protected function casts()
     {
         return [
@@ -64,7 +70,7 @@ class QuoteRequest extends Model
     }
 
     public function quotes(): HasMany
-{
-    return $this->hasMany(Quote::class);
-}
+    {
+        return $this->hasMany(Quote::class);
+    }
 }
