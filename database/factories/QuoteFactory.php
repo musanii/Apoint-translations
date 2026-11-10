@@ -24,13 +24,16 @@ class QuoteFactory extends Factory
             'is_active' => true,
         ]);
 
-        $currency = Currency::create([
-            'code' => 'KES',
-            'name' => 'Kenyan Shilling',
-            'symbol' => 'KSh',
-            'decimal_places' => 2,
-            'is_active' => true,
-        ]);
+    $currency = Currency::firstOrCreate(
+    ['code' => 'KES'],
+    [
+        'name' => 'Kenyan Shilling',
+        'symbol' => 'KSh',
+        'decimal_places' => 2,
+        'is_active' => true,
+        'is_default' => true,
+    ]
+);
 
         $quoteRequest = QuoteRequest::create([
             'user_id' => $user->id,
