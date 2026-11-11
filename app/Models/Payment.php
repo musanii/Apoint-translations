@@ -12,7 +12,7 @@ class Payment extends Model
     /** @use HasFactory<\Database\Factories\PaymentFactory> */
     use HasFactory;
 
-    public const STATUS_PENDING = 'ppending';
+    public const STATUS_PENDING = 'pending';
     public const STATUS_SUCCESSFUL = 'successful';
     public const STATUS_FAILED = 'failed';
     public const STATUS_REFUNDED = 'refunded';
@@ -27,15 +27,23 @@ class Payment extends Model
         'amount',
         'status',
         'failure_reason',
-        'paid_at'
+        'paid_at',
+        'provider_checkout_request_id',
+        'provider_merchant_request_id',
+        'reconciliation_attempts',
+        'last_reconciled_at',
+        'next_reconciliation_at',
     ];
 
     #[Override]
     protected function casts()
     {
         return [
-            'amount'=>'decimal:2',
-            'paid_at'=>'datetime',
+            'amount' => 'decimal:2',
+            'paid_at' => 'datetime',
+            'reconciliation_attempts' => 'integer',
+            'last_reconciled_at' => 'datetime',
+            'next_reconciliation_at' => 'datetime',
 
         ];
     }

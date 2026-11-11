@@ -9,6 +9,10 @@ use InvalidArgumentException;
 
 class PaymentStatusService
 {
+
+    public function __construct(
+        private readonly OrderStatusService $orderStatusService
+    ) {}
     public function markSuccessful(Payment $payment, ?string $providerReference): Payment
     {
         return DB::transaction(function () use ($payment, $providerReference) {
@@ -41,14 +45,104 @@ class PaymentStatusService
                 ->lockForUpdate()
                 ->findOrFail($payment->order_id);
 
+            if ($order->payment_status !== Order::PAYMENT_STATUS_PAID) {
+                $order->update([
+                    'payment_status' => Order::PAYMENT_STATUS_PAID,
+                    'paid_at' => $payment->paid_at,
+                ]);
+            }
+
+            if ($order->status === Order::STATUS_PENDING_PAYMENT) {
+                $this->orderStatusService->confirm($order);
+            }
+
+
+
+            return $payment->refresh();
+        });
+    }
+
+
+    public function recoverFailedPayment(
+        Payment $payment,
+        string $providerReference
+    ): Payment {
+        return DB::transaction(function () use ($payment, $providerReference) {
+            $payment = Payment::query()
+                ->lockForUpdate()
+                ->findOrFail($payment->id);
+
+            if ($payment->status !== Payment::STATUS_FAILED) {
+                throw new InvalidArgumentException(
+                    'Only failed payments can be recovered.'
+                );
+            }
+
+            if (trim($providerReference) === '') {
+                throw new InvalidArgumentException(
+                    'The provider transaction reference cannot be empty.'
+                );
+            }
+
+            if (
+                Payment::query()
+                ->where('provider', $payment->provider)
+                ->where('provider_reference', $providerReference)
+                ->exists()
+            ) {
+                throw new InvalidArgumentException(
+                    'This provider transaction reference has already been used.'
+                );
+            }
+
+            $order = Order::query()
+                ->lockForUpdate()
+                ->findOrFail($payment->order_id);
+
+            if ($order->status !== Order::STATUS_PENDING_PAYMENT) {
+                throw new InvalidArgumentException(
+                    'Only orders awaiting payment can recover a failed payment.'
+                );
+            }
+
+            if (! in_array($order->payment_status, [
+                Order::PAYMENT_STATUS_FAILED,
+                Order::PAYMENT_STATUS_PENDING,
+            ], true)) {
+                throw new InvalidArgumentException(
+                    'Only orders with failed or pending payment status can recover a failed payment.'
+                );
+            }
+
+            $hasOtherSuccessfulPayment = $order->payments()
+                ->where('id', '!=', $payment->id)
+                ->where('status', Payment::STATUS_SUCCESSFUL)
+                ->exists();
+
+            if ($hasOtherSuccessfulPayment) {
+                throw new InvalidArgumentException(
+                    'Another payment attempt has already succeeded for this order.'
+                );
+            }
+
+            $payment->update([
+                'status' => Payment::STATUS_SUCCESSFUL,
+                'provider_reference' => $providerReference,
+                'paid_at' => now(),
+                'failure_reason' => null,
+            ]);
+
             $order->update([
                 'payment_status' => Order::PAYMENT_STATUS_PAID,
                 'paid_at' => $payment->paid_at,
             ]);
 
+            $this->orderStatusService->confirm($order);
+
             return $payment->refresh();
         });
     }
+
 
     public function markFailed(Payment $payment, string $failureReason): Payment
     {
@@ -84,6 +178,56 @@ class PaymentStatusService
                     'payment_status' => Order::PAYMENT_STATUS_FAILED,
                 ]);
             }
+
+            return $payment->refresh();
+        });
+    }
+
+    public function attachProviderReference(
+        Payment $payment,
+        string $providerReference
+    ): Payment {
+        return DB::transaction(function () use ($payment, $providerReference) {
+            $payment = Payment::query()
+                ->lockForUpdate()
+                ->findOrFail($payment->id);
+
+            if ($payment->status !== Payment::STATUS_SUCCESSFUL) {
+                throw new InvalidArgumentException(
+                    'Only successful payments can receive a provider reference.'
+                );
+            }
+
+            if (trim($providerReference) === '') {
+                throw new InvalidArgumentException(
+                    'The provider transaction reference cannot be empty.'
+                );
+            }
+
+            if ($payment->provider_reference !== null) {
+                if ($payment->provider_reference === $providerReference) {
+                    return $payment;
+                }
+
+                throw new InvalidArgumentException(
+                    'This payment already has a different provider transaction reference.'
+                );
+            }
+
+            if (
+                Payment::query()
+                ->where('provider', $payment->provider)
+                ->where('provider_reference', $providerReference)
+                ->exists()
+            ) {
+                throw new InvalidArgumentException(
+                    'This provider transaction reference has already been used.'
+                );
+            }
+
+            $payment->update([
+                'provider_reference' => $providerReference,
+            ]);
 
             return $payment->refresh();
         });
