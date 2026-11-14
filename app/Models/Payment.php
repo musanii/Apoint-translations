@@ -24,7 +24,10 @@ class Payment extends Model
         'currency_id',
         'reference',
         'provider',
+        'payment_method',
+        'provider_channel_id',
         'provider_reference',
+        'provider_initiation_started_at',
         'amount',
         'status',
         'failure_reason',
@@ -45,7 +48,7 @@ class Payment extends Model
             'reconciliation_attempts' => 'integer',
             'last_reconciled_at' => 'datetime',
             'next_reconciliation_at' => 'datetime',
-
+            'provider_initiation_started_at' => 'datetime',
         ];
     }
 

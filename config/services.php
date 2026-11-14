@@ -35,13 +35,23 @@ return [
         ],
     ],
 
-        'mpesa' => [
-            'consumer_key' => env('MPESA_CONSUMER_KEY'),
-            'consumer_secret' => env('MPESA_CONSUMER_SECRET'),
-            'shortcode' => env('MPESA_SHORTCODE'),
-            'passkey' => env('MPESA_PASSKEY'),
-            'callback_url' => env('MPESA_CALLBACK_URL'),
-            'sandbox' => env('MPESA_SANDBOX', true),
+    'mpesa' => [
+        'consumer_key' => env('MPESA_CONSUMER_KEY'),
+        'consumer_secret' => env('MPESA_CONSUMER_SECRET'),
+        'shortcode' => env('MPESA_SHORTCODE'),
+        'passkey' => env('MPESA_PASSKEY'),
+        'callback_url' => env('MPESA_CALLBACK_URL'),
+        'sandbox' => env('MPESA_SANDBOX', true),
+    ],
+
+    'payhero' => [
+        'base_url' => env(
+            'PAYHERO_BASE_URL',
+            'https://backend.payhero.co.ke'
+        ),
+        'username' => env('PAYHERO_USERNAME'),
+        'password' => env('PAYHERO_PASSWORD'),
+        'callback_url' => env('PAYHERO_CALLBACK_URL'),
     ],
 
 ];

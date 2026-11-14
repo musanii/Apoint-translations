@@ -11,7 +11,8 @@ uses(RefreshDatabase::class);
 
 it('marks a payment successful when Daraja confirms the STK payment', function () {
     $payment = Payment::factory()->create([
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'amount' => 100,
         'provider_checkout_request_id' => 'ws_CO_123456789',
         'provider_merchant_request_id' => 'merchant-123',
@@ -45,7 +46,8 @@ it('marks a payment successful when Daraja confirms the STK payment', function (
 
 it('marks a payment failed when Daraja reports an unsuccessful STK payment', function () {
     $payment = Payment::factory()->create([
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'provider_checkout_request_id' => 'ws_CO_FAILED_123',
         'provider_merchant_request_id' => 'merchant-failed',
     ]);
@@ -71,7 +73,8 @@ it('marks a payment failed when Daraja reports an unsuccessful STK payment', fun
 
 it('handles a duplicate successful callback without processing the payment twice', function () {
 $payment = Payment::factory()->create([
-    'provider' => 'mpesa',
+    'provider' => 'daraja',
+'payment_method' => 'mpesa',
     'amount' => 100,
     'provider_checkout_request_id' => 'ws_CO_DUPLICATE_123',
     'provider_merchant_request_id' => 'merchant-123',
@@ -108,7 +111,8 @@ $payment = Payment::factory()->create([
 
 it('rejects a successful callback when the amount does not match the payment', function () {
     $payment = Payment::factory()->create([
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'amount' => 100,
         'provider_checkout_request_id' => 'ws_CO_WRONG_AMOUNT',
     ]);
@@ -167,7 +171,8 @@ it('rejects a callback with a missing STK callback body', function () {
 
 it('rejects a successful callback without an M-Pesa receipt number', function () {
     $payment = Payment::factory()->create([
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'amount' => 100,
         'provider_checkout_request_id' => 'ws_CO_NO_RECEIPT',
     ]);
@@ -195,7 +200,8 @@ it('rejects a successful callback without an M-Pesa receipt number', function ()
 
 it('rejects a callback with a mismatched merchant request ID', function () {
     $payment = Payment::factory()->create([
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'amount' => 100,
         'provider_checkout_request_id' => 'ws_CO_MERCHANT_CHECK',
         'provider_merchant_request_id' => 'merchant-expected',
@@ -232,7 +238,8 @@ it('attaches the receipt when a successful callback arrives after reconciliation
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'amount' => 100,
         'status' => Payment::STATUS_SUCCESSFUL,
         'provider_checkout_request_id' => 'ws_CO_123456',
@@ -284,7 +291,8 @@ it('recovers a failed payment when Daraja independently confirms late success', 
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'amount' => 100,
         'status' => Payment::STATUS_FAILED,
         'failure_reason' => 'Payment timed out.',
@@ -348,7 +356,8 @@ it('keeps a failed payment unchanged when Daraja does not confirm late success',
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'amount' => 100,
         'status' => Payment::STATUS_FAILED,
         'failure_reason' => 'Payment timed out.',
@@ -408,7 +417,8 @@ it('does not recover a failed payment when Daraja returns a mismatched checkout 
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'amount' => 100,
         'status' => Payment::STATUS_FAILED,
         'failure_reason' => 'Payment timed out.',
@@ -468,7 +478,8 @@ it('does not recover a failed payment when Daraja returns a mismatched merchant 
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'amount' => 100,
         'status' => Payment::STATUS_FAILED,
         'failure_reason' => 'Payment timed out.',
@@ -527,7 +538,8 @@ it('does not recover a failed payment when Daraja verification throws an excepti
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'amount' => 100,
         'status' => Payment::STATUS_FAILED,
         'failure_reason' => 'Payment timed out.',

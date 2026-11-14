@@ -15,9 +15,12 @@ class MpesaStkPushQueryService
 
     public function query(Payment $payment): array
     {
-        if ($payment->provider !== 'mpesa') {
+        if (
+            $payment->provider !== 'daraja' ||
+            $payment->payment_method !== 'mpesa'
+        ) {
             throw new InvalidArgumentException(
-                'This payment does not use M-Pesa.'
+                'This payment does not use Daraja M-Pesa.'
             );
         }
 
@@ -34,15 +37,18 @@ class MpesaStkPushQueryService
         }
 
         return $this->sendQuery($payment);
-
-       
     }
 
 
     public function verifyLateSuccess(Payment $payment): array
     {
-        if ($payment->provider !== 'mpesa') {
-            throw new InvalidArgumentException('This payment does not use M-Pesa');
+        if (
+            $payment->provider !== 'daraja' ||
+            $payment->payment_method !== 'mpesa'
+        ) {
+            throw new InvalidArgumentException(
+                'This payment does not use Daraja M-Pesa.'
+            );
         }
 
         if ($payment->status !== Payment::STATUS_FAILED) {
@@ -54,55 +60,53 @@ class MpesaStkPushQueryService
     }
 
     private function sendQuery(Payment $payment): array
-{
-    if (! $payment->provider_checkout_request_id) {
-        throw new InvalidArgumentException(
-            'This payment does not have an STK Push checkout request ID.'
+    {
+        if (! $payment->provider_checkout_request_id) {
+            throw new InvalidArgumentException(
+                'This payment does not have an STK Push checkout request ID.'
+            );
+        }
+
+        $baseUrl = config('services.mpesa.sandbox')
+            ? 'https://sandbox.safaricom.co.ke'
+            : 'https://api.safaricom.co.ke';
+
+        $timestamp = now()->format('YmdHis');
+
+        $shortcode = config('services.mpesa.shortcode');
+        $passkey = config('services.mpesa.passkey');
+
+        $password = base64_encode(
+            $shortcode . $passkey . $timestamp
         );
+
+        $response = Http::withToken(
+            $this->tokenService->getAccessToken()
+        )
+            ->acceptJson()
+            ->post(
+                $baseUrl . '/mpesa/stkpushquery/v1/query',
+                [
+                    'BusinessShortCode' => $shortcode,
+                    'Password' => $password,
+                    'Timestamp' => $timestamp,
+                    'CheckoutRequestID' => $payment->provider_checkout_request_id,
+                ]
+            );
+
+        $response->throw();
+
+        $data = $response->json();
+
+        if (
+            ! is_array($data) ||
+            ($data['ResponseCode'] ?? null) !== '0'
+        ) {
+            throw new RuntimeException(
+                'Daraja did not accept the STK Push query.'
+            );
+        }
+
+        return $data;
     }
-
-    $baseUrl = config('services.mpesa.sandbox')
-        ? 'https://sandbox.safaricom.co.ke'
-        : 'https://api.safaricom.co.ke';
-
-    $timestamp = now()->format('YmdHis');
-
-    $shortcode = config('services.mpesa.shortcode');
-    $passkey = config('services.mpesa.passkey');
-
-    $password = base64_encode(
-        $shortcode . $passkey . $timestamp
-    );
-
-    $response = Http::withToken(
-        $this->tokenService->getAccessToken()
-    )
-        ->acceptJson()
-        ->post(
-            $baseUrl . '/mpesa/stkpushquery/v1/query',
-            [
-                'BusinessShortCode' => $shortcode,
-                'Password' => $password,
-                'Timestamp' => $timestamp,
-                'CheckoutRequestID' => $payment->provider_checkout_request_id,
-            ]
-        );
-
-    $response->throw();
-
-    $data = $response->json();
-
-    if (
-        ! is_array($data) ||
-        ($data['ResponseCode'] ?? null) !== '0'
-    ) {
-        throw new RuntimeException(
-            'Daraja did not accept the STK Push query.'
-        );
-    }
-
-    return $data;
-}
-
-    
 }

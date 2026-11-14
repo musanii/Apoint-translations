@@ -35,14 +35,15 @@ it('marks a payment successful when Daraja confirms the STK Push', function () {
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'amount' => 100,
         'status' => Payment::STATUS_PENDING,
         'provider_checkout_request_id' => 'ws_CO_123456',
         'provider_merchant_request_id' => 'merchant-request-123',
     ]);
 
-$result = app(MpesaPaymentReconciliationService::class)
+    $result = app(MpesaPaymentReconciliationService::class)
         ->reconcile($payment);
 
     expect($result->status)
@@ -84,7 +85,8 @@ it('marks a payment failed when Daraja confirms the STK Push failed', function (
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'amount' => 100,
         'status' => Payment::STATUS_PENDING,
         'provider_checkout_request_id' => 'ws_CO_123456',
@@ -130,14 +132,15 @@ it('does not change payment status when Daraja returns no result code', function
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'amount' => 100,
         'status' => Payment::STATUS_PENDING,
         'provider_checkout_request_id' => 'ws_CO_123456',
         'provider_merchant_request_id' => 'merchant-request-123',
     ]);
 
-    expect(fn () => app(\App\Services\MpesaPaymentReconciliationService::class)
+    expect(fn() => app(\App\Services\MpesaPaymentReconciliationService::class)
         ->reconcile($payment))
         ->toThrow(RuntimeException::class);
 
@@ -177,14 +180,15 @@ it('does not update a payment when Daraja returns mismatched request identifiers
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'amount' => 100,
         'status' => Payment::STATUS_PENDING,
         'provider_checkout_request_id' => 'ws_CO_123456',
         'provider_merchant_request_id' => 'merchant-request-123',
     ]);
 
-    expect(fn () => app(\App\Services\MpesaPaymentReconciliationService::class)
+    expect(fn() => app(\App\Services\MpesaPaymentReconciliationService::class)
         ->reconcile($payment))
         ->toThrow(RuntimeException::class);
 
@@ -223,7 +227,8 @@ it('uses a fallback failure reason when Daraja returns an invalid description', 
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'amount' => 100,
         'status' => Payment::STATUS_PENDING,
         'provider_checkout_request_id' => 'ws_CO_123456',
@@ -268,7 +273,8 @@ it('keeps a payment pending when Daraja returns an unrecognized result code', fu
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'amount' => 100,
         'status' => Payment::STATUS_PENDING,
         'provider_checkout_request_id' => 'ws_CO_123456',
@@ -286,3 +292,14 @@ it('keeps a payment pending when Daraja returns an unrecognized result code', fu
         ->toBe(Order::PAYMENT_STATUS_PENDING);
 });
 
+it('rejects PayHero payments', function () {
+    $payment = Payment::factory()->create([
+        'provider' => 'payhero',
+        'payment_method' => 'mpesa',
+        'status' => Payment::STATUS_PENDING,
+    ]);
+
+    expect(fn () => app(MpesaPaymentReconciliationService::class)
+        ->reconcile($payment))
+        ->toThrow(InvalidArgumentException::class);
+});

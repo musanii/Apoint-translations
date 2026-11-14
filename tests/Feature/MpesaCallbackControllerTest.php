@@ -8,7 +8,8 @@ uses(RefreshDatabase::class);
 
 it('accepts a successful Daraja callback and returns an acknowledgement', function () {
     $payment = Payment::factory()->create([
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'amount' => 100,
         'provider_checkout_request_id' => 'ws_CO_CONTROLLER_123',
         'provider_merchant_request_id' => 'merchant-controller-123',
@@ -44,7 +45,8 @@ it('accepts a successful Daraja callback and returns an acknowledgement', functi
 
 it('acknowledges a failed payment callback and records the failure', function () {
     $payment = Payment::factory()->create([
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'provider_checkout_request_id' => 'ws_CO_CONTROLLER_FAILED',
         'provider_merchant_request_id' => 'merchant-controller-failed',
     ]);
@@ -74,7 +76,8 @@ it('acknowledges a failed payment callback and records the failure', function ()
 
 it('acknowledges duplicate callbacks without processing the payment twice', function () {
     $payment = Payment::factory()->create([
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+'payment_method' => 'mpesa',
         'amount' => 100,
         'provider_checkout_request_id' => 'ws_CO_CONTROLLER_DUPLICATE',
         'provider_merchant_request_id' => 'merchant-controller-duplicate',
@@ -132,4 +135,32 @@ it('acknowledges callbacks for unknown checkout request IDs', function () {
         ->assertJsonPath('ResultDesc', 'Accepted');
 
     expect(Payment::query()->count())->toBe(0);
+});
+
+it('does not process a PayHero payment through the Daraja callback endpoint', function () {
+    $payment = Payment::factory()->create([
+        'provider' => 'payhero',
+        'payment_method' => 'mpesa',
+        'provider_checkout_request_id' => 'ws_CO_PAYHERO_123',
+        'provider_merchant_request_id' => 'merchant-payhero-123',
+    ]);
+
+    $callback = [
+        'Body' => [
+            'stkCallback' => [
+                'MerchantRequestID' => 'merchant-payhero-123',
+                'CheckoutRequestID' => 'ws_CO_PAYHERO_123',
+                'ResultCode' => 1032,
+                'ResultDesc' => 'Request cancelled by user.',
+            ],
+        ],
+    ];
+
+    $response = $this->postJson('/mpesa/callback', $callback);
+
+    $response->assertOk()
+        ->assertJsonPath('ResultCode', 0);
+
+    expect($payment->fresh()->status)
+        ->toBe(Payment::STATUS_PENDING);
 });

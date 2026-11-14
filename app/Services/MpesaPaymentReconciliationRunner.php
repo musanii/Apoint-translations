@@ -29,7 +29,8 @@ class MpesaPaymentReconciliationRunner
 
             if (
                 ! $payment ||
-                $payment->provider !== 'mpesa' ||
+                $payment->provider !== 'daraja' ||
+                $payment->payment_method !== 'mpesa' ||
                 $payment->status !== Payment::STATUS_PENDING ||
                 !$payment->provider_checkout_request_id ||
                 $payment->reconciliation_attempts >= self::MAX_ATTEMPTS ||
@@ -65,7 +66,8 @@ class MpesaPaymentReconciliationRunner
             );
         }
         $paymentIds = Payment::query()
-            ->where('provider', 'mpesa')
+            ->where('provider', 'daraja')
+            ->where('payment_method', 'mpesa')
             ->where('status', Payment::STATUS_PENDING)
             ->whereNotNull('provider_checkout_request_id')
             ->where('reconciliation_attempts', '<', self::MAX_ATTEMPTS)

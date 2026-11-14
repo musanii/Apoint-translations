@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Payment;
+use InvalidArgumentException;
 use RuntimeException;
 
 class MpesaPaymentReconciliationService
@@ -21,6 +22,14 @@ class MpesaPaymentReconciliationService
 
     public function reconcile(Payment $payment): Payment
     {
+        if (
+            $payment->provider !== 'daraja' ||
+            $payment->payment_method !== 'mpesa'
+        ) {
+            throw new InvalidArgumentException(
+                'This payment does not use Daraja M-Pesa.'
+            );
+        }
         $result = $this->queryService->query($payment);
 
         if (

@@ -36,7 +36,8 @@ it('initiates an STK push and stores the Daraja request identifiers', function (
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'amount' => 100,
         'status' => Payment::STATUS_PENDING,
     ]);
@@ -82,8 +83,9 @@ it('does not initiate a second STK Push for the same payment', function () {
     ]);
 
     $payment = Payment::factory()->create([
-        'provider' => 'mpesa',
-           'amount' => 100,
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
+        'amount' => 100,
         'status' => Payment::STATUS_PENDING,
     ]);
 
@@ -91,7 +93,7 @@ it('does not initiate a second STK Push for the same payment', function () {
 
     $service->initiate($payment, '254712345678');
 
-    expect(fn () => $service->initiate(
+    expect(fn() => $service->initiate(
         $payment->fresh(),
         '254712345678'
     ))->toThrow(InvalidArgumentException::class);
@@ -103,11 +105,12 @@ it('does not initiate an STK Push for a failed payment', function () {
     Http::fake();
 
     $payment = Payment::factory()->create([
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'status' => Payment::STATUS_FAILED,
     ]);
 
-    expect(fn () => app(MpesaStkPushService::class)->initiate(
+    expect(fn() => app(MpesaStkPushService::class)->initiate(
         $payment,
         '254712345678'
     ))->toThrow(InvalidArgumentException::class);
@@ -123,7 +126,7 @@ it('rejects payments from other providers', function () {
         'status' => Payment::STATUS_PENDING,
     ]);
 
-    expect(fn () => app(MpesaStkPushService::class)->initiate(
+    expect(fn() => app(MpesaStkPushService::class)->initiate(
         $payment,
         '254712345678'
     ))->toThrow(InvalidArgumentException::class);
@@ -139,12 +142,13 @@ it('rejects payments that are not in Kenyan shillings', function () {
     ]);
 
     $payment = Payment::factory()->create([
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'currency_id' => $currency->id,
         'status' => Payment::STATUS_PENDING,
     ]);
 
-    expect(fn () => app(MpesaStkPushService::class)->initiate(
+    expect(fn() => app(MpesaStkPushService::class)->initiate(
         $payment,
         '254712345678'
     ))->toThrow(InvalidArgumentException::class);
@@ -156,8 +160,27 @@ it('rejects fractional payment amounts', function () {
     Http::fake();
 
     $payment = Payment::factory()->create([
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'amount' => 100.50,
+        'status' => Payment::STATUS_PENDING,
+    ]);
+
+    expect(fn() => app(MpesaStkPushService::class)->initiate(
+        $payment,
+        '254712345678'
+    ))->toThrow(InvalidArgumentException::class);
+
+    Http::assertNothingSent();
+});
+
+
+it('rejects PayHero payments', function () {
+    Http::fake();
+
+    $payment = Payment::factory()->create([
+        'provider' => 'payhero',
+        'payment_method' => 'mpesa',
         'status' => Payment::STATUS_PENDING,
     ]);
 

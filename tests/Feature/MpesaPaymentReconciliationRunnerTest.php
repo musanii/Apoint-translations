@@ -11,7 +11,8 @@ it('identifies only eligible pending M-Pesa payments for reconciliation', functi
 
     $eligiblePayment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'status' => Payment::STATUS_PENDING,
         'provider_checkout_request_id' => 'checkout-eligible',
         'reconciliation_attempts' => 0,
@@ -20,7 +21,8 @@ it('identifies only eligible pending M-Pesa payments for reconciliation', functi
 
     $notYetDuePayment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'status' => Payment::STATUS_PENDING,
         'provider_checkout_request_id' => 'checkout-not-due',
         'reconciliation_attempts' => 0,
@@ -29,7 +31,8 @@ it('identifies only eligible pending M-Pesa payments for reconciliation', functi
 
     $successfulPayment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'status' => Payment::STATUS_SUCCESSFUL,
         'provider_checkout_request_id' => 'checkout-successful',
         'reconciliation_attempts' => 0,
@@ -38,7 +41,8 @@ it('identifies only eligible pending M-Pesa payments for reconciliation', functi
 
     $failedPayment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'status' => Payment::STATUS_FAILED,
         'provider_checkout_request_id' => 'checkout-failed',
         'reconciliation_attempts' => 0,
@@ -56,7 +60,8 @@ it('identifies only eligible pending M-Pesa payments for reconciliation', functi
 
     $exhaustedPayment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'status' => Payment::STATUS_PENDING,
         'provider_checkout_request_id' => 'checkout-exhausted',
         'reconciliation_attempts' => 6,
@@ -64,7 +69,8 @@ it('identifies only eligible pending M-Pesa payments for reconciliation', functi
     ]);
 
     expect(Payment::query()
-        ->where('provider', 'mpesa')
+        ->where('provider', 'daraja')
+        ->where('payment_method', 'mpesa')
         ->where('status', Payment::STATUS_PENDING)
         ->whereNotNull('provider_checkout_request_id')
         ->where('reconciliation_attempts', '<', 6)
@@ -82,8 +88,8 @@ use App\Services\MpesaPaymentReconciliationService;
 use Mockery;
 
 it('claims a due payment and sends it for reconciliation', function () {
-   $now = \Illuminate\Support\Carbon::now();
-\Illuminate\Support\Carbon::setTestNow($now);
+    $now = \Illuminate\Support\Carbon::now();
+    \Illuminate\Support\Carbon::setTestNow($now);
 
     $order = Order::factory()->create([
         'total' => 100,
@@ -92,7 +98,8 @@ it('claims a due payment and sends it for reconciliation', function () {
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'status' => Payment::STATUS_PENDING,
         'provider_checkout_request_id' => 'checkout-runner-test',
         'reconciliation_attempts' => 0,
@@ -125,7 +132,7 @@ it('claims a due payment and sends it for reconciliation', function () {
     expect($payment->reconciliation_attempts)->toBe(1);
     expect($payment->last_reconciled_at)->not->toBeNull();
     expect($payment->next_reconciliation_at->format('Y-m-d H:i'))
-    ->toBe($now->copy()->addMinutes(2)->format('Y-m-d H:i'));
+        ->toBe($now->copy()->addMinutes(2)->format('Y-m-d H:i'));
     \Illuminate\Support\Carbon::setTestNow();
 });
 
@@ -140,7 +147,8 @@ it('keeps a payment pending and schedules a retry when reconciliation throws an 
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'status' => Payment::STATUS_PENDING,
         'provider_checkout_request_id' => 'checkout-network-error',
         'reconciliation_attempts' => 0,
@@ -187,7 +195,8 @@ it('stops scheduling retries after the sixth attempt', function () {
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'status' => Payment::STATUS_PENDING,
         'provider_checkout_request_id' => 'checkout-final-attempt',
         'reconciliation_attempts' => 5,
@@ -236,9 +245,10 @@ it('uses the correct retry delay after each reconciliation attempt', function (
 
     $payment = Payment::factory()->create([
         'order_id' => $order->id,
-        'provider' => 'mpesa',
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
         'status' => Payment::STATUS_PENDING,
-        'provider_checkout_request_id' => 'checkout-retry-'.$previousAttempts,
+        'provider_checkout_request_id' => 'checkout-retry-' . $previousAttempts,
         'reconciliation_attempts' => $previousAttempts,
         'next_reconciliation_at' => now()->subMinute(),
     ]);
@@ -286,11 +296,12 @@ it('does not process more payments than the supplied batch limit', function () {
     ]);
 
     $payments = collect(range(1, 3))->map(
-        fn (int $number) => Payment::factory()->create([
+        fn(int $number) => Payment::factory()->create([
             'order_id' => $order->id,
-            'provider' => 'mpesa',
+            'provider' => 'daraja',
+            'payment_method' => 'mpesa',
             'status' => Payment::STATUS_PENDING,
-            'provider_checkout_request_id' => 'checkout-batch-'.$number,
+            'provider_checkout_request_id' => 'checkout-batch-' . $number,
             'reconciliation_attempts' => 0,
             'next_reconciliation_at' => now()->subMinute(),
         ])
@@ -303,7 +314,7 @@ it('does not process more payments than the supplied batch limit', function () {
     $reconciliationService
         ->shouldReceive('reconcile')
         ->twice()
-        ->andReturnUsing(fn (Payment $payment) => $payment);
+        ->andReturnUsing(fn(Payment $payment) => $payment);
 
     app()->instance(
         MpesaPaymentReconciliationService::class,
@@ -327,7 +338,7 @@ it('does not process more payments than the supplied batch limit', function () {
 it('rejects a batch limit less than one', function (int $limit) {
     $runner = app(MpesaPaymentReconciliationRunner::class);
 
-    expect(fn () => $runner->run($limit))
+    expect(fn() => $runner->run($limit))
         ->toThrow(InvalidArgumentException::class);
 })->with([
     'zero' => [0],

@@ -31,7 +31,8 @@ class MpesaCallbackService
         }
 
         $payment = Payment::query()
-            ->where('provider', 'mpesa')
+            ->where('provider', 'daraja')
+            ->where('payment_method', 'mpesa')
             ->where('provider_checkout_request_id', $checkoutRequestId)
             ->first();
 

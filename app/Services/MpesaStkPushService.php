@@ -16,9 +16,12 @@ class MpesaStkPushService
 
     public function initiate(Payment $payment, string $phoneNumber): Payment
     {
-        if ($payment->provider !== 'mpesa') {
+        if (
+            $payment->provider !== 'daraja' ||
+            $payment->payment_method !== 'mpesa'
+        ) {
             throw new InvalidArgumentException(
-                'This payment does not use M-Pesa.'
+                'This payment does not use Daraja M-Pesa.'
             );
         }
         if ($payment->currency()->value('code') !== 'KES') {
@@ -119,7 +122,7 @@ class MpesaStkPushService
             $lockedPayment->update([
                 'provider_checkout_request_id' => $checkoutRequestId,
                 'provider_merchant_request_id' => $merchantRequestId,
-                'next_reconciliation_at'=> now()->addMinute(),
+                'next_reconciliation_at' => now()->addMinute(),
             ]);
 
             return $lockedPayment->refresh();
