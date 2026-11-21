@@ -17,7 +17,7 @@ import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
     { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
-    { title: 'My requests', href: '/dashboard', icon: ClipboardList },
+    { title: 'My requests', href: '/dashboard#requests', icon: ClipboardList },
     { title: 'New quote request', href: '/quote-requests/create', icon: Plus },
 ];
 
