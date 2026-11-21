@@ -1,11 +1,11 @@
 <?php
 
-use App\\Models\\Currency;
-use App\\Models\\Quote;
-use App\\Models\\QuoteRequest;
-use App\\Models\\Service;
-use App\\Models\\User;
-use Inertia\\Testing\\AssertableInertia as Assert;
+use App\Models\Currency;
+use App\Models\Quote;
+use App\Models\QuoteRequest;
+use App\Models\Service;
+use App\Models\User;
+use Inertia\Testing\AssertableInertia as Assert;
 
 test('guests are redirected to the login page', function () {
     $this->get(route('dashboard'))->assertRedirect(route('login'));
