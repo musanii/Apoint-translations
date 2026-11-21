@@ -25,7 +25,8 @@ class Service extends Model
         ];
     }
 
-    public function pricingRules(): HasMany<PricingRule, $this><PricingRule, $this>
+    /** @return HasMany<PricingRule, $this> */
+    public function pricingRules(): HasMany
     {
         return $this->hasMany(PricingRule::class);
     }
