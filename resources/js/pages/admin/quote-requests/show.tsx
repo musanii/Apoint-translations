@@ -2,7 +2,7 @@ import { Head,useForm,router } from '@inertiajs/react';
 import { ArrowLeft,Download,FileText,ClipboardCheck,Calculator } from 'lucide-react';
 import type { FormEvent } from 'react';
 type Doc={id:number;original_name:string;extension:string;size:number;created_at:string};
-type Quote={id:number;reference:string;pricing_type:string;total:string;status:string;created_at:string;customer_notes:string|null;currency:{code:string;symbol:string}};
+type Quote={id:number;reference:string;pricing_type:string;total:string;status:string;created_at:string;valid_until:string|null;customer_notes:string|null;currency:{code:string;symbol:string}};
 type RequestData={id:number;status:string;quantity:number|null;unit:string|null;delivery_date:string|null;instructions:string|null;delivery_method:string;recipient_name:string|null;recipient_phone:string|null;delivery_country:string|null;delivery_address:string|null;delivery_postal_code:string|null;created_at:string;user:{name:string;email:string};service:{name:string};source_language:{name:string}|null;target_language:{name:string}|null;currency:{code:string;symbol:string};documents:Doc[];quotes:Quote[]};
 type FormData={pricing_type:'per_word'|'per_page'|'fixed';quantity:string;unit:string;rate:string;subtotal:string;express_fee:string;certification_fee:string;courier_fee:string;customer_notes:string;admin_notes:string};
 const badge=(s:string)=>s==='pending'?'bg-[#F9E9D8] text-[#8B4D24]':s==='under_review'?'bg-[#F5E8F0] text-[#7C4266]':'bg-[#E7F1E8] text-[#386547]';
