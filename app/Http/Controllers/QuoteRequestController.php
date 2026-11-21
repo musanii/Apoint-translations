@@ -11,6 +11,7 @@ use App\Services\QuoteService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -102,7 +103,7 @@ class QuoteRequestController extends Controller
             : ($pricingRule?->unit ?? $quoteService->inferUnitForService((int) $data['service_id']));
 
         $quoteRequest = QuoteRequest::create([
-            'user_id' => $request->user()->id,
+            'user_id' => (int) $request->user()->getAuthIdentifier(),
             'service_id' => $data['service_id'],
             'source_language_id' => $data['source_language_id'],
             'target_language_id' => $data['target_language_id'],
@@ -136,12 +137,9 @@ class QuoteRequestController extends Controller
             ->with('success', 'Your quote request has been submitted. You can upload your documents below.');
     }
 
-    public function show(Request $request, QuoteRequest $quoteRequest): Response
+    public function show(QuoteRequest $quoteRequest): Response
     {
-        abort_unless(
-            $request->user()->can('view', $quoteRequest),
-            403
-        );
+        Gate::authorize('view', $quoteRequest);
 
         $quoteRequest->load([
             'service:id,name',
