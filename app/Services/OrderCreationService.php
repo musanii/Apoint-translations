@@ -16,7 +16,7 @@ class OrderCreationService
         private OrderReferenceGenerator $referenceGenerator,
     ) {}
 
-    public function createFRomAcceptedQuote(Quote $quote): Order
+    public function createFromAcceptedQuote(Quote $quote): Order
     {
         return DB::transaction(function () use ($quote) {
             $lockedQuote = Quote::query()
