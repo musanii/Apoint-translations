@@ -42,7 +42,7 @@ export default function Welcome({ services }: { services: Service[] }) {
 
                             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
                                 <a
-                                    href="#quote"
+                                    href="/quote-requests/create"
                                     className="inline-flex items-center justify-center rounded-full bg-[#3A091A] px-8 py-4 text-sm font-semibold text-white transition duration-300 hover:-translate-y-1 hover:bg-[#4A1525]"
                                 >
                                     Request a Translation
