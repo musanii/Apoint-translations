@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\MpesaCallbackController;
 use App\Http\Controllers\PayHeroCallbackController;
 use App\Http\Controllers\QuoteRequestDocumentController;
@@ -16,6 +17,12 @@ Route::get('/', function () {
             ->get(['id', 'name', 'slug', 'description']),
     ]);
 })->name('home');
+
+Route::get('/calculator/options', [CalculatorController::class, 'options'])
+    ->name('calculator.options');
+
+Route::get('/calculator/calculate', [CalculatorController::class, 'calculate'])
+    ->name('calculator.calculate');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');

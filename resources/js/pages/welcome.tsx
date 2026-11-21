@@ -6,6 +6,7 @@ import AboutSection from "@/components/website/about-section";
 import ContactSection from "@/components/website/contact-section";
 import Footer from "@/components/website/footer";
 import type { Service } from '@/types/service';
+import PriceCalculator from "@/components/website/price-calculator";
 
 
 export default function Welcome({ services }: { services: Service[] }) {
@@ -87,6 +88,7 @@ export default function Welcome({ services }: { services: Service[] }) {
                         </div>
                     </section>
                     <ServicesSection services={services} />
+                    <PriceCalculator />
                     <LanguagesSection />
                     <AboutSection />
                     <ContactSection />

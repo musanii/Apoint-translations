@@ -41,7 +41,7 @@ class ServiceSeeder extends Seeder
                 'sort_order' => 5,
             ],
             [
-                'name' => 'Report Writting',
+                'name' => 'Report Writing',
                 'description' => 'Compiling your quartely and yearly reports.',
                 'sort_order' => 6,
             ],
