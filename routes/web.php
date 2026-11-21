@@ -19,7 +19,7 @@ Route::middleware('auth')->group(function(){
  Route::get('/quote-requests/{quoteRequest}',[QuoteRequestController::class,'show'])->name('quote-requests.show');
  Route::post('/quote-requests/{quoteRequest}/documents',[QuoteRequestDocumentController::class,'store'])->name('quote-requests.documents.store');
 });
-Route::middleware(['auth','verified'])->group(fn()=>Route::inertia('dashboard','dashboard')->name('dashboard'));
+Route::middleware(['auth','verified'])->get('/dashboard', DashboardController::class)->name('dashboard');
 Route::middleware(['auth','can:admin'])->prefix('admin')->name('admin.')->group(function(){
  Route::get('/quote-requests',[AdminQuoteRequestController::class,'index'])->name('quote-requests.index');
  Route::get('/quote-requests/{quoteRequest}',[AdminQuoteRequestController::class,'show'])->name('quote-requests.show');
