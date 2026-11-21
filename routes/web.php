@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MpesaCallbackController;
+use App\Http\Controllers\PayHeroCallbackController;
 use App\Http\Controllers\QuoteRequestDocumentController;
 
 use Illuminate\Support\Facades\Route;
@@ -15,4 +16,6 @@ Route::post('/quote-requests/{quoteRequest}/documents', [QuoteRequestDocumentCon
 
 Route::post('/mpesa/callback', [MpesaCallbackController::class, 'handle'])
     ->name('mpesa.callback');
+Route::post('/payhero/callback', [PayHeroCallbackController::class, 'handle'])
+    ->name('payhero.callback');
 require __DIR__ . '/settings.php';

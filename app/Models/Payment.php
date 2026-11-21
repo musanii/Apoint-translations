@@ -27,6 +27,8 @@ class Payment extends Model
         'payment_method',
         'provider_channel_id',
         'provider_reference',
+        'provider_transaction_reference',
+        'provider_initiation_started_at',
         'provider_initiation_started_at',
         'amount',
         'status',

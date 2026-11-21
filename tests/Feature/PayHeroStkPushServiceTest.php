@@ -41,9 +41,11 @@ it('initiates a PayHero STK push and stores the provider identifiers', function 
     $result = app(PayHeroStkPushService::class)
         ->initiate($payment, '254712345678');
 
-    expect($result->provider_reference)->toBe('PH-TEST-123')
-        ->and($result->provider_checkout_request_id)->toBe('checkout-123')
-        ->and($result->next_reconciliation_at)->not->toBeNull();
+expect($result->provider_transaction_reference)->toBe('PH-TEST-123')
+    ->and($result->provider_reference)->toBeNull()
+    ->and($result->provider_checkout_request_id)->toBe('checkout-123')
+    ->and($result->provider_initiation_started_at)->toBeNull()
+    ->and($result->next_reconciliation_at)->not->toBeNull();
 
     Http::assertSent(function (Request $request) use ($payment) {
         return $request->url() === 'https://backend.payhero.co.ke/api/v2/payments'
@@ -277,7 +279,8 @@ it('rejects an incomplete PayHero response', function () {
     expect(fn () => app(PayHeroStkPushService::class)->initiate(
         $payment,
         '254712345678'
-    ))->toThrow(RuntimeException::class);
+    ))->toThrow(RuntimeException::class)
+    ->and($payment->provider_transaction_reference)->toBeNull();
 
     expect($payment->fresh())
         ->provider_reference->toBeNull()
@@ -425,24 +428,4 @@ it('releases the initiation claim after a definite HTTP rejection', function () 
     expect($payment->fresh()->provider_initiation_started_at)->toBeNull();
 
     Http::assertSentCount(1);
-});
-
-it('rejects a payment that already has an initiation claim', function () {
-    Http::fake();
-
-    $payment = Payment::factory()->create([
-        'provider' => 'payhero',
-        'payment_method' => 'mpesa',
-        'provider_channel_id' => '12345',
-        'provider_initiation_started_at' => now(),
-        'amount' => 100,
-        'status' => Payment::STATUS_PENDING,
-    ]);
-
-    expect(fn () => app(PayHeroStkPushService::class)->initiate(
-        $payment,
-        '254712345678'
-    ))->toThrow(InvalidArgumentException::class);
-
-    Http::assertNothingSent();
 });

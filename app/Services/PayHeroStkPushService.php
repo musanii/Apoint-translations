@@ -144,7 +144,7 @@ class PayHeroStkPushService
             }
 
             $lockedPayment->update([
-                'provider_reference' => $providerReference,
+                'provider_transaction_reference' => $providerReference,
                 'provider_checkout_request_id' => $checkoutRequestId,
                 'provider_initiation_started_at' => null,
                 'next_reconciliation_at' => now()->addMinute(),
