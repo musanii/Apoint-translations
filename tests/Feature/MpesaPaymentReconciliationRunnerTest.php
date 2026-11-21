@@ -85,11 +85,13 @@ it('identifies only eligible pending M-Pesa payments for reconciliation', functi
 
 use App\Services\MpesaPaymentReconciliationRunner;
 use App\Services\MpesaPaymentReconciliationService;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Mockery;
 
 it('claims a due payment and sends it for reconciliation', function () {
-    $now = \Illuminate\Support\Carbon::now();
-    \Illuminate\Support\Carbon::setTestNow($now);
+    $now = Carbon::now();
+    Carbon::setTestNow($now);
 
     $order = Order::factory()->create([
         'total' => 100,
@@ -133,12 +135,12 @@ it('claims a due payment and sends it for reconciliation', function () {
     expect($payment->last_reconciled_at)->not->toBeNull();
     expect($payment->next_reconciliation_at->format('Y-m-d H:i'))
         ->toBe($now->copy()->addMinutes(2)->format('Y-m-d H:i'));
-    \Illuminate\Support\Carbon::setTestNow();
+    Carbon::setTestNow();
 });
 
 it('keeps a payment pending and schedules a retry when reconciliation throws an exception', function () {
-    $now = \Illuminate\Support\Carbon::now();
-    \Illuminate\Support\Carbon::setTestNow($now);
+    $now = Carbon::now();
+    Carbon::setTestNow($now);
 
     $order = Order::factory()->create([
         'total' => 100,
@@ -169,7 +171,7 @@ it('keeps a payment pending and schedules a retry when reconciliation throws an 
         $reconciliationService
     );
 
-    \Illuminate\Support\Facades\Log::shouldReceive('error')->once();
+    Log::shouldReceive('error')->once();
 
     app(MpesaPaymentReconciliationRunner::class)->run();
 
@@ -181,12 +183,12 @@ it('keeps a payment pending and schedules a retry when reconciliation throws an 
     expect($payment->next_reconciliation_at->format('Y-m-d H:i'))
         ->toBe($now->copy()->addMinutes(2)->format('Y-m-d H:i'));
 
-    \Illuminate\Support\Carbon::setTestNow();
+    Carbon::setTestNow();
 });
 
 it('stops scheduling retries after the sixth attempt', function () {
-    $now = \Illuminate\Support\Carbon::now();
-    \Illuminate\Support\Carbon::setTestNow($now);
+    $now = Carbon::now();
+    Carbon::setTestNow($now);
 
     $order = Order::factory()->create([
         'total' => 100,
@@ -229,14 +231,14 @@ it('stops scheduling retries after the sixth attempt', function () {
     // A second run must not query this exhausted payment again.
     expect($runner->run())->toBe(0);
 
-    \Illuminate\Support\Carbon::setTestNow();
+    Carbon::setTestNow();
 });
 it('uses the correct retry delay after each reconciliation attempt', function (
     int $previousAttempts,
     int $expectedDelay
 ) {
-    $now = \Illuminate\Support\Carbon::now();
-    \Illuminate\Support\Carbon::setTestNow($now);
+    $now = Carbon::now();
+    Carbon::setTestNow($now);
 
     $order = Order::factory()->create([
         'total' => 100,
@@ -248,7 +250,7 @@ it('uses the correct retry delay after each reconciliation attempt', function (
         'provider' => 'daraja',
         'payment_method' => 'mpesa',
         'status' => Payment::STATUS_PENDING,
-        'provider_checkout_request_id' => 'checkout-retry-' . $previousAttempts,
+        'provider_checkout_request_id' => 'checkout-retry-'.$previousAttempts,
         'reconciliation_attempts' => $previousAttempts,
         'next_reconciliation_at' => now()->subMinute(),
     ]);
@@ -277,7 +279,7 @@ it('uses the correct retry delay after each reconciliation attempt', function (
     expect($payment->next_reconciliation_at->format('Y-m-d H:i'))
         ->toBe($now->copy()->addMinutes($expectedDelay)->format('Y-m-d H:i'));
 
-    \Illuminate\Support\Carbon::setTestNow();
+    Carbon::setTestNow();
 })->with([
     'after attempt 1' => [0, 2],
     'after attempt 2' => [1, 5],
@@ -287,8 +289,8 @@ it('uses the correct retry delay after each reconciliation attempt', function (
 ]);
 
 it('does not process more payments than the supplied batch limit', function () {
-    $now = \Illuminate\Support\Carbon::now();
-    \Illuminate\Support\Carbon::setTestNow($now);
+    $now = Carbon::now();
+    Carbon::setTestNow($now);
 
     $order = Order::factory()->create([
         'total' => 100,
@@ -296,12 +298,12 @@ it('does not process more payments than the supplied batch limit', function () {
     ]);
 
     $payments = collect(range(1, 3))->map(
-        fn(int $number) => Payment::factory()->create([
+        fn (int $number) => Payment::factory()->create([
             'order_id' => $order->id,
             'provider' => 'daraja',
             'payment_method' => 'mpesa',
             'status' => Payment::STATUS_PENDING,
-            'provider_checkout_request_id' => 'checkout-batch-' . $number,
+            'provider_checkout_request_id' => 'checkout-batch-'.$number,
             'reconciliation_attempts' => 0,
             'next_reconciliation_at' => now()->subMinute(),
         ])
@@ -314,7 +316,7 @@ it('does not process more payments than the supplied batch limit', function () {
     $reconciliationService
         ->shouldReceive('reconcile')
         ->twice()
-        ->andReturnUsing(fn(Payment $payment) => $payment);
+        ->andReturnUsing(fn (Payment $payment) => $payment);
 
     app()->instance(
         MpesaPaymentReconciliationService::class,
@@ -332,13 +334,13 @@ it('does not process more payments than the supplied batch limit', function () {
 
     expect($attemptedCount)->toBe(2);
 
-    \Illuminate\Support\Carbon::setTestNow();
+    Carbon::setTestNow();
 });
 
 it('rejects a batch limit less than one', function (int $limit) {
     $runner = app(MpesaPaymentReconciliationRunner::class);
 
-    expect(fn() => $runner->run($limit))
+    expect(fn () => $runner->run($limit))
         ->toThrow(InvalidArgumentException::class);
 })->with([
     'zero' => [0],

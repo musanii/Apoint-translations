@@ -5,7 +5,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
 
 test('it requires an uploaded document', function () {
-    $request = new StoreQuoteRequestDocumentRequest();
+    $request = new StoreQuoteRequestDocumentRequest;
 
     $validator = Validator::make([], $request->rules());
 
@@ -16,7 +16,7 @@ test('it requires an uploaded document', function () {
 test('it rejects unsupported file types', function () {
     $file = UploadedFile::fake()->create('script.exe', 100);
 
-    $request = new StoreQuoteRequestDocumentRequest();
+    $request = new StoreQuoteRequestDocumentRequest;
 
     $validator = Validator::make(
         ['document' => $file],
@@ -29,7 +29,7 @@ test('it rejects unsupported file types', function () {
 test('it rejects documents larger than 10 MB', function () {
     $file = UploadedFile::fake()->create('large.pdf', 10241);
 
-    $request = new StoreQuoteRequestDocumentRequest();
+    $request = new StoreQuoteRequestDocumentRequest;
 
     $validator = Validator::make(
         ['document' => $file],

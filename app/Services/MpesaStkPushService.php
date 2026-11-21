@@ -61,7 +61,7 @@ class MpesaStkPushService
         $passkey = config('services.mpesa.passkey');
 
         $password = base64_encode(
-            $shortcode . $passkey . $timestamp
+            $shortcode.$passkey.$timestamp
         );
 
         $response = Http::withToken(
@@ -69,7 +69,7 @@ class MpesaStkPushService
         )
             ->acceptJson()
             ->post(
-                $baseUrl . '/mpesa/stkpush/v1/processrequest',
+                $baseUrl.'/mpesa/stkpush/v1/processrequest',
                 [
                     'BusinessShortCode' => $shortcode,
                     'Password' => $password,

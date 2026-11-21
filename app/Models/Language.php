@@ -22,20 +22,18 @@ class Language extends Model
     protected function casts()
     {
         return [
-            'is_active'=>'boolean',
-            'sort_order'=>'integer',
+            'is_active' => 'boolean',
+            'sort_order' => 'integer',
         ];
     }
 
-
-    public function sourcePricingRules():HasMany
+    public function sourcePricingRules(): HasMany
     {
-        return $this->hasMany(PricingRule::class,'source_language_id');
+        return $this->hasMany(PricingRule::class, 'source_language_id');
     }
 
-
-     public function targetPricingRules():HasMany
+    public function targetPricingRules(): HasMany
     {
-        return $this->hasMany(PricingRule::class,'target_language_id');
+        return $this->hasMany(PricingRule::class, 'target_language_id');
     }
 }

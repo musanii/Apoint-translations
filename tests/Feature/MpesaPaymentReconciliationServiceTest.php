@@ -93,7 +93,7 @@ it('marks a payment failed when Daraja confirms the STK Push failed', function (
         'provider_merchant_request_id' => 'merchant-request-123',
     ]);
 
-    $result = app(\App\Services\MpesaPaymentReconciliationService::class)
+    $result = app(MpesaPaymentReconciliationService::class)
         ->reconcile($payment);
 
     expect($result->status)
@@ -140,7 +140,7 @@ it('does not change payment status when Daraja returns no result code', function
         'provider_merchant_request_id' => 'merchant-request-123',
     ]);
 
-    expect(fn() => app(\App\Services\MpesaPaymentReconciliationService::class)
+    expect(fn () => app(MpesaPaymentReconciliationService::class)
         ->reconcile($payment))
         ->toThrow(RuntimeException::class);
 
@@ -149,7 +149,6 @@ it('does not change payment status when Daraja returns no result code', function
         ->and($order->fresh()->payment_status)
         ->toBe(Order::PAYMENT_STATUS_PENDING);
 });
-
 
 it('does not update a payment when Daraja returns mismatched request identifiers', function () {
     config([
@@ -188,7 +187,7 @@ it('does not update a payment when Daraja returns mismatched request identifiers
         'provider_merchant_request_id' => 'merchant-request-123',
     ]);
 
-    expect(fn() => app(\App\Services\MpesaPaymentReconciliationService::class)
+    expect(fn () => app(MpesaPaymentReconciliationService::class)
         ->reconcile($payment))
         ->toThrow(RuntimeException::class);
 
@@ -235,7 +234,7 @@ it('uses a fallback failure reason when Daraja returns an invalid description', 
         'provider_merchant_request_id' => 'merchant-request-123',
     ]);
 
-    $result = app(\App\Services\MpesaPaymentReconciliationService::class)
+    $result = app(MpesaPaymentReconciliationService::class)
         ->reconcile($payment);
 
     expect($result->status)

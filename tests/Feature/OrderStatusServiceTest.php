@@ -3,7 +3,6 @@
 use App\Models\Order;
 use App\Services\OrderStatusService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
 use InvalidArgumentException;
 
 uses(RefreshDatabase::class);
@@ -72,7 +71,7 @@ it('does not allow an order in progress to be cancelled', function () {
 
     $service = app(OrderStatusService::class);
 
-    expect(fn() => $service->cancel($order))
+    expect(fn () => $service->cancel($order))
         ->toThrow(InvalidArgumentException::class);
 
     expect($order->fresh()->status)
@@ -87,7 +86,7 @@ it('does not allow a completed order to be cancelled', function () {
 
     $service = app(OrderStatusService::class);
 
-    expect(fn() => $service->cancel($order))
+    expect(fn () => $service->cancel($order))
         ->toThrow(InvalidArgumentException::class);
 
     expect($order->fresh()->status)
@@ -102,7 +101,7 @@ it('does not confirm an unpaid order', function () {
 
     $service = app(OrderStatusService::class);
 
-    expect(fn() => $service->confirm($order))
+    expect(fn () => $service->confirm($order))
         ->toThrow(InvalidArgumentException::class);
 
     expect($order->fresh()->status)

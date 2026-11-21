@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Override;
 
-
 class Service extends Model
 {
     protected $fillable = [
@@ -14,7 +13,7 @@ class Service extends Model
         'slug',
         'description',
         'is_active',
-        'sort_order'
+        'sort_order',
     ];
 
     #[Override]

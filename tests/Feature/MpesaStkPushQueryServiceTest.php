@@ -4,6 +4,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Services\MpesaStkPushQueryService;
 use Illuminate\Http\Client\Request;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 use RuntimeException;
@@ -65,7 +66,6 @@ it('queries Daraja for the status of an existing STK Push', function () {
     });
 });
 
-
 it('rejects payments from other providers', function () {
     Http::fake();
 
@@ -75,7 +75,7 @@ it('rejects payments from other providers', function () {
         'provider_checkout_request_id' => 'ws_CO_123456',
     ]);
 
-    expect(fn() => app(MpesaStkPushQueryService::class)->query($payment))
+    expect(fn () => app(MpesaStkPushQueryService::class)->query($payment))
         ->toThrow(InvalidArgumentException::class);
 
     Http::assertNothingSent();
@@ -91,7 +91,7 @@ it('rejects payments that are not pending', function () {
         'provider_checkout_request_id' => 'ws_CO_123456',
     ]);
 
-    expect(fn() => app(MpesaStkPushQueryService::class)->query($payment))
+    expect(fn () => app(MpesaStkPushQueryService::class)->query($payment))
         ->toThrow(InvalidArgumentException::class);
 
     Http::assertNothingSent();
@@ -107,12 +107,11 @@ it('rejects payments without a checkout request ID', function () {
         'provider_checkout_request_id' => null,
     ]);
 
-    expect(fn() => app(MpesaStkPushQueryService::class)->query($payment))
+    expect(fn () => app(MpesaStkPushQueryService::class)->query($payment))
         ->toThrow(InvalidArgumentException::class);
 
     Http::assertNothingSent();
 });
-
 
 it('rejects a query that Daraja does not accept', function () {
     config([
@@ -140,7 +139,7 @@ it('rejects a query that Daraja does not accept', function () {
         'provider_checkout_request_id' => 'ws_CO_123456',
     ]);
 
-    expect(fn() => app(MpesaStkPushQueryService::class)->query($payment))
+    expect(fn () => app(MpesaStkPushQueryService::class)->query($payment))
         ->toThrow(RuntimeException::class);
 
     expect($payment->fresh()->status)
@@ -170,13 +169,12 @@ it('does not change payment status when Daraja is unavailable', function () {
         'provider_checkout_request_id' => 'ws_CO_123456',
     ]);
 
-    expect(fn() => app(MpesaStkPushQueryService::class)->query($payment))
-        ->toThrow(\Illuminate\Http\Client\RequestException::class);
+    expect(fn () => app(MpesaStkPushQueryService::class)->query($payment))
+        ->toThrow(RequestException::class);
 
     expect($payment->fresh()->status)
         ->toBe(Payment::STATUS_PENDING);
 });
-
 
 it('verifies a late successful callback by querying Daraja for a failed payment', function () {
     config([
@@ -237,7 +235,7 @@ it('rejects late-success verification for a pending payment', function () {
         'provider_checkout_request_id' => 'ws_CO_123456',
     ]);
 
-    expect(fn() => app(MpesaStkPushQueryService::class)
+    expect(fn () => app(MpesaStkPushQueryService::class)
         ->verifyLateSuccess($payment))
         ->toThrow(InvalidArgumentException::class);
 
@@ -253,7 +251,7 @@ it('rejects late-success verification for payments from other providers', functi
         'provider_checkout_request_id' => 'ws_CO_123456',
     ]);
 
-    expect(fn() => app(MpesaStkPushQueryService::class)
+    expect(fn () => app(MpesaStkPushQueryService::class)
         ->verifyLateSuccess($payment))
         ->toThrow(InvalidArgumentException::class);
 

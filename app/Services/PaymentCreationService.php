@@ -74,7 +74,7 @@ class PaymentCreationService
 
             $payment = $order->payments()->create([
                 'currency_id' => $order->currency_id,
-                'reference' => 'APT-' . fake()->unique()->numerify('##########'),
+                'reference' => 'APT-'.fake()->unique()->numerify('##########'),
                 'provider' => $provider,
                 'payment_method' => $paymentMethod,
                 'provider_channel_id' => $providerChannelId,

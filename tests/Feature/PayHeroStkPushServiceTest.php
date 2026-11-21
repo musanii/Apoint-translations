@@ -1,10 +1,12 @@
 
 <?php
 
+use App\Models\Currency;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Services\PayHeroStkPushService;
 use Illuminate\Http\Client\Request;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 
 it('initiates a PayHero STK push and stores the provider identifiers', function () {
@@ -41,11 +43,11 @@ it('initiates a PayHero STK push and stores the provider identifiers', function 
     $result = app(PayHeroStkPushService::class)
         ->initiate($payment, '254712345678');
 
-expect($result->provider_transaction_reference)->toBe('PH-TEST-123')
-    ->and($result->provider_reference)->toBeNull()
-    ->and($result->provider_checkout_request_id)->toBe('checkout-123')
-    ->and($result->provider_initiation_started_at)->toBeNull()
-    ->and($result->next_reconciliation_at)->not->toBeNull();
+    expect($result->provider_transaction_reference)->toBe('PH-TEST-123')
+        ->and($result->provider_reference)->toBeNull()
+        ->and($result->provider_checkout_request_id)->toBe('checkout-123')
+        ->and($result->provider_initiation_started_at)->toBeNull()
+        ->and($result->next_reconciliation_at)->not->toBeNull();
 
     Http::assertSent(function (Request $request) use ($payment) {
         return $request->url() === 'https://backend.payhero.co.ke/api/v2/payments'
@@ -58,7 +60,6 @@ expect($result->provider_transaction_reference)->toBe('PH-TEST-123')
             && $request['callback_url'] === 'https://example.com/payhero/callback';
     });
 });
-
 
 it('rejects payments belonging to other providers', function () {
     Http::fake();
@@ -80,7 +81,7 @@ it('rejects payments belonging to other providers', function () {
 it('rejects payments that are not in Kenyan shillings', function () {
     Http::fake();
 
-    $currency = \App\Models\Currency::factory()->create([
+    $currency = Currency::factory()->create([
         'code' => 'USD',
     ]);
 
@@ -251,7 +252,6 @@ it('rejects payments that already have a checkout request ID', function () {
     Http::assertNothingSent();
 });
 
-
 it('rejects an incomplete PayHero response', function () {
     Http::fake([
         'backend.payhero.co.ke/api/v2/payments' => Http::response([
@@ -280,7 +280,7 @@ it('rejects an incomplete PayHero response', function () {
         $payment,
         '254712345678'
     ))->toThrow(RuntimeException::class)
-    ->and($payment->provider_transaction_reference)->toBeNull();
+        ->and($payment->provider_transaction_reference)->toBeNull();
 
     expect($payment->fresh())
         ->provider_reference->toBeNull()
@@ -350,7 +350,7 @@ it('propagates PayHero HTTP errors without persisting provider identifiers', fun
     expect(fn () => app(PayHeroStkPushService::class)->initiate(
         $payment,
         '254712345678'
-    ))->toThrow(\Illuminate\Http\Client\RequestException::class);
+    ))->toThrow(RequestException::class);
     expect($payment->fresh()->provider_initiation_started_at)->toBeNull();
 
     expect($payment->fresh())
@@ -385,7 +385,7 @@ it('retains the initiation claim after an ambiguous server error', function () {
     expect(fn () => app(PayHeroStkPushService::class)->initiate(
         $payment,
         '254712345678'
-    ))->toThrow(\Illuminate\Http\Client\RequestException::class);
+    ))->toThrow(RequestException::class);
 
     expect($payment->fresh()->provider_initiation_started_at)
         ->not->toBeNull();
@@ -423,7 +423,7 @@ it('releases the initiation claim after a definite HTTP rejection', function () 
     expect(fn () => app(PayHeroStkPushService::class)->initiate(
         $payment,
         '254712345678'
-    ))->toThrow(\Illuminate\Http\Client\RequestException::class);
+    ))->toThrow(RequestException::class);
 
     expect($payment->fresh()->provider_initiation_started_at)->toBeNull();
 

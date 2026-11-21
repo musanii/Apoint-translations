@@ -6,6 +6,7 @@ use App\Models\PricingRule;
 use App\Models\Service;
 use App\Services\PricingCalculator;
 use App\Services\QuoteService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -92,7 +93,7 @@ test('it finds the matching pricing rule and calculates a quote', function () {
         ->toBe('sw');
 
     $quoteService = new QuoteService(
-        new PricingCalculator()
+        new PricingCalculator
     );
 
     $quote = $quoteService->calculate(
@@ -141,17 +142,17 @@ test('it rejects requests without a matching pricing rule', function () {
     ]);
 
     $quoteService = new QuoteService(
-        new PricingCalculator()
+        new PricingCalculator
     );
 
-    expect(fn() => $quoteService->calculate(
+    expect(fn () => $quoteService->calculate(
         serviceId: $service->id,
         sourceLanguageId: $english->id,
         targetLanguageId: $german->id,
         currencyId: $currency->id,
         quantity: 200
     ))->toThrow(
-        Illuminate\Database\Eloquent\ModelNotFoundException::class
+        ModelNotFoundException::class
     );
 });
 
@@ -197,20 +198,19 @@ test('it rejects inactive source or target languages', function () {
     ]);
 
     $quoteService = new QuoteService(
-        new PricingCalculator()
+        new PricingCalculator
     );
 
-    expect(fn() => $quoteService->calculate(
+    expect(fn () => $quoteService->calculate(
         serviceId: $service->id,
         sourceLanguageId: $english->id,
         targetLanguageId: $swahili->id,
         currencyId: $currency->id,
         quantity: 200
     ))->toThrow(
-        Illuminate\Database\Eloquent\ModelNotFoundException::class
+        ModelNotFoundException::class
     );
 });
-
 
 test('it rejects inactive services', function () {
     $service = Service::create([
@@ -254,20 +254,19 @@ test('it rejects inactive services', function () {
     ]);
 
     $quoteService = new QuoteService(
-        new PricingCalculator()
+        new PricingCalculator
     );
 
-    expect(fn() => $quoteService->calculate(
+    expect(fn () => $quoteService->calculate(
         serviceId: $service->id,
         sourceLanguageId: $english->id,
         targetLanguageId: $swahili->id,
         currencyId: $currency->id,
         quantity: 200
     ))->toThrow(
-        Illuminate\Database\Eloquent\ModelNotFoundException::class
+        ModelNotFoundException::class
     );
 });
-
 
 test('it rejects inactive currencies', function () {
     $service = Service::create([
@@ -311,17 +310,17 @@ test('it rejects inactive currencies', function () {
     ]);
 
     $quoteService = new QuoteService(
-        new PricingCalculator()
+        new PricingCalculator
     );
 
-    expect(fn() => $quoteService->calculate(
+    expect(fn () => $quoteService->calculate(
         serviceId: $service->id,
         sourceLanguageId: $english->id,
         targetLanguageId: $swahili->id,
         currencyId: $currency->id,
         quantity: 200
     ))->toThrow(
-        Illuminate\Database\Eloquent\ModelNotFoundException::class
+        ModelNotFoundException::class
     );
 });
 
@@ -367,16 +366,16 @@ test('it rejects inactive pricing rules', function () {
     ]);
 
     $quoteService = new QuoteService(
-        new PricingCalculator()
+        new PricingCalculator
     );
 
-    expect(fn() => $quoteService->calculate(
+    expect(fn () => $quoteService->calculate(
         serviceId: $service->id,
         sourceLanguageId: $english->id,
         targetLanguageId: $swahili->id,
         currencyId: $currency->id,
         quantity: 200
     ))->toThrow(
-        Illuminate\Database\Eloquent\ModelNotFoundException::class
+        ModelNotFoundException::class
     );
 });

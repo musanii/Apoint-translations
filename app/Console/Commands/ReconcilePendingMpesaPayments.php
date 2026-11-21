@@ -16,12 +16,12 @@ class ReconcilePendingMpesaPayments extends Command
      */
     public function handle(
         MpesaPaymentReconciliationRunner $runner
-    ):int
-    {
+    ): int {
         $attempted = $runner->run();
         $this->info(
             "Processed {$attempted} M-Pesa reconciliation attempts."
         );
-      return self::SUCCESS;
+
+        return self::SUCCESS;
     }
 }

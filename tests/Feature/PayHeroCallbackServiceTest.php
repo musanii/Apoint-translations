@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Payment;
 use App\Models\Order;
+use App\Models\Payment;
 use App\Services\PayHeroCallbackService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -44,7 +44,6 @@ it('marks a payment successful when PayHero confirms the M-Pesa payment', functi
         ->toBe(Order::PAYMENT_STATUS_PAID);
 });
 
-
 it('does not process a duplicate successful callback twice', function () {
     $payment = Payment::factory()->create([
         'provider' => 'payhero',
@@ -84,8 +83,6 @@ it('does not process a duplicate successful callback twice', function () {
         ->toBe(Order::PAYMENT_STATUS_PAID);
 });
 
-
-
 it('does not mark a payment successful when the callback amount does not match', function () {
     $payment = Payment::factory()->create([
         'provider' => 'payhero',
@@ -111,22 +108,20 @@ it('does not mark a payment successful when the callback amount does not match',
     ];
 
     expect(fn () => app(PayHeroCallbackService::class)->handle($callback))
-    ->toThrow(
-        InvalidArgumentException::class,
-        'The callback amount does not match the payment amount.'
-    );
+        ->toThrow(
+            InvalidArgumentException::class,
+            'The callback amount does not match the payment amount.'
+        );
 
-$payment->refresh();
+    $payment->refresh();
 
-expect($payment->status)
-    ->toBe(Payment::STATUS_PENDING)
-    ->and($payment->provider_reference)
-    ->toBeNull()
-    ->and($payment->provider_transaction_reference)
-    ->toBe('PH-TEST-123');
+    expect($payment->status)
+        ->toBe(Payment::STATUS_PENDING)
+        ->and($payment->provider_reference)
+        ->toBeNull()
+        ->and($payment->provider_transaction_reference)
+        ->toBe('PH-TEST-123');
 });
-
-
 
 it('rejects a callback with an incorrect external reference', function () {
     $payment = Payment::factory()->create([
@@ -163,7 +158,6 @@ it('rejects a callback with an incorrect external reference', function () {
         ->toBeNull();
 });
 
-
 it('rejects a successful callback without an M-Pesa receipt number', function () {
     $payment = Payment::factory()->create([
         'provider' => 'payhero',
@@ -199,7 +193,6 @@ it('rejects a successful callback without an M-Pesa receipt number', function ()
         ->toBeNull();
 });
 
-
 it('ignores callbacks for unknown checkout requests', function () {
     $callback = [
         'status' => true,
@@ -221,7 +214,6 @@ it('ignores callbacks for unknown checkout requests', function () {
     expect($result)->toBeNull()
         ->and(Payment::count())->toBe(0);
 });
-
 
 it('does not process a callback belonging to a Daraja payment', function () {
     $payment = Payment::factory()->create([
@@ -254,8 +246,6 @@ it('does not process a callback belonging to a Daraja payment', function () {
         ->and($payment->fresh()->provider_reference)
         ->toBeNull();
 });
-
-
 
 it('rejects a callback with contradictory payment status information', function () {
     $payment = Payment::factory()->create([
@@ -292,8 +282,6 @@ it('rejects a callback with contradictory payment status information', function 
         ->toBeNull();
 });
 
-
-
 it('marks a payment failed when PayHero confirms an M-Pesa failure', function () {
     $payment = Payment::factory()->create([
         'provider' => 'payhero',
@@ -329,7 +317,6 @@ it('marks a payment failed when PayHero confirms an M-Pesa failure', function ()
         ->and($result->fresh()->order->payment_status)
         ->toBe(Order::PAYMENT_STATUS_FAILED);
 });
-
 
 it('does not process a duplicate failed callback twice', function () {
     $payment = Payment::factory()->create([
@@ -372,7 +359,6 @@ it('does not process a duplicate failed callback twice', function () {
         ->toBe(Order::PAYMENT_STATUS_FAILED);
 });
 
-
 it('rejects a failed result code paired with a success status', function () {
     $payment = Payment::factory()->create([
         'provider' => 'payhero',
@@ -408,7 +394,6 @@ it('rejects a failed result code paired with a success status', function () {
         ->toBeNull();
 });
 
-
 it('rejects a callback without a response object', function () {
     expect(fn () => app(PayHeroCallbackService::class)->handle([
         'status' => true,
@@ -417,7 +402,6 @@ it('rejects a callback without a response object', function () {
         'Invalid PayHero callback payload.'
     );
 });
-
 
 it('rejects a callback without a checkout request ID', function () {
     expect(fn () => app(PayHeroCallbackService::class)->handle([
@@ -433,7 +417,6 @@ it('rejects a callback without a checkout request ID', function () {
         'The callback is missing its checkout request ID.'
     );
 });
-
 
 it('rejects a callback with a non-numeric result code', function () {
     $payment = Payment::factory()->create([
@@ -465,8 +448,6 @@ it('rejects a callback with a non-numeric result code', function () {
         ->toBe(Payment::STATUS_PENDING);
 });
 
-
-
 it('rejects an unknown callback payment status', function () {
     $payment = Payment::factory()->create([
         'provider' => 'payhero',
@@ -493,8 +474,6 @@ it('rejects an unknown callback payment status', function () {
     expect($payment->fresh()->status)
         ->toBe(Payment::STATUS_PENDING);
 });
-
-
 
 it('recovers a failed payment after PayHero independently confirms late success', function () {
     $order = Order::factory()->create([
@@ -548,17 +527,16 @@ it('recovers a failed payment after PayHero independently confirms late success'
         ->and($order->fresh()->payment_status)
         ->toBe('paid');
 
-   Http::assertSent(function ($request) {
-    return str_contains(
-        $request->url(),
-        '/api/v2/transaction-status'
-    ) && str_contains(
-        $request->url(),
-        'reference=PH-TEST-123'
-    );
+    Http::assertSent(function ($request) {
+        return str_contains(
+            $request->url(),
+            '/api/v2/transaction-status'
+        ) && str_contains(
+            $request->url(),
+            'reference=PH-TEST-123'
+        );
+    });
 });
-});
-
 
 it('does not recover a failed payment when PayHero has not confirmed late success', function () {
     $order = Order::factory()->create([
@@ -616,7 +594,6 @@ it('does not recover a failed payment when PayHero has not confirmed late succes
         ->toBe('failed');
 });
 
-
 it('rejects a late success when the verified receipt differs from the callback receipt', function () {
     $order = Order::factory()->create([
         'status' => Order::STATUS_PENDING_PAYMENT,
@@ -673,13 +650,3 @@ it('rejects a late success when the verified receipt differs from the callback r
         ->and($order->fresh()->payment_status)
         ->toBe('failed');
 });
-
-
-
-
-
-
-
-
-
-

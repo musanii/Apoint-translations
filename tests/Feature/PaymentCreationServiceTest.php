@@ -17,18 +17,18 @@ it('creates a pending payment using the order total and currency', function () {
         'mpesa'
     );
 
-expect($payment)
-    ->toBeInstanceOf(Payment::class)
-    ->and($payment->order_id)->toBe($order->id)
-    ->and($payment->currency_id)->toBe($order->currency_id)
-    ->and((float) $payment->amount)->toBe(1250.00)
-    ->and($payment->provider)->toBe('daraja')
-    ->and($payment->payment_method)->toBe('mpesa')
-    ->and($payment->status)->toBe(Payment::STATUS_PENDING)
-    ->and($payment->reference)->not->toBeEmpty();
+    expect($payment)
+        ->toBeInstanceOf(Payment::class)
+        ->and($payment->order_id)->toBe($order->id)
+        ->and($payment->currency_id)->toBe($order->currency_id)
+        ->and((float) $payment->amount)->toBe(1250.00)
+        ->and($payment->provider)->toBe('daraja')
+        ->and($payment->payment_method)->toBe('mpesa')
+        ->and($payment->status)->toBe(Payment::STATUS_PENDING)
+        ->and($payment->reference)->not->toBeEmpty();
 
-expect($order->fresh()->payment_status)
-    ->toBe(Order::PAYMENT_STATUS_PENDING);
+    expect($order->fresh()->payment_status)
+        ->toBe(Order::PAYMENT_STATUS_PENDING);
 });
 
 it('does not create another payment while an attempt is pending', function () {
@@ -42,7 +42,7 @@ it('does not create another payment while an attempt is pending', function () {
         'status' => Payment::STATUS_PENDING,
     ]);
 
-    expect(fn() => app(PaymentCreationService::class)->createFor(
+    expect(fn () => app(PaymentCreationService::class)->createFor(
         $order,
         'daraja',
         'mpesa'
@@ -80,7 +80,7 @@ it('does not create a payment for a cancelled order', function () {
         'payment_status' => Order::PAYMENT_STATUS_UNPAID,
     ]);
 
-    expect(fn() => app(PaymentCreationService::class)->createFor(
+    expect(fn () => app(PaymentCreationService::class)->createFor(
         $order,
         'daraja',
         'mpesa'
@@ -95,7 +95,7 @@ it('does not create a payment for an already paid order', function () {
         'payment_status' => Order::PAYMENT_STATUS_PAID,
     ]);
 
-    expect(fn() => app(PaymentCreationService::class)->createFor(
+    expect(fn () => app(PaymentCreationService::class)->createFor(
         $order,
         'daraja',
         'mpesa'
@@ -110,7 +110,7 @@ it('rejects an unsupported payment provider', function () {
         'payment_status' => Order::PAYMENT_STATUS_UNPAID,
     ]);
 
-    expect(fn() => app(PaymentCreationService::class)->createFor(
+    expect(fn () => app(PaymentCreationService::class)->createFor(
         $order,
         'unsupported-provider',
         'mpesa'

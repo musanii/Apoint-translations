@@ -150,7 +150,6 @@ class MpesaCallbackService
         );
     }
 
-
     private function verifyLateSuccess(Payment $payment): bool
     {
         $result = $this->stkPushQueryService->verifyLateSuccess($payment);

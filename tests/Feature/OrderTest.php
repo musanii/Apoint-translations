@@ -4,8 +4,8 @@ use App\Models\Currency;
 use App\Models\Order;
 use App\Models\Quote;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Carbon\CarbonInterface;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
@@ -57,7 +57,7 @@ it('allows a customer to retrieve their orders', function () {
 it('does not expose another customers orders through their relationship', function () {
     $order = Order::factory()->create();
 
-    $anotherUser = \App\Models\User::factory()->create();
+    $anotherUser = User::factory()->create();
 
     expect($anotherUser->orders)->toBeEmpty()
         ->and($order->user->orders)->toHaveCount(1);

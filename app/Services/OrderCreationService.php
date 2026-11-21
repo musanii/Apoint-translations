@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Order;
 use App\Models\Quote;
 use Illuminate\Support\Facades\DB;
-use InvalidArgumentException;
 
 class OrderCreationService
 {
@@ -16,7 +15,6 @@ class OrderCreationService
         private QuoteStatusService $quoteStatusService,
         private OrderReferenceGenerator $referenceGenerator,
     ) {}
-
 
     public function createFRomAcceptedQuote(Quote $quote): Order
     {

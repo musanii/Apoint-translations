@@ -32,7 +32,7 @@ beforeEach(function () {
 });
 
 test('digital delivery does not require physical delivery details', function () {
-    $request = new StoreQuoteRequestRequest();
+    $request = new StoreQuoteRequestRequest;
 
     $validator = Validator::make([
         ...$this->baseRequestData,
@@ -43,7 +43,7 @@ test('digital delivery does not require physical delivery details', function () 
 });
 
 test('physical delivery requires recipient and destination details', function () {
-    $request = new StoreQuoteRequestRequest();
+    $request = new StoreQuoteRequestRequest;
 
     $validator = Validator::make([
         ...$this->baseRequestData,
@@ -60,7 +60,7 @@ test('physical delivery requires recipient and destination details', function ()
 });
 
 test('it rejects unsupported delivery methods', function () {
-    $request = new StoreQuoteRequestRequest();
+    $request = new StoreQuoteRequestRequest;
 
     $validator = Validator::make([
         ...$this->baseRequestData,
@@ -72,7 +72,7 @@ test('it rejects unsupported delivery methods', function () {
 });
 
 test('physical delivery accepts complete recipient details', function () {
-    $request = new StoreQuoteRequestRequest();
+    $request = new StoreQuoteRequestRequest;
 
     $validator = Validator::make([
         ...$this->baseRequestData,

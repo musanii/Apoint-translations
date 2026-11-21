@@ -2,29 +2,35 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Override;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Override;
 
 class Order extends Model
 {
-
-use HasFactory; 
+    use HasFactory;
 
     public const STATUS_PENDING_PAYMENT = 'pending_payment';
+
     public const STATUS_CONFIRMED = 'confirmed';
+
     public const STATUS_IN_PROGRESS = 'in_progress';
+
     public const STATUS_COMPLETED = 'completed';
+
     public const STATUS_CANCELLED = 'cancelled';
 
     public const PAYMENT_STATUS_UNPAID = 'unpaid';
-    public const PAYMENT_STATUS_PENDING = 'pending';
-    public const PAYMENT_STATUS_PAID = 'paid';
-    public const PAYMENT_STATUS_FAILED = 'failed';
-    public const PAYMENT_STATUS_REFUNDED = 'refunded';
 
+    public const PAYMENT_STATUS_PENDING = 'pending';
+
+    public const PAYMENT_STATUS_PAID = 'paid';
+
+    public const PAYMENT_STATUS_FAILED = 'failed';
+
+    public const PAYMENT_STATUS_REFUNDED = 'refunded';
 
     protected $fillable = [
         'quote_id',
@@ -47,7 +53,6 @@ use HasFactory;
         'paid_at',
 
     ];
-
 
     #[Override]
     protected function casts()
@@ -72,10 +77,9 @@ use HasFactory;
         return $this->belongsTo(User::class);
     }
 
-
     public function currency(): BelongsTo
     {
-        return $this->belongsTo(Currency::class,'currency_id');
+        return $this->belongsTo(Currency::class, 'currency_id');
     }
 
     public function payments(): HasMany

@@ -3,10 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Currency;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Io238\ISOCountries\Models\Currency as IsoCurrency;
-
 
 class CurrencySeeder extends Seeder
 {
@@ -23,7 +21,6 @@ class CurrencySeeder extends Seeder
             'CAD',
             'AED',
         ];
-
 
         foreach ($currencyCodes as $code) {
             $isoCurrency = IsoCurrency::findOrFail($code);

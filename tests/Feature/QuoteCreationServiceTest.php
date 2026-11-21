@@ -61,7 +61,6 @@ test('it creates a draft quote for a quote request', function () {
         ->and($quote->reference)->toStartWith('APT-Q-');
 });
 
-
 test('it includes express and certification fees in the total', function () {
     $quote = $this->quoteCreationService->create(
         quoteRequest: $this->quoteRequest,
@@ -75,11 +74,11 @@ test('it includes express and certification fees in the total', function () {
         courierFee: 100,
     );
 
-  expect($quote->subtotal)->toBe('500.00')
-    ->and($quote->express_fee)->toBe('150.00')
-    ->and($quote->certification_fee)->toBe('200.00')
-    ->and($quote->courier_fee)->toBe('100.00')
-    ->and($quote->total)->toBe('950.00');
+    expect($quote->subtotal)->toBe('500.00')
+        ->and($quote->express_fee)->toBe('150.00')
+        ->and($quote->certification_fee)->toBe('200.00')
+        ->and($quote->courier_fee)->toBe('100.00')
+        ->and($quote->total)->toBe('950.00');
 });
 
 test('it defaults optional fees to zero', function () {
@@ -120,7 +119,6 @@ it('rejects negative quantity', function () {
         subtotal: 25,
     ))->toThrow(InvalidArgumentException::class);
 });
-
 
 it('rejects zero quantity', function () {
     expect(fn () => $this->quoteCreationService->create(

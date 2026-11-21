@@ -20,7 +20,7 @@ class OrderFactory extends Factory
             'quote_id' => $quote->id,
             'user_id' => $quoteRequest->user_id,
             'currency_id' => $quote->currency_id,
-            'reference' => 'APT-O-' . now()->year . '-' . fake()->unique()->numerify('######'),
+            'reference' => 'APT-O-'.now()->year.'-'.fake()->unique()->numerify('######'),
             'subtotal' => $quote->subtotal,
             'express_fee' => 0,
             'certification_fee' => 0,

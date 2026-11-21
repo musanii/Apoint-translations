@@ -1,13 +1,11 @@
 <?php
 
-use App\Models\Currency;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Services\PaymentStatusService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
-
 
 it('marks a pending payment as successful and updates its order', function () {
     $order = Order::factory()->create([
@@ -74,7 +72,6 @@ it('does not mark a payment as failed when it was already marked successful', fu
         ->toBe(Order::PAYMENT_STATUS_PAID);
 });
 
-
 it('does not mark a failed payment as successful', function () {
     $order = Order::factory()->create([
         'payment_status' => Order::PAYMENT_STATUS_FAILED,
@@ -87,7 +84,7 @@ it('does not mark a failed payment as successful', function () {
 
     $service = app(PaymentStatusService::class);
 
-    expect(fn() => $service->markSuccessful(
+    expect(fn () => $service->markSuccessful(
         $payment,
         'MPESA-TRANSACTION-123'
     ))->toThrow(InvalidArgumentException::class);
@@ -187,7 +184,7 @@ it('does not process a successful payment twice', function () {
 
     $service->markSuccessful($payment, 'MPESA-TRANSACTION-123');
 
-    expect(fn() => $service->markSuccessful(
+    expect(fn () => $service->markSuccessful(
         $payment,
         'MPESA-TRANSACTION-456'
     ))->toThrow(InvalidArgumentException::class);
@@ -221,7 +218,7 @@ it('rejects a provider transaction reference already used by another payment', f
 
     $service->markSuccessful($firstPayment, 'MPESA-DUPLICATE-123');
 
-    expect(fn() => $service->markSuccessful(
+    expect(fn () => $service->markSuccessful(
         $secondPayment,
         'MPESA-DUPLICATE-123'
     ))->toThrow(InvalidArgumentException::class);
@@ -231,7 +228,6 @@ it('rejects a provider transaction reference already used by another payment', f
         ->and($secondOrder->fresh()->payment_status)
         ->toBe(Order::PAYMENT_STATUS_PENDING);
 });
-
 
 it('attaches a provider reference to an already successful payment', function () {
     $paidAt = now()->subMinutes(5);
@@ -365,8 +361,6 @@ it('rejects a provider reference already attached to another payment', function 
     expect($secondPayment->fresh()->provider_reference)->toBeNull();
 });
 
-
-
 it('recovers a failed payment after verified M-Pesa success', function () {
     $order = Order::factory()->create([
         'status' => Order::STATUS_PENDING_PAYMENT,
@@ -405,8 +399,6 @@ it('recovers a failed payment after verified M-Pesa success', function () {
         ->toBe(Order::STATUS_CONFIRMED);
 });
 
-
-
 it('does not recover a failed payment when its order is no longer awaiting payment', function () {
     $order = Order::factory()->create([
         'status' => Order::STATUS_CONFIRMED,
@@ -431,7 +423,6 @@ it('does not recover a failed payment when its order is no longer awaiting payme
         ->and($order->fresh()->status)
         ->toBe(Order::STATUS_CONFIRMED);
 });
-
 
 it('does not recover a failed payment when another payment attempt has already succeeded', function () {
     $order = Order::factory()->create([
@@ -463,8 +454,6 @@ it('does not recover a failed payment when another payment attempt has already s
         ->toBeNull();
 });
 
-
-
 it('does not recover a failed payment with an empty provider reference', function () {
     $order = Order::factory()->create([
         'status' => Order::STATUS_PENDING_PAYMENT,
@@ -489,7 +478,6 @@ it('does not recover a failed payment with an empty provider reference', functio
         ->and($order->fresh()->payment_status)
         ->toBe(Order::PAYMENT_STATUS_FAILED);
 });
-
 
 it('does not recover a failed payment with a provider reference already used elsewhere', function () {
     $order = Order::factory()->create([
@@ -519,7 +507,6 @@ it('does not recover a failed payment with a provider reference already used els
         ->and($failedPayment->fresh()->provider_reference)
         ->toBeNull();
 });
-
 
 it('records another successful payment without confirming an already paid order twice', function () {
     $order = Order::factory()->create([

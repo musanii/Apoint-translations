@@ -20,20 +20,20 @@ class QuoteFactory extends Factory
 
         $service = Service::create([
             'name' => 'Translation',
-            'slug' => 'translation-' . fake()->unique()->numberBetween(1, 999999),
+            'slug' => 'translation-'.fake()->unique()->numberBetween(1, 999999),
             'is_active' => true,
         ]);
 
-    $currency = Currency::firstOrCreate(
-    ['code' => 'KES'],
-    [
-        'name' => 'Kenyan Shilling',
-        'symbol' => 'KSh',
-        'decimal_places' => 2,
-        'is_active' => true,
-        'is_default' => true,
-    ]
-);
+        $currency = Currency::firstOrCreate(
+            ['code' => 'KES'],
+            [
+                'name' => 'Kenyan Shilling',
+                'symbol' => 'KSh',
+                'decimal_places' => 2,
+                'is_active' => true,
+                'is_default' => true,
+            ]
+        );
 
         $quoteRequest = QuoteRequest::create([
             'user_id' => $user->id,
@@ -44,7 +44,7 @@ class QuoteFactory extends Factory
         return [
             'quote_request_id' => $quoteRequest->id,
             'currency_id' => $currency->id,
-            'reference' => 'APT-Q-' . now()->year . '-' . fake()->unique()->numerify('######'),
+            'reference' => 'APT-Q-'.now()->year.'-'.fake()->unique()->numerify('######'),
             'pricing_type' => 'per_word',
             'quantity' => 100,
             'unit' => 'word',

@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Currency;
-use App\Models\Quote;
 use App\Models\Service;
 use App\Models\User;
 use App\Services\QuoteReferenceGenerator;
@@ -41,7 +40,7 @@ test('it generates the first quote reference for the current year', function () 
     $reference = $this->generator->generate();
 
     expect($reference)->toBe(
-        'APT-Q-' . now()->year . '-000001'
+        'APT-Q-'.now()->year.'-000001'
     );
 });
 
@@ -50,11 +49,11 @@ test('it increments the reference number sequentially', function () {
     $secondReference = $this->generator->generate();
 
     expect($firstReference)->toBe(
-        'APT-Q-' . now()->year . '-000001'
+        'APT-Q-'.now()->year.'-000001'
     );
 
     expect($secondReference)->toBe(
-        'APT-Q-' . now()->year . '-000002'
+        'APT-Q-'.now()->year.'-000002'
     );
 });
 

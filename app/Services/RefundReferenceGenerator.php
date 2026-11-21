@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 
 class RefundReferenceGenerator
 {
-
     public function generate(): string
     {
         return DB::transaction(function () {

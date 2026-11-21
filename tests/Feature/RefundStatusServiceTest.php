@@ -1,7 +1,6 @@
 
 <?php
 
-use App\Models\Payment;
 use App\Models\Refund;
 use App\Services\RefundStatusService;
 use Illuminate\Foundation\Testing\RefreshDatabase;

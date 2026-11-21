@@ -50,19 +50,19 @@ class QuoteRequestDocumentService
         $mimeType = $file->getMimeType();
 
         $allowedMimeTypes = [
-            'pdf'  => ['application/pdf'],
+            'pdf' => ['application/pdf'],
             'docx' => [
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 'application/zip',
             ],
-            'jpg'  => ['image/jpeg'],
+            'jpg' => ['image/jpeg'],
             'jpeg' => ['image/jpeg'],
-            'png'  => ['image/png'],
+            'png' => ['image/png'],
             'xlsx' => [
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'application/zip',
             ],
-            'csv'  => [
+            'csv' => [
                 'text/plain',
                 'text/csv',
                 'application/csv',
@@ -72,7 +72,7 @@ class QuoteRequestDocumentService
                 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
                 'application/zip',
             ],
-            'zip'  => [
+            'zip' => [
                 'application/zip',
                 'application/x-zip',
                 'application/x-zip-compressed',

@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Log;
 
 class MpesaPaymentReconciliationRunner
 {
-
     private const MAX_ATTEMPTS = 6;
+
     private const RETRY_DELAYS = [
         2,
         5,
@@ -32,7 +32,7 @@ class MpesaPaymentReconciliationRunner
                 $payment->provider !== 'daraja' ||
                 $payment->payment_method !== 'mpesa' ||
                 $payment->status !== Payment::STATUS_PENDING ||
-                !$payment->provider_checkout_request_id ||
+                ! $payment->provider_checkout_request_id ||
                 $payment->reconciliation_attempts >= self::MAX_ATTEMPTS ||
                 (
                     $payment->next_reconciliation_at !== null &&
@@ -54,6 +54,7 @@ class MpesaPaymentReconciliationRunner
                     : null,
 
             ]);
+
             return $payment->refresh();
         });
     }
@@ -83,7 +84,7 @@ class MpesaPaymentReconciliationRunner
         foreach ($paymentIds as $paymentId) {
             $payment = $this->claimAttempt($paymentId);
 
-            if (!$payment) {
+            if (! $payment) {
                 continue;
             }
             $processed++;
@@ -97,6 +98,7 @@ class MpesaPaymentReconciliationRunner
                 ]);
             }
         }
+
         return $processed;
     }
 }

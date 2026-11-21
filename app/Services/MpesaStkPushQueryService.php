@@ -39,7 +39,6 @@ class MpesaStkPushQueryService
         return $this->sendQuery($payment);
     }
 
-
     public function verifyLateSuccess(Payment $payment): array
     {
         if (
@@ -56,6 +55,7 @@ class MpesaStkPushQueryService
                 'Only failed payments can undergo late-success verification.'
             );
         }
+
         return $this->sendQuery($payment);
     }
 
@@ -77,7 +77,7 @@ class MpesaStkPushQueryService
         $passkey = config('services.mpesa.passkey');
 
         $password = base64_encode(
-            $shortcode . $passkey . $timestamp
+            $shortcode.$passkey.$timestamp
         );
 
         $response = Http::withToken(
@@ -85,7 +85,7 @@ class MpesaStkPushQueryService
         )
             ->acceptJson()
             ->post(
-                $baseUrl . '/mpesa/stkpushquery/v1/query',
+                $baseUrl.'/mpesa/stkpushquery/v1/query',
                 [
                     'BusinessShortCode' => $shortcode,
                     'Password' => $password,

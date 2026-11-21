@@ -2,8 +2,8 @@
 
 use App\Models\Currency;
 use App\Models\Language;
-use App\Models\QuoteRequest;
 use App\Models\PricingRule;
+use App\Models\QuoteRequest;
 use App\Models\Service;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;

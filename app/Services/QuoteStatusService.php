@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\Quote;
-use InvalidArgumentException;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class QuoteStatusService
 {
@@ -29,14 +29,12 @@ class QuoteStatusService
     }
 
     public function accept(Quote $quote): Quote
-
     {
 
         return DB::transaction(function () use ($quote) {
             $quote = Quote::query()
                 ->lockForUpdate()
                 ->findOrFail($quote->id);
-
 
             if ($quote->status !== Quote::STATUS_SENT) {
                 throw new InvalidArgumentException('Only sent quotes can be accepted.');
@@ -49,7 +47,6 @@ class QuoteStatusService
             return $quote->refresh();
         });
     }
-
 
     public function reject(Quote $quote): Quote
     {
@@ -66,10 +63,10 @@ class QuoteStatusService
                 'status' => Quote::STATUS_REJECTED,
                 'rejected_at' => now(),
             ]);
+
             return $quote->refresh();
         });
     }
-
 
     public function expire(Quote $quote): Quote
     {
@@ -89,6 +86,7 @@ class QuoteStatusService
             $quote->update([
                 'status' => Quote::STATUS_EXPIRED,
             ]);
+
             return $quote->refresh();
         });
     }

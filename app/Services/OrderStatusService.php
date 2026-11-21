@@ -32,7 +32,6 @@ class OrderStatusService
         });
     }
 
-
     public function startProcessing(Order $order): Order
     {
         return DB::transaction(function () use ($order) {
@@ -54,7 +53,6 @@ class OrderStatusService
         });
     }
 
-
     public function complete(Order $order): Order
     {
         return DB::transaction(function () use ($order) {
@@ -75,7 +73,6 @@ class OrderStatusService
             return $order;
         });
     }
-
 
     public function cancel(Order $order): Order
     {

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        
+
         Schema::create('pricing_rules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('service_id')->constrained()->restrictOnDelete();

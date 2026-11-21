@@ -50,7 +50,7 @@ it('sends an authenticated STK push request to PayHero', function () {
             && $request->data() === $payload
             && $request->hasHeader(
                 'Authorization',
-                'Basic ' . base64_encode('test-user:test-password')
+                'Basic '.base64_encode('test-user:test-password')
             );
     });
 

@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('quote_requests', function (Blueprint $table) {
-    $table->string('delivery_method', 20)
-        ->default('digital')
-        ->after('instructions');
+            $table->string('delivery_method', 20)
+                ->default('digital')
+                ->after('instructions');
 
-    $table->string('recipient_name')->nullable();
-    $table->string('recipient_phone', 30)->nullable();
-    $table->string('delivery_country', 100)->nullable();
-    $table->string('delivery_address')->nullable();
-    $table->string('delivery_postal_code', 30)->nullable();
-});
+            $table->string('recipient_name')->nullable();
+            $table->string('recipient_phone', 30)->nullable();
+            $table->string('delivery_country', 100)->nullable();
+            $table->string('delivery_address')->nullable();
+            $table->string('delivery_postal_code', 30)->nullable();
+        });
     }
 
     /**

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamp('last_reconciled_at')->nullable();
             $table->timestamp('next_reconciliation_at')->nullable();
             $table->index(
-                ['status','provider','next_reconciliation_at'],
+                ['status', 'provider', 'next_reconciliation_at'],
                 'payments_reconciliation_due_index'
             );
         });
