@@ -6,6 +6,7 @@ use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CustomerQuoteController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\MpesaCallbackController;
 use App\Http\Controllers\PayHeroCallbackController;
 use App\Http\Controllers\QuoteRequestController;
@@ -22,11 +23,12 @@ Route::middleware('auth')->group(function(){
  Route::post('/quotes/{quote}/accept',[CustomerQuoteController::class,'accept'])->name('quotes.accept');
  Route::post('/quotes/{quote}/reject',[CustomerQuoteController::class,'reject'])->name('quotes.reject');
  Route::get('/orders/{order}',[OrderController::class,'show'])->name('orders.show');
+ Route::post('/orders/{order}/payments',[PaymentController::class,'store'])->name('orders.payments.store');
  Route::post('/quote-requests',[QuoteRequestController::class,'store'])->name('quote-requests.store');
  Route::get('/quote-requests/{quoteRequest}',[QuoteRequestController::class,'show'])->name('quote-requests.show');
  Route::post('/quote-requests/{quoteRequest}/documents',[QuoteRequestDocumentController::class,'store'])->name('quote-requests.documents.store');
 });
-Route::middleware(['auth','verified'])->get('/dashboard', DashboardController::class)->name('dashboard');
+Route::middleware('auth')->get('/dashboard', DashboardController::class)->name('dashboard');
 Route::middleware(['auth','can:admin'])->prefix('admin')->name('admin.')->group(function(){
  Route::get('/quote-requests',[AdminQuoteRequestController::class,'index'])->name('quote-requests.index');
  Route::get('/quote-requests/{quoteRequest}',[AdminQuoteRequestController::class,'show'])->name('quote-requests.show');
