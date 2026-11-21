@@ -54,6 +54,7 @@ const requestStatus: Record<string, { label: string; className: string }> = {
     pending: { label: 'Received', className: 'bg-[#F9E9D8] text-[#8B4D24]' },
     under_review: { label: 'In review', className: 'bg-[#F5E8F0] text-[#7C4266]' },
     quote_draft: { label: 'Preparing quotation', className: 'bg-[#F5E8F0] text-[#7C4266]' },
+    quote_sent: { label: 'Quotation ready', className: 'bg-[#E7F1E8] text-[#386547]' },
 };
 
 function money(value: string, symbol: string) {
@@ -157,9 +158,19 @@ export default function Dashboard({ summary, recentRequests, recentOrders }: Pro
                                                     {new Date(item.created_at).toLocaleDateString()} · {item.documents_count} {item.documents_count === 1 ? 'document' : 'documents'} · {item.currency.code}
                                                 </p>
                                                 {latestQuote && (
-                                                    <p className="mt-2 text-sm font-medium text-[#8B5362]">
-                                                        Quotation {latestQuote.reference}: {money(latestQuote.total, latestQuote.currency.symbol)} · {humanize(latestQuote.status)}
-                                                    </p>
+                                                    <div className="mt-2 flex flex-wrap items-center gap-3">
+                                                        <p className="text-sm font-medium text-[#8B5362]">
+                                                            Quotation {latestQuote.reference}: {money(latestQuote.total, latestQuote.currency.symbol)} · {humanize(latestQuote.status)}
+                                                        </p>
+                                                        {latestQuote.status === 'sent' && (
+                                                            <Link href={`/quotes/${latestQuote.id}`} className="text-sm font-semibold text-[#3A091A] underline decoration-[#D4AF37] underline-offset-4">
+                                                                Review quotation
+                                                            </Link>
+                                                        )}
+                                                        {latestQuote.status === 'accepted' && (
+                                                            <span className="text-xs font-semibold text-[#386547]">Accepted</span>
+                                                        )}
+                                                    </div>
                                                 )}
                                             </div>
                                             <Link href={`/quote-requests/${item.id}`} className="inline-flex shrink-0 items-center gap-2 self-start rounded-full border border-[#3A091A]/15 px-4 py-2.5 text-sm font-semibold text-[#3A091A] transition hover:border-[#9B6877] hover:bg-[#FAF6F0] sm:self-center">
