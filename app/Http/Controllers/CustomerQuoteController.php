@@ -57,9 +57,12 @@ class CustomerQuoteController extends Controller
     {
         abort_unless($quote->quoteRequest()->where('user_id', $request->user()->id)->exists(), 404);
 
-        if ($quote->valid_until !== null && $quote->valid_until->isPast() && $quote->status === Quote::STATUS_SENT) {
-            app(QuoteStatusService::class)->expire($quote);
+        if ($quote->status !== Quote::STATUS_SENT) {
+            return redirect()->route('dashboard')->with('error', 'This quotation is no longer available for acceptance.');
+        }
 
+        if ($quote->valid_until !== null && $quote->valid_until->isPast()) {
+            app(QuoteStatusService::class)->expire($quote);
             return redirect()->route('dashboard')->with('error', 'This quotation has expired. Please contact Apoint for an updated quotation.');
         }
 
@@ -71,6 +74,15 @@ class CustomerQuoteController extends Controller
     public function reject(Request $request, Quote $quote, QuoteStatusService $statusService): RedirectResponse
     {
         abort_unless($quote->quoteRequest()->where('user_id', $request->user()->id)->exists(), 404);
+
+        if ($quote->status !== Quote::STATUS_SENT) {
+            return redirect()->route('dashboard')->with('error', 'This quotation is no longer available for a decision.');
+        }
+
+        if ($quote->valid_until !== null && $quote->valid_until->isPast()) {
+            $statusService->expire($quote);
+            return redirect()->route('dashboard')->with('error', 'This quotation has expired. Please contact Apoint for an updated quotation.');
+        }
 
         $statusService->reject($quote);
 
