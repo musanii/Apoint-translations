@@ -25,7 +25,7 @@ class DashboardController extends Controller
             ->with([
                 'service:id,name',
                 'currency:id,code,symbol',
-                'quotes' => fn (Builder $query) => $query
+                'quotes' => fn ($query) => $query
                     ->whereIn('status', $visibleQuoteStatuses)
                     ->with('currency:id,code,symbol')
                     ->latest(),
