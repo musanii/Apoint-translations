@@ -11,13 +11,12 @@ class QuoteService
         private PricingCalculator $calculator
     ) {}
 
-    public function calculate(
+    public function findPricingRule(
         int $serviceId,
         ?int $sourceLanguageId,
         ?int $targetLanguageId,
-        int $currencyId,
-        int $quantity
-    ): array {
+        int $currencyId
+    ): PricingRule {
         $query = PricingRule::query()
             ->where('service_id', $serviceId)
             ->where('currency_id', $currencyId)
@@ -45,6 +44,40 @@ class QuoteService
             throw (new ModelNotFoundException())
                 ->setModel(PricingRule::class);
         }
+
+        return $pricingRule;
+    }
+
+    /**
+     * Infer a quantity unit for custom language or currency combinations.
+     * Only return a unit when every active rule for the service agrees.
+     */
+    public function inferUnitForService(int $serviceId): ?string
+    {
+        $units = PricingRule::query()
+            ->where('service_id', $serviceId)
+            ->where('is_active', true)
+            ->whereNotNull('unit')
+            ->distinct()
+            ->pluck('unit')
+            ->values();
+
+        return $units->count() === 1 ? $units->first() : null;
+    }
+
+    public function calculate(
+        int $serviceId,
+        ?int $sourceLanguageId,
+        ?int $targetLanguageId,
+        int $currencyId,
+        int $quantity
+    ): array {
+        $pricingRule = $this->findPricingRule(
+            $serviceId,
+            $sourceLanguageId,
+            $targetLanguageId,
+            $currencyId
+        );
 
         return $this->calculator->calculate($pricingRule, $quantity);
     }

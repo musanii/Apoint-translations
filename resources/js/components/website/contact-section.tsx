@@ -31,7 +31,7 @@ export default function ContactSection() {
 
                         <div className="mt-9 flex flex-col justify-center gap-4 sm:flex-row">
                             <a
-                                href="#quote"
+                                href="/quote-requests/create"
                                 className="rounded-full bg-[#E8B4B8] px-8 py-4 text-sm font-semibold text-[#3A091A] transition duration-300 hover:-translate-y-1 hover:bg-white"
                             >
                                 Request a Quote

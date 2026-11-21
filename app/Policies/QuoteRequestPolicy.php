@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\QuoteRequest;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class QuoteRequestPolicy
 {
@@ -29,7 +28,7 @@ class QuoteRequestPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**

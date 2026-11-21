@@ -50,7 +50,7 @@ export default function Navbar() {
                     </a>
 
                     <a
-                        href="#quote"
+                        href="/quote-requests/create"
                         className="rounded-full bg-[#3A091A] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#4A1525]"
                     >
                         Get a Quote
@@ -109,7 +109,7 @@ export default function Navbar() {
                             Contact
                         </a>
                         <a
-                            href="#quote"
+                            href="/quote-requests/create"
                             onClick={() => setIsMenuOpen(false)}
                             className="rounded-full bg-[#3A091A] px-6 py-3 text-center text-sm font-semibold text-white"
                         >
