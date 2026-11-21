@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,7 @@ use Override;
 
 class Order extends Model
 {
+    /** @use HasFactory<OrderFactory> */
     use HasFactory;
 
     public const STATUS_PENDING_PAYMENT = 'pending_payment';
@@ -67,22 +69,22 @@ class Order extends Model
         ];
     }
 
-    public function quote(): BelongsTo
+    public function quote(): BelongsTo<Quote, $this>
     {
         return $this->belongsTo(Quote::class);
     }
 
-    public function user(): BelongsTo
+    public function user(): BelongsTo<User, $this>
     {
         return $this->belongsTo(User::class);
     }
 
-    public function currency(): BelongsTo
+    public function currency(): BelongsTo<Currency, $this>
     {
         return $this->belongsTo(Currency::class, 'currency_id');
     }
 
-    public function payments(): HasMany
+    public function payments(): HasMany<Payment, $this>
     {
         return $this->hasMany(Payment::class);
     }
