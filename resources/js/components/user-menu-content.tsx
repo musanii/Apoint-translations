@@ -40,12 +40,6 @@ export function UserMenuContent({ user }: Props) {
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                    <Link className="block w-full cursor-pointer" href="/dashboard" prefetch onClick={cleanup}>
-                        <LayoutDashboard className="mr-2" />
-                        My dashboard
-                    </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
                     <Link
                         className="block w-full cursor-pointer"
                         href={edit()}
