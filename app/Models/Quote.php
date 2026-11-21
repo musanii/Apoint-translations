@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\QuoteFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Quote extends Model
 {
+    /** @use HasFactory<QuoteFactory> */
     use HasFactory;
 
     public const STATUS_DRAFT = 'draft';
@@ -59,12 +61,12 @@ class Quote extends Model
         ];
     }
 
-    public function quoteRequest(): BelongsTo
+    public function quoteRequest(): BelongsTo<QuoteRequest, $this>
     {
         return $this->belongsTo(QuoteRequest::class);
     }
 
-    public function currency(): BelongsTo
+    public function currency(): BelongsTo<Currency, $this>
     {
         return $this->belongsTo(Currency::class);
     }
