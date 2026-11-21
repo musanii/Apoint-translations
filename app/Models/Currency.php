@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Currency extends Model
 {
     /** @use HasFactory<CurrencyFactory> */
+    /** @use HasFactory<CurrencyFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -30,7 +31,7 @@ class Currency extends Model
         ];
     }
 
-    public function pricingRules(): HasMany<PricingRule, $this>
+    public function pricingRules(): HasMany<PricingRule, $this><PricingRule, $this>
     {
         return $this->hasMany(PricingRule::class);
     }
