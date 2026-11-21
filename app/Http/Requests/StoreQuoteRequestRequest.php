@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\QuoteRequest;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class StoreQuoteRequestRequest extends FormRequest
@@ -14,7 +15,7 @@ class StoreQuoteRequestRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->can('create', QuoteRequest::class) ?? false;
+        return $this->user() !== null && Gate::allows('create', QuoteRequest::class);
     }
 
     /**
