@@ -1,4 +1,3 @@
-
 const languages = [
     { name: 'English', region: 'Global' },
     { name: 'Swahili', region: 'East Africa' },
@@ -16,10 +15,7 @@ const languages = [
 
 export default function LanguagesSection() {
     return (
-        <section
-            id="languages"
-            className="bg-[#FAF6F0] px-6 py-20 md:py-28"
-        >
+        <section id="languages" className="bg-[#FAF6F0] px-6 py-20 md:py-28">
             <div className="mx-auto max-w-7xl lg:px-2">
                 <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
                     <div>
@@ -27,7 +23,7 @@ export default function LanguagesSection() {
                             Languages We Work With
                         </p>
 
-                        <h2 className="mt-4 font-[var(--font-apoint-heading)] text-4xl font-medium leading-tight text-[#3A091A] md:text-5xl">
+                        <h2 className="mt-4 text-4xl leading-tight font-[var(--font-apoint-heading)] font-medium text-[#3A091A] md:text-5xl">
                             Many languages.
                             <span className="block text-[#A76D78] italic">
                                 One clear message.
@@ -57,7 +53,7 @@ export default function LanguagesSection() {
                             >
                                 <div className="mb-3 h-1 w-8 rounded-full bg-[#D4AF37]" />
 
-                                <h3 className="font-[var(--font-apoint-heading)] text-lg font-semibold text-[#3A091A]">
+                                <h3 className="text-lg font-[var(--font-apoint-heading)] font-semibold text-[#3A091A]">
                                     {language.name}
                                 </h3>
 

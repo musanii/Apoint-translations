@@ -12,7 +12,8 @@ type FlashPayload = {
 export function useFlashToast(): void {
     useEffect(() => {
         return router.on('flash', (event) => {
-            const flash = (event as CustomEvent<{ flash?: FlashPayload }>).detail?.flash;
+            const flash = (event as CustomEvent<{ flash?: FlashPayload }>)
+                .detail?.flash;
 
             if (!flash) return;
 

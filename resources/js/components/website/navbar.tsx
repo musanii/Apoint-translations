@@ -1,19 +1,19 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <header className="sticky top-0 x-50 border-b border-[#3A091A]/10 bg-[#FAF6F0]/95 backdrop-blur-md">
+        <header className="x-50 sticky top-0 border-b border-[#3A091A]/10 bg-[#FAF6F0]/95 backdrop-blur-md">
             <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
                 {/*Brand*/}
                 <a href="/" className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#3A091A] font-[var(--font-apoint-heading)] text-2xl text-[#E8B4B8]">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#3A091A] text-2xl font-[var(--font-apoint-heading)] text-[#E8B4B8]">
                         A
                     </div>
 
                     <div>
-                        <div className="font-[var(--font-apoint-heading)] text-xl font-semibold leading-tight text-[#3A091A]">
+                        <div className="text-xl leading-tight font-[var(--font-apoint-heading)] font-semibold text-[#3A091A]">
                             Apoint
                         </div>
                         <div className="text-[9px] font-semibold tracking-[0.25em] text-[#4A1525]">
@@ -63,8 +63,8 @@ export default function Navbar() {
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                     aria-label={
                         isMenuOpen
-                            ? "Close navigation menu"
-                            : "Open navigation menu"
+                            ? 'Close navigation menu'
+                            : 'Open navigation menu'
                     }
                     aria-expanded={isMenuOpen}
                     className="rounded-lg p-2 text-[#3A091A] hover:bg-[#E8B4B8]/20 md:hidden"

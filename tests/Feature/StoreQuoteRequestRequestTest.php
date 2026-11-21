@@ -1,9 +1,9 @@
 <?php
 
-use App\\Http\\Requests\\StoreQuoteRequestRequest;
-use App\\Models\\Currency;
-use App\\Models\\Service;
-use Illuminate\\Support\\Facades\\Validator;
+use App\Http\Requests\StoreQuoteRequestRequest;
+use App\Models\Currency;
+use App\Models\Service;
+use Illuminate\Support\Facades\Validator;
 
 beforeEach(function () {
     $service = Service::create([
