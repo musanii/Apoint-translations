@@ -1,4 +1,5 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import type { FormEvent } from 'react';
 import { ArrowLeft, CheckCircle2, Clock3, ReceiptText } from 'lucide-react';
 
 type Order = {
@@ -17,7 +18,7 @@ export default function ShowOrder({ order, canPayOnline }: { order: Order; canPa
     const money = (value: string) => order.currency.symbol + ' ' + Number(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const rows: [string, string][] = [['Subtotal', order.subtotal], ['Express service', order.express_fee], ['Certification', order.certification_fee], ['Courier / delivery', order.courier_fee]];
 
-    function pay(event: React.FormEvent<HTMLFormElement>) {
+    function pay(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         post('/orders/' + order.id + '/payments', { preserveScroll: true });
     }
