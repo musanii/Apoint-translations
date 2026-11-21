@@ -25,7 +25,7 @@ class QuoteRequestDocument extends Model
         ];
     }
 
-    public function quoteRequest(): BelongsTo<QuoteRequest, $this>
+    public function quoteRequest(): BelongsTo<QuoteRequest, $this><QuoteRequest, $this>
     {
         return $this->belongsTo(QuoteRequest::class);
     }
