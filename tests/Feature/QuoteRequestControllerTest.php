@@ -98,6 +98,86 @@ test('an authenticated customer can submit a digital quote request without a pri
     $this->assertDatabaseCount('quotes', 0);
 });
 
+test('a matching active pricing rule supplies the request quantity unit', function () {
+    $user = User::factory()->create();
+    $options = createQuoteRequestOptions();
+
+    PricingRule::create([
+        'service_id' => $options['service']->id,
+        'currency_id' => $options['currency']->id,
+        'source_language_id' => $options['english']->id,
+        'target_language_id' => $options['swahili']->id,
+        'pricing_type' => 'per_word',
+        'unit' => 'word',
+        'rate' => 8,
+        'minimum_charge' => 800,
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($user)
+        ->post(route('quote-requests.store'), [
+            'service_id' => $options['service']->id,
+            'source_language_id' => $options['english']->id,
+            'target_language_id' => $options['swahili']->id,
+            'currency_id' => $options['currency']->id,
+            'quantity' => 450,
+            'delivery_method' => 'digital',
+        ])
+        ->assertRedirect();
+
+    $quoteRequest = QuoteRequest::query()->sole();
+
+    expect($quoteRequest->quantity)->toBe(450)
+        ->and($quoteRequest->unit)->toBe('word');
+});
+
+test('a custom language combination can use an unambiguous service quantity unit', function () {
+    $user = User::factory()->create();
+    $options = createQuoteRequestOptions();
+
+    $french = Language::create([
+        'name' => 'French',
+        'code' => 'fr',
+        'is_active' => true,
+    ]);
+
+    $german = Language::create([
+        'name' => 'German',
+        'code' => 'de',
+        'is_active' => true,
+    ]);
+
+    PricingRule::create([
+        'service_id' => $options['service']->id,
+        'currency_id' => $options['currency']->id,
+        'source_language_id' => $options['english']->id,
+        'target_language_id' => $options['swahili']->id,
+        'pricing_type' => 'per_word',
+        'unit' => 'word',
+        'rate' => 8,
+        'minimum_charge' => 800,
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($user)
+        ->post(route('quote-requests.store'), [
+            'service_id' => $options['service']->id,
+            'source_language_id' => $french->id,
+            'target_language_id' => $german->id,
+            'currency_id' => $options['currency']->id,
+            'quantity' => 450,
+            'delivery_method' => 'digital',
+        ])
+        ->assertRedirect();
+
+    $quoteRequest = QuoteRequest::query()->sole();
+
+    expect($quoteRequest->quantity)->toBe(450)
+        ->and($quoteRequest->unit)->toBe('word');
+
+    $this->assertDatabaseCount('quotes', 0);
+});
+
 test('a customer can submit a request with physical delivery details', function () {
     $user = User::factory()->create();
     $options = createQuoteRequestOptions();
