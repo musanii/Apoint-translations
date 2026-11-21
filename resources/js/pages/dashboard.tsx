@@ -112,7 +112,7 @@ export default function Dashboard({ summary, recentRequests, recentOrders }: Pro
                         ))}
                     </div>
 
-                    <section className="mt-7 overflow-hidden rounded-2xl border border-[#3A091A]/10 bg-white shadow-sm">
+                    <section id="requests" className="mt-7 overflow-hidden rounded-2xl border border-[#3A091A]/10 bg-white shadow-sm">
                         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#3A091A]/10 px-5 py-4 sm:px-6">
                             <div>
                                 <h2 className="font-serif text-xl font-semibold">Recent quote requests</h2>
