@@ -1,37 +1,13 @@
-const services = [
-     {
-        number: '01',
-        title: 'Document Translation',
-        description:
-            'Accurate translation of personal, academic and professional documents while preserving their meaning and context.',
-        icon: '文',
-    },
-    {
-        number: '02',
-        title: 'Certified Translation',
-        description:
-            'Translation support for official documents intended for institutions, applications and formal processes.',
-        icon: '✧',
-    },
-    {
-        number: '03',
-        title: 'Business & Legal',
-        description:
-            'Careful translation of business, legal and corporate documents where precision and clarity matter.',
-        icon: '§',
-    },
-    {
-        number: '04',
-        title: 'Localization',
-        description:
-            'Adaptation of content for different languages, audiences and cultural contexts across markets.',
-        icon: '◎',
-    },
-];
+import type { Service } from '@/types/service';
 
-export default function ServicesSection(){
+
+type ServicesSectionProps = {
+    services: Service[];
+};
+
+export default function ServicesSection({ services }: ServicesSectionProps) {
     return (
-         <section
+        <section
             id="services"
             className="bg-white px-6 py-20 md:py-28"
         >
@@ -51,24 +27,24 @@ export default function ServicesSection(){
                     </p>
                 </div>
 
-                <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                    {services.map((service) => (
+                <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {services.map((service, index) => (
                         <article
-                            key={service.number}
+                            key={service.id}
                             className="group rounded-2xl border border-[#3A091A]/10 bg-[#FAF6F0] p-7 transition duration-300 hover:-translate-y-2 hover:border-[#D4AF37]/60 hover:bg-white hover:shadow-xl hover:shadow-[#3A091A]/5"
                         >
                             <div className="flex items-center justify-between">
                                 <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#3A091A] font-[var(--font-apoint-heading)] text-xl text-[#E8B4B8]">
-                                    {service.icon}
+                                    {['文', '✧', '§', '◎', '✦', '◇'][index % 6]}
                                 </span>
 
                                 <span className="text-xs font-semibold tracking-widest text-[#B69A9E]">
-                                    {service.number}
+                                    {String(index + 1).padStart(2, '0')}
                                 </span>
                             </div>
 
                             <h3 className="mt-8 font-[var(--font-apoint-heading)] text-2xl font-semibold text-[#3A091A]">
-                                {service.title}
+                                {service.name}
                             </h3>
 
                             <p className="mt-4 text-sm leading-7 text-[#806D70]">
@@ -89,6 +65,5 @@ export default function ServicesSection(){
                 </div>
             </div>
         </section>
-
     );
 }

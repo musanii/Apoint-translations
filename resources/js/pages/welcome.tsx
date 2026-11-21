@@ -1,12 +1,14 @@
+import { Head } from "@inertiajs/react";
+import Navbar from "@/components/website/navbar";
+import ServicesSection from "@/components/website/services-section";
+import LanguagesSection from "@/components/website/languages-section";
+import AboutSection from "@/components/website/about-section";
+import ContactSection from "@/components/website/contact-section";
+import Footer from "@/components/website/footer";
+import type { Service } from '@/types/service';
 
-import { Head } from '@inertiajs/react';
-import Navbar from '@/components/website/navbar';
-import ServicesSection from '@/components/website/services-section';
-import LanguagesSection from '@/components/website/languages-section';
-import AboutSection from '@/components/website/about-section';
-import ContactSection from '@/components/website/contact-section';
-import Footer from '@/components/website/footer';
-export default function Welcome() {
+
+export default function Welcome({ services }: { services: Service[] }) {
     return (
         <>
             <Head title="Professional Translation Services" />
@@ -31,10 +33,10 @@ export default function Welcome() {
                             </h1>
 
                             <p className="mt-7 max-w-lg text-base leading-8 text-[#705B60] md:text-lg">
-                                Professional translation services that help
-                                your words travel further. We bring clarity,
-                                accuracy and understanding to every document
-                                and every conversation.
+                                Professional translation services that help your
+                                words travel further. We bring clarity, accuracy
+                                and understanding to every document and every
+                                conversation.
                             </p>
 
                             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
@@ -84,7 +86,7 @@ export default function Welcome() {
                             </div>
                         </div>
                     </section>
-                    <ServicesSection />
+                    <ServicesSection services={services} />
                     <LanguagesSection />
                     <AboutSection />
                     <ContactSection />
