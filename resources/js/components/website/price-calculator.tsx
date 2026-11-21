@@ -31,7 +31,7 @@ type CalculatorOption = {
     source_language: LanguageOption | null;
     target_language: LanguageOption | null;
     currency: CurrencyOption;
-    pricing_type: 'per_word' | 'per_page' | 'fixed' | string;
+    pricing_type: string;
     unit: string;
     description: string | null;
 };
@@ -92,18 +92,6 @@ function CalculatorSkeleton() {
             </div>
         </section>
     );
-}
-
-function getQuantityLabel(pricingType: string, unit: string): string {
-    if (pricingType === 'per_word' || unit === 'word') {
-        return 'Document word count';
-    }
-
-    if (pricingType === 'per_page' || unit === 'page') {
-        return 'Document page count';
-    }
-
-    return `Quantity (${unit || 'units'})`;
 }
 
 function getQuantityQuestion(pricingType: string, unit: string): string {
@@ -207,7 +195,7 @@ export default function PriceCalculator() {
             }
         }
 
-        loadOptions();
+        void loadOptions();
 
         return () => {
             cancelled = true;
@@ -258,10 +246,6 @@ export default function PriceCalculator() {
     const quantityTemplate = selectedOption ?? serviceOptions[0] ?? null;
 
     const isFixed = quantityTemplate?.pricing_type === 'fixed';
-
-    const selectedService = services.find(
-        service => service.id === selection?.serviceId,
-    );
 
     const selectedCurrency = currencies.find(
         currency => currency.id === selection?.currencyId,
