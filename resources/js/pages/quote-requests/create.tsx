@@ -64,6 +64,11 @@ export default function CreateQuoteRequest({
     const defaultCurrency =
         currencies.find(currency => currency.is_default) ?? currencies[0];
 
+    const localToday = new Date();
+    const minimumDeliveryDate = new Date(
+        localToday.getTime() - localToday.getTimezoneOffset() * 60_000,
+    ).toISOString().slice(0, 10);
+
     const { data, setData, post, processing, errors } = useForm<FormData>({
         service_id: initial.service_id ?? services[0]?.id ?? null,
         source_language_id: initial.source_language_id,
@@ -279,7 +284,7 @@ export default function CreateQuoteRequest({
                                             <input
                                                 id="delivery_date"
                                                 type="date"
-                                                min={new Date().toISOString().slice(0, 10)}
+                                                min={minimumDeliveryDate}
                                                 value={data.delivery_date}
                                                 onChange={event => setData('delivery_date', event.target.value)}
                                                 className={fieldClass}
