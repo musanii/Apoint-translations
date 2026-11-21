@@ -31,6 +31,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/quote-requests', [QuoteRequestController::class, 'store'])
         ->name('quote-requests.store');
 
+    Route::get('/quote-requests/{quoteRequest}', [QuoteRequestController::class, 'show'])
+        ->name('quote-requests.show');
+
     Route::post('/quote-requests/{quoteRequest}/documents', [QuoteRequestDocumentController::class, 'store'])
         ->name('quote-requests.documents.store');
 });
