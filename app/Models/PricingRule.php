@@ -29,22 +29,26 @@ class PricingRule extends Model
         ];
     }
 
-    public function service(): BelongsTo<Service, $this><Service, $this>
+    /** @return BelongsTo<Service, $this> */
+    public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
     }
 
-    public function currency(): BelongsTo<Currency, $this><Currency, $this>
+    /** @return BelongsTo<Currency, $this> */
+    public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
     }
 
-    public function sourceLanguage(): BelongsTo<Language, $this><Language, $this>
+    /** @return BelongsTo<Language, $this> */
+    public function sourceLanguage(): BelongsTo
     {
         return $this->belongsTo(Language::class, 'source_language_id');
     }
 
-    public function targetLanguage(): BelongsTo<Language, $this><Language, $this>
+    /** @return BelongsTo<Language, $this> */
+    public function targetLanguage(): BelongsTo
     {
         return $this->belongsTo(Language::class, 'target_language_id');
     }
