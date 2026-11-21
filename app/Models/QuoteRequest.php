@@ -39,37 +39,37 @@ class QuoteRequest extends Model
         ];
     }
 
-    public function user(): BelongsTo<User, $this>
+    public function user(): BelongsTo<User, $this><User, $this>
     {
         return $this->belongsTo(User::class);
     }
 
-    public function service(): BelongsTo<Service, $this>
+    public function service(): BelongsTo<Service, $this><Service, $this>
     {
         return $this->belongsTo(Service::class);
     }
 
-    public function sourceLanguage(): BelongsTo<Language, $this>
+    public function sourceLanguage(): BelongsTo<Language, $this><Language, $this>
     {
         return $this->belongsTo(Language::class, 'source_language_id');
     }
 
-    public function targetLanguage(): BelongsTo<Language, $this>
+    public function targetLanguage(): BelongsTo<Language, $this><Language, $this>
     {
         return $this->belongsTo(Language::class, 'target_language_id');
     }
 
-    public function currency(): BelongsTo<Currency, $this>
+    public function currency(): BelongsTo<Currency, $this><Currency, $this>
     {
         return $this->belongsTo(Currency::class);
     }
 
-    public function documents(): HasMany<QuoteRequestDocument, $this>
+    public function documents(): HasMany<QuoteRequestDocument, $this><QuoteRequestDocument, $this>
     {
         return $this->hasMany(QuoteRequestDocument::class);
     }
 
-    public function quotes(): HasMany<Quote, $this>
+    public function quotes(): HasMany<Quote, $this><Quote, $this>
     {
         return $this->hasMany(Quote::class);
     }
