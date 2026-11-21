@@ -105,3 +105,13 @@ test('internal draft quotations are not exposed on the customer dashboard', func
             ->has('recentRequests.0.quotes', 0)
         );
 });
+
+
+test('an authenticated but unverified customer can access the dashboard', function () {
+    $user = User::factory()->unverified()->create();
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page->component('dashboard'));
+});
