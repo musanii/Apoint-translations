@@ -8,13 +8,14 @@ class QuoteSequence extends Model
 {
     protected $fillable = [
         'year',
-        'last_number'
+        'last_number',
     ];
 
-    protected function casts(){
+    protected function casts()
+    {
         return [
-            'year'=>'integer',
-            'last_number'=> 'integer'
+            'year' => 'integer',
+            'last_number' => 'integer',
         ];
     }
 }

@@ -1,13 +1,12 @@
-import { Head } from "@inertiajs/react";
-import Navbar from "@/components/website/navbar";
-import ServicesSection from "@/components/website/services-section";
-import LanguagesSection from "@/components/website/languages-section";
-import AboutSection from "@/components/website/about-section";
-import ContactSection from "@/components/website/contact-section";
-import Footer from "@/components/website/footer";
+import { Head } from '@inertiajs/react';
+import Navbar from '@/components/website/navbar';
+import ServicesSection from '@/components/website/services-section';
+import LanguagesSection from '@/components/website/languages-section';
+import AboutSection from '@/components/website/about-section';
+import ContactSection from '@/components/website/contact-section';
+import Footer from '@/components/website/footer';
 import type { Service } from '@/types/service';
-import PriceCalculator from "@/components/website/price-calculator";
-
+import PriceCalculator from '@/components/website/price-calculator';
 
 export default function Welcome({ services }: { services: Service[] }) {
     return (
@@ -26,7 +25,7 @@ export default function Welcome({ services }: { services: Service[] }) {
                                 Words without boundaries
                             </p>
 
-                            <h1 className="font-[var(--font-apoint-heading)] text-5xl leading-[1.12] font-medium text-[#3A091A] sm:text-6xl lg:text-7xl">
+                            <h1 className="text-5xl leading-[1.12] font-[var(--font-apoint-heading)] font-medium text-[#3A091A] sm:text-6xl lg:text-7xl">
                                 Every word
                                 <span className="block text-[#A76D78] italic">
                                     matters.
@@ -78,7 +77,7 @@ export default function Welcome({ services }: { services: Service[] }) {
                             </div>
 
                             <div className="absolute -bottom-6 -left-4 rounded-2xl border border-[#3A091A]/5 bg-white/95 px-6 py-4 shadow-xl backdrop-blur-sm sm:-left-8">
-                                <p className="font-[var(--font-apoint-heading)] text-lg font-semibold text-[#3A091A]">
+                                <p className="text-lg font-[var(--font-apoint-heading)] font-semibold text-[#3A091A]">
                                     Your words, understood.
                                 </p>
                                 <p className="mt-1 text-xs tracking-wide text-[#806D70]">

@@ -48,4 +48,4 @@ Route::post('/mpesa/callback', [MpesaCallbackController::class, 'handle'])
 Route::post('/payhero/callback', [PayHeroCallbackController::class, 'handle'])
     ->name('payhero.callback');
 
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';

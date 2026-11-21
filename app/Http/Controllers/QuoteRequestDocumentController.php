@@ -6,7 +6,6 @@ use App\Http\Requests\StoreQuoteRequestDocumentRequest;
 use App\Models\QuoteRequest;
 use App\Services\QuoteRequestDocumentService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class QuoteRequestDocumentController extends Controller
 {
@@ -21,6 +20,7 @@ class QuoteRequestDocumentController extends Controller
         );
 
         $documentService->upload($quoteRequest, $request->file('document'));
+
         return back()->with(
             'success',
             'Document uploaded successfully.'

@@ -9,10 +9,10 @@ use InvalidArgumentException;
 
 class PaymentStatusService
 {
-
     public function __construct(
         private readonly OrderStatusService $orderStatusService
     ) {}
+
     public function markSuccessful(Payment $payment, ?string $providerReference): Payment
     {
         return DB::transaction(function () use ($payment, $providerReference) {
@@ -26,9 +26,9 @@ class PaymentStatusService
             if (
                 $providerReference !== null &&
                 Payment::query()
-                ->where('provider', $payment->provider)
-                ->where('provider_reference', $providerReference)
-                ->exists()
+                    ->where('provider', $payment->provider)
+                    ->where('provider_reference', $providerReference)
+                    ->exists()
             ) {
                 throw new InvalidArgumentException(
                     'This provider transaction reference has already been used.'
@@ -56,12 +56,9 @@ class PaymentStatusService
                 $this->orderStatusService->confirm($order);
             }
 
-
-
             return $payment->refresh();
         });
     }
-
 
     public function recoverFailedPayment(
         Payment $payment,
@@ -86,9 +83,9 @@ class PaymentStatusService
 
             if (
                 Payment::query()
-                ->where('provider', $payment->provider)
-                ->where('provider_reference', $providerReference)
-                ->exists()
+                    ->where('provider', $payment->provider)
+                    ->where('provider_reference', $providerReference)
+                    ->exists()
             ) {
                 throw new InvalidArgumentException(
                     'This provider transaction reference has already been used.'
@@ -143,7 +140,6 @@ class PaymentStatusService
         });
     }
 
-
     public function markFailed(Payment $payment, string $failureReason): Payment
     {
         return DB::transaction(function () use ($payment, $failureReason) {
@@ -157,15 +153,15 @@ class PaymentStatusService
 
             $payment->update([
                 'status' => Payment::STATUS_FAILED,
-                'failure_reason' => $failureReason
+                'failure_reason' => $failureReason,
             ]);
 
             $order = Order::query()
                 ->lockForUpdate()
                 ->findOrFail($payment->order_id);
 
-            //Do not mark the entire order as failed if another
-            //payment attempt is still pennding or has succeeded
+            // Do not mark the entire order as failed if another
+            // payment attempt is still pennding or has succeeded
             $hasOtherActiveAttempt = $order->payments()
                 ->where('id', '!=', $payment->id)
                 ->whereIn('status', [
@@ -216,9 +212,9 @@ class PaymentStatusService
 
             if (
                 Payment::query()
-                ->where('provider', $payment->provider)
-                ->where('provider_reference', $providerReference)
-                ->exists()
+                    ->where('provider', $payment->provider)
+                    ->where('provider_reference', $providerReference)
+                    ->exists()
             ) {
                 throw new InvalidArgumentException(
                     'This provider transaction reference has already been used.'

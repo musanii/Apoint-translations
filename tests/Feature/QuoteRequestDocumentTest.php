@@ -1,8 +1,6 @@
 <?php
 
 use App\Models\Currency;
-use App\Models\QuoteRequest;
-use App\Models\QuoteRequestDocument;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

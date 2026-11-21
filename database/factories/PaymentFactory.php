@@ -6,7 +6,6 @@ use App\Models\Currency;
 use App\Models\Order;
 use App\Models\Payment;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use RuntimeException;
 
 /**
  * @extends Factory<Payment>
@@ -27,7 +26,7 @@ class PaymentFactory extends Factory
                     'is_default' => true,
                 ]
             )->id,
-            'reference' => 'APT-P-' . fake()->unique()->numerify('##########'),
+            'reference' => 'APT-P-'.fake()->unique()->numerify('##########'),
             'provider' => fake()->randomElement(['mpesa', 'flutterwave']),
             'provider_reference' => null,
             'amount' => fake()->randomFloat(2, 100, 50000),

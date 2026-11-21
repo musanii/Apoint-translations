@@ -2,6 +2,7 @@
 
 use App\Models\Order;
 use App\Models\Payment;
+use Carbon\CarbonInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -29,7 +30,7 @@ it('casts paid_at to a datetime', function () {
     ]);
 
     expect($payment->paid_at)
-        ->toBeInstanceOf(\Carbon\CarbonInterface::class);
+        ->toBeInstanceOf(CarbonInterface::class);
 });
 
 it('allows an order to have multiple payment attempts', function () {

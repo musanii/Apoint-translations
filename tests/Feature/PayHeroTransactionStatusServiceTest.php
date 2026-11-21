@@ -40,8 +40,6 @@ it('verifies a late payment using the PayHero transaction reference', function (
         ->and($result['reference'])->toBe('PH-TEST-123');
 });
 
-
-
 it('rejects a transaction that PayHero has not confirmed as successful', function () {
     $payment = Payment::factory()->create([
         'provider' => 'payhero',
@@ -76,8 +74,6 @@ it('rejects a transaction that PayHero has not confirmed as successful', functio
     expect($payment->fresh()->status)
         ->toBe(Payment::STATUS_FAILED);
 });
-
-
 
 it('rejects a successful response with a different transaction reference', function () {
     $payment = Payment::factory()->create([
@@ -114,8 +110,6 @@ it('rejects a successful response with a different transaction reference', funct
         ->toBe(Payment::STATUS_FAILED);
 });
 
-
-
 it('rejects a successful response with a different checkout request ID', function () {
     $payment = Payment::factory()->create([
         'provider' => 'payhero',
@@ -151,8 +145,6 @@ it('rejects a successful response with a different checkout request ID', functio
         ->toBe(Payment::STATUS_FAILED);
 });
 
-
-
 it('rejects a successful response with a different transaction amount', function () {
     $payment = Payment::factory()->create([
         'provider' => 'payhero',
@@ -186,7 +178,6 @@ it('rejects a successful response with a different transaction amount', function
     expect($payment->fresh()->status)
         ->toBe(Payment::STATUS_FAILED);
 });
-
 
 it('rejects payments that do not belong to PayHero', function () {
     $payment = Payment::factory()->create([

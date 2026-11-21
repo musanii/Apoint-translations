@@ -17,7 +17,6 @@ class QuoteCreationService
         //
     }
 
-
     public function create(
         QuoteRequest $quoteRequest,
         string $pricingType,
@@ -30,7 +29,6 @@ class QuoteCreationService
         float $courierFee = 0,
         ?string $customerNotes = null,
         ?string $adminNotes = null,
-
 
     ): Quote {
 
@@ -55,6 +53,7 @@ class QuoteCreationService
                 'Invalid quote pricing values.'
             );
         }
+
         return DB::transaction(function () use (
 
             $quoteRequest,

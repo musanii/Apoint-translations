@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\PaymentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,14 +11,16 @@ use Override;
 
 class Payment extends Model
 {
-    /** @use HasFactory<\Database\Factories\PaymentFactory> */
+    /** @use HasFactory<PaymentFactory> */
     use HasFactory;
 
     public const STATUS_PENDING = 'pending';
-    public const STATUS_SUCCESSFUL = 'successful';
-    public const STATUS_FAILED = 'failed';
-    public const STATUS_REFUNDED = 'refunded';
 
+    public const STATUS_SUCCESSFUL = 'successful';
+
+    public const STATUS_FAILED = 'failed';
+
+    public const STATUS_REFUNDED = 'refunded';
 
     protected $fillable = [
         'order_id',
@@ -63,6 +66,7 @@ class Payment extends Model
     {
         return $this->belongsTo(Currency::class);
     }
+
     public function refunds(): HasMany
     {
         return $this->hasMany(Refund::class);

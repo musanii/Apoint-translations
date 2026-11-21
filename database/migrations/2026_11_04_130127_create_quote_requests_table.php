@@ -44,7 +44,7 @@ return new class extends Migration
 
             $table->text('instructions')->nullable();
 
-            $table->string('status',30)->default('pending');
+            $table->string('status', 30)->default('pending');
 
             $table->timestamps();
         });

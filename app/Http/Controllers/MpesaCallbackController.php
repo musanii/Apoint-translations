@@ -9,31 +9,30 @@ use Illuminate\Support\Facades\Log;
 
 class MpesaCallbackController extends Controller
 {
-   public function __construct(private readonly MpesaCallbackService $callbackService)
-   {
-   
-   }
+    public function __construct(private readonly MpesaCallbackService $callbackService) {}
 
-   public function handle(Request $request):JsonResponse{
+    public function handle(Request $request): JsonResponse
+    {
 
-   try {
-    $this->callbackService->handle($request->all());
-   } catch (\Throwable $exception) {
-    Log::error('M-Pesa callback processing failed.',[
-        'exception'=>$exception::class,
-        'message'=>$exception->getMessage(),
-    ]);
+        try {
+            $this->callbackService->handle($request->all());
+        } catch (\Throwable $exception) {
+            Log::error('M-Pesa callback processing failed.', [
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
 
-    return response()->json([
-        'ResultCode'=>1,
-        'ResultDesc'=>'Callback processing failed.'
-    ],500);
+            return response()->json([
+                'ResultCode' => 1,
+                'ResultDesc' => 'Callback processing failed.',
+            ], 500);
 
-   }
-   return response()->json([
-    'ResultCode'=>0,
-    'ResultDesc'=>'Accepted',
-   ]);
+        }
 
-   }
+        return response()->json([
+            'ResultCode' => 0,
+            'ResultDesc' => 'Accepted',
+        ]);
+
+    }
 }

@@ -3,18 +3,16 @@
 namespace App\Services;
 
 use App\Models\Payment;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use RuntimeException;
-
 
 class PayHeroStkPushService
 {
     public function __construct(
         private readonly PayHeroApiClient $apiClient
     ) {}
-
 
     public function initiate(Payment $payment, string $phoneNumber): Payment
     {

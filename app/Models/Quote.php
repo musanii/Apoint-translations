@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Quote extends Model
 {
-    use HasFactory; 
+    use HasFactory;
 
     public const STATUS_DRAFT = 'draft';
 
@@ -50,12 +50,12 @@ class Quote extends Model
             'subtotal' => 'decimal:2',
             'express_fee' => 'decimal:2',
             'certification_fee' => 'decimal:2',
-            'courier_fee'=>'decimal:2',
+            'courier_fee' => 'decimal:2',
             'total' => 'decimal:2',
             'valid_until' => 'datetime',
             'accepted_at' => 'datetime',
             'rejected_at' => 'datetime',
-            'sent_at'=>'datetime'
+            'sent_at' => 'datetime',
         ];
     }
 

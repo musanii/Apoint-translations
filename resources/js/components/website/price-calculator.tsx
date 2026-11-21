@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from 'react';
 
 type ServiceOption = {
@@ -31,7 +30,7 @@ type CalculatorOption = {
     source_language: LanguageOption | null;
     target_language: LanguageOption | null;
     currency: CurrencyOption;
-    pricing_type: 'per_word' | 'per_page' | 'fixed' | string;
+    pricing_type: string;
     unit: string;
     description: string | null;
 };
@@ -73,7 +72,7 @@ function CalculatorSkeleton() {
 
                 <div className="grid overflow-hidden rounded-3xl bg-white shadow-xl md:grid-cols-[1.2fr_0.8fr]">
                     <div className="space-y-7 p-7 md:p-10">
-                        {[1, 2, 3, 4].map(item => (
+                        {[1, 2, 3, 4].map((item) => (
                             <div key={item} className="space-y-3">
                                 <div className="h-4 w-28 rounded bg-gray-200" />
                                 <div className="h-12 w-full rounded-xl bg-gray-100" />
@@ -92,18 +91,6 @@ function CalculatorSkeleton() {
             </div>
         </section>
     );
-}
-
-function getQuantityLabel(pricingType: string, unit: string): string {
-    if (pricingType === 'per_word' || unit === 'word') {
-        return 'Document word count';
-    }
-
-    if (pricingType === 'per_page' || unit === 'page') {
-        return 'Document page count';
-    }
-
-    return `Quantity (${unit || 'units'})`;
 }
 
 function getQuantityQuestion(pricingType: string, unit: string): string {
@@ -184,14 +171,18 @@ export default function PriceCalculator() {
                         targetLanguageId: first.target_language?.id ?? null,
                         currencyId: first.currency.id,
                     });
-                } else if (loadedServices.length > 0 && loadedCurrencies.length > 0) {
+                } else if (
+                    loadedServices.length > 0 &&
+                    loadedCurrencies.length > 0
+                ) {
                     setSelection({
                         serviceId: loadedServices[0].id,
                         sourceLanguageId: null,
                         targetLanguageId: null,
                         currencyId:
-                            loadedCurrencies.find(currency => currency.is_default)?.id ??
-                            loadedCurrencies[0].id,
+                            loadedCurrencies.find(
+                                (currency) => currency.is_default,
+                            )?.id ?? loadedCurrencies[0].id,
                     });
                 }
             } catch {
@@ -207,7 +198,7 @@ export default function PriceCalculator() {
             }
         }
 
-        loadOptions();
+        void loadOptions();
 
         return () => {
             cancelled = true;
@@ -218,7 +209,7 @@ export default function PriceCalculator() {
     const serviceOptions = useMemo(
         () =>
             options.filter(
-                option => option.service.id === selection?.serviceId,
+                (option) => option.service.id === selection?.serviceId,
             ),
         [options, selection?.serviceId],
     );
@@ -227,7 +218,7 @@ export default function PriceCalculator() {
     const requiresLanguages = useMemo(
         () =>
             serviceOptions.some(
-                option => option.source_language || option.target_language,
+                (option) => option.source_language || option.target_language,
             ),
         [serviceOptions],
     );
@@ -236,7 +227,7 @@ export default function PriceCalculator() {
     const selectedOption = useMemo(
         () =>
             options.find(
-                option =>
+                (option) =>
                     option.service.id === selection?.serviceId &&
                     (option.source_language?.id ?? null) ===
                         selection?.sourceLanguageId &&
@@ -259,12 +250,8 @@ export default function PriceCalculator() {
 
     const isFixed = quantityTemplate?.pricing_type === 'fixed';
 
-    const selectedService = services.find(
-        service => service.id === selection?.serviceId,
-    );
-
     const selectedCurrency = currencies.find(
-        currency => currency.id === selection?.currencyId,
+        (currency) => currency.id === selection?.currencyId,
     );
 
     // All active currencies are available, not just currencies with prices.
@@ -275,17 +262,14 @@ export default function PriceCalculator() {
     const targetLanguages = languages;
 
     function chooseService(serviceId: number) {
-        const first = options.find(
-            option => option.service.id === serviceId,
-        );
+        const first = options.find((option) => option.service.id === serviceId);
 
         const currentCurrency = currencies.find(
-            currency => currency.id === selection?.currencyId,
+            (currency) => currency.id === selection?.currencyId,
         );
 
         const defaultCurrency =
-            currencies.find(currency => currency.is_default) ??
-            currencies[0];
+            currencies.find((currency) => currency.is_default) ?? currencies[0];
 
         setSelection({
             serviceId,
@@ -348,7 +332,7 @@ export default function PriceCalculator() {
         }
 
         const matchingRule = options.find(
-            option =>
+            (option) =>
                 option.service.id === selection.serviceId &&
                 (option.source_language?.id ?? null) ===
                     selection.sourceLanguageId &&
@@ -463,11 +447,17 @@ export default function PriceCalculator() {
         });
 
         if (selection.sourceLanguageId !== null) {
-            params.set('source_language_id', String(selection.sourceLanguageId));
+            params.set(
+                'source_language_id',
+                String(selection.sourceLanguageId),
+            );
         }
 
         if (selection.targetLanguageId !== null) {
-            params.set('target_language_id', String(selection.targetLanguageId));
+            params.set(
+                'target_language_id',
+                String(selection.targetLanguageId),
+            );
         }
 
         if (!isFixed && quantity > 0) {
@@ -490,12 +480,9 @@ export default function PriceCalculator() {
 
     if (services.length === 0 || currencies.length === 0) {
         return (
-            <section
-                id="price-calculator"
-                className="bg-[#FAF6F0] px-6 py-20"
-            >
+            <section id="price-calculator" className="bg-[#FAF6F0] px-6 py-20">
                 <div className="mx-auto max-w-2xl text-center">
-                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#9B6877]">
+                    <p className="text-sm font-semibold tracking-[0.2em] text-[#9B6877] uppercase">
                         Transparent pricing
                     </p>
 
@@ -519,13 +506,10 @@ export default function PriceCalculator() {
     }
 
     return (
-        <section
-            id="price-calculator"
-            className="bg-[#FAF6F0] px-6 py-20"
-        >
+        <section id="price-calculator" className="bg-[#FAF6F0] px-6 py-20">
             <div className="mx-auto max-w-6xl">
                 <div className="mx-auto mb-12 max-w-2xl text-center">
-                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#9B6877]">
+                    <p className="text-sm font-semibold tracking-[0.2em] text-[#9B6877] uppercase">
                         Transparent pricing
                     </p>
 
@@ -553,16 +537,13 @@ export default function PriceCalculator() {
                             <select
                                 id="calculator-service"
                                 value={selection?.serviceId ?? ''}
-                                onChange={event =>
+                                onChange={(event) =>
                                     chooseService(Number(event.target.value))
                                 }
-                                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-800 outline-none transition focus:border-[#9B6877] focus:ring-2 focus:ring-[#E8B4B8]/40"
+                                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-800 transition outline-none focus:border-[#9B6877] focus:ring-2 focus:ring-[#E8B4B8]/40"
                             >
-                                {services.map(service => (
-                                    <option
-                                        key={service.id}
-                                        value={service.id}
-                                    >
+                                {services.map((service) => (
+                                    <option key={service.id} value={service.id}>
                                         {service.name}
                                     </option>
                                 ))}
@@ -581,28 +562,31 @@ export default function PriceCalculator() {
 
                                     <select
                                         id="calculator-source"
-                                        value={selection?.sourceLanguageId ?? ''}
-                                        onChange={event => {
+                                        value={
+                                            selection?.sourceLanguageId ?? ''
+                                        }
+                                        onChange={(event) => {
                                             if (event.target.value !== '') {
                                                 chooseSourceLanguage(
                                                     Number(event.target.value),
                                                 );
                                             }
                                         }}
-                                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 outline-none transition focus:border-[#9B6877]"
+                                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 transition outline-none focus:border-[#9B6877]"
                                     >
                                         <option value="">
                                             Select source language
                                         </option>
 
-                                        {sourceLanguages.map(language => (
+                                        {sourceLanguages.map((language) => (
                                             <option
                                                 key={language.id}
                                                 value={language.id}
                                             >
                                                 {language.name}
                                                 {language.native_name &&
-                                                language.native_name !== language.name
+                                                language.native_name !==
+                                                    language.name
                                                     ? ` (${language.native_name})`
                                                     : ''}
                                             </option>
@@ -620,28 +604,31 @@ export default function PriceCalculator() {
 
                                     <select
                                         id="calculator-target"
-                                        value={selection?.targetLanguageId ?? ''}
-                                        onChange={event => {
+                                        value={
+                                            selection?.targetLanguageId ?? ''
+                                        }
+                                        onChange={(event) => {
                                             if (event.target.value !== '') {
                                                 chooseTargetLanguage(
                                                     Number(event.target.value),
                                                 );
                                             }
                                         }}
-                                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 outline-none transition focus:border-[#9B6877]"
+                                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 transition outline-none focus:border-[#9B6877]"
                                     >
                                         <option value="">
                                             Select target language
                                         </option>
 
-                                        {targetLanguages.map(language => (
+                                        {targetLanguages.map((language) => (
                                             <option
                                                 key={language.id}
                                                 value={language.id}
                                             >
                                                 {language.name}
                                                 {language.native_name &&
-                                                language.native_name !== language.name
+                                                language.native_name !==
+                                                    language.name
                                                     ? ` (${language.native_name})`
                                                     : ''}
                                             </option>
@@ -673,7 +660,7 @@ export default function PriceCalculator() {
                                         max="100000"
                                         step="1"
                                         value={quantity}
-                                        onChange={event => {
+                                        onChange={(event) => {
                                             const value = event.target.value;
 
                                             if (value === '') {
@@ -686,12 +673,14 @@ export default function PriceCalculator() {
                                                     100000,
                                                     Math.max(
                                                         1,
-                                                        Math.floor(Number(value)) || 1,
+                                                        Math.floor(
+                                                            Number(value),
+                                                        ) || 1,
                                                     ),
                                                 ),
                                             );
                                         }}
-                                        className="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none transition focus:border-[#9B6877]"
+                                        className="w-full rounded-xl border border-gray-200 px-4 py-3 transition outline-none focus:border-[#9B6877]"
                                     />
 
                                     <p className="mt-2 text-xs leading-5 text-gray-500">
@@ -716,12 +705,14 @@ export default function PriceCalculator() {
                                 <select
                                     id="calculator-currency"
                                     value={selection?.currencyId ?? ''}
-                                    onChange={event =>
-                                        chooseCurrency(Number(event.target.value))
+                                    onChange={(event) =>
+                                        chooseCurrency(
+                                            Number(event.target.value),
+                                        )
                                     }
-                                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 outline-none transition focus:border-[#9B6877]"
+                                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 transition outline-none focus:border-[#9B6877]"
                                 >
-                                    {availableCurrencies.map(currency => (
+                                    {availableCurrencies.map((currency) => (
                                         <option
                                             key={currency.id}
                                             value={currency.id}
@@ -745,7 +736,7 @@ export default function PriceCalculator() {
 
                     {/* Estimate panel */}
                     <div className="flex flex-col justify-center bg-[#3A091A] p-8 text-white md:p-10">
-                        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#E8B4B8]">
+                        <p className="text-sm font-semibold tracking-[0.18em] text-[#E8B4B8] uppercase">
                             Your estimated price
                         </p>
 
@@ -777,8 +768,7 @@ export default function PriceCalculator() {
                             <div className="mt-6 space-y-3 border-t border-white/20 pt-5 text-sm">
                                 <div className="flex justify-between gap-4">
                                     <span className="text-white/65">
-                                        {estimate.quantity}{' '}
-                                        {estimate.unit}
+                                        {estimate.quantity} {estimate.unit}
                                         {estimate.quantity === 1 ? '' : 's'}
                                     </span>
 
@@ -787,14 +777,17 @@ export default function PriceCalculator() {
                                             style: 'currency',
                                             currency: estimate.currency,
                                             minimumFractionDigits:
-                                                selectedCurrency?.decimal_places ?? 2,
+                                                selectedCurrency?.decimal_places ??
+                                                2,
                                             maximumFractionDigits:
-                                                selectedCurrency?.decimal_places ?? 2,
+                                                selectedCurrency?.decimal_places ??
+                                                2,
                                         }).format(estimate.subtotal)}
                                     </span>
                                 </div>
 
-                                {estimate.minimum_charge > estimate.subtotal && (
+                                {estimate.minimum_charge >
+                                    estimate.subtotal && (
                                     <div className="flex justify-between gap-4">
                                         <span className="text-white/65">
                                             Minimum charge applied

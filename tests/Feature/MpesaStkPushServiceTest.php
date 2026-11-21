@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Currency;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Services\MpesaStkPushService;
@@ -93,7 +94,7 @@ it('does not initiate a second STK Push for the same payment', function () {
 
     $service->initiate($payment, '254712345678');
 
-    expect(fn() => $service->initiate(
+    expect(fn () => $service->initiate(
         $payment->fresh(),
         '254712345678'
     ))->toThrow(InvalidArgumentException::class);
@@ -110,7 +111,7 @@ it('does not initiate an STK Push for a failed payment', function () {
         'status' => Payment::STATUS_FAILED,
     ]);
 
-    expect(fn() => app(MpesaStkPushService::class)->initiate(
+    expect(fn () => app(MpesaStkPushService::class)->initiate(
         $payment,
         '254712345678'
     ))->toThrow(InvalidArgumentException::class);
@@ -126,7 +127,7 @@ it('rejects payments from other providers', function () {
         'status' => Payment::STATUS_PENDING,
     ]);
 
-    expect(fn() => app(MpesaStkPushService::class)->initiate(
+    expect(fn () => app(MpesaStkPushService::class)->initiate(
         $payment,
         '254712345678'
     ))->toThrow(InvalidArgumentException::class);
@@ -137,7 +138,7 @@ it('rejects payments from other providers', function () {
 it('rejects payments that are not in Kenyan shillings', function () {
     Http::fake();
 
-    $currency = \App\Models\Currency::factory()->create([
+    $currency = Currency::factory()->create([
         'code' => 'USD',
     ]);
 
@@ -148,7 +149,7 @@ it('rejects payments that are not in Kenyan shillings', function () {
         'status' => Payment::STATUS_PENDING,
     ]);
 
-    expect(fn() => app(MpesaStkPushService::class)->initiate(
+    expect(fn () => app(MpesaStkPushService::class)->initiate(
         $payment,
         '254712345678'
     ))->toThrow(InvalidArgumentException::class);
@@ -166,14 +167,13 @@ it('rejects fractional payment amounts', function () {
         'status' => Payment::STATUS_PENDING,
     ]);
 
-    expect(fn() => app(MpesaStkPushService::class)->initiate(
+    expect(fn () => app(MpesaStkPushService::class)->initiate(
         $payment,
         '254712345678'
     ))->toThrow(InvalidArgumentException::class);
 
     Http::assertNothingSent();
 });
-
 
 it('rejects PayHero payments', function () {
     Http::fake();

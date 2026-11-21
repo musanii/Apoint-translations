@@ -41,7 +41,7 @@ class QuoteService
         $pricingRule = $query->first();
 
         if (! $pricingRule) {
-            throw (new ModelNotFoundException())
+            throw (new ModelNotFoundException)
                 ->setModel(PricingRule::class);
         }
 

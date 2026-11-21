@@ -5,6 +5,7 @@ use App\Models\Language;
 use App\Models\QuoteRequest;
 use App\Models\Service;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -104,7 +105,7 @@ test('a quote request cannot reference a nonexistent service', function () {
     expect(fn () => $user->quoteRequests()->create([
         'service_id' => 99999,
         'currency_id' => $currency->id,
-    ]))->toThrow(\Illuminate\Database\QueryException::class);
+    ]))->toThrow(QueryException::class);
 });
 
 test('a quote request can store physical delivery details', function () {

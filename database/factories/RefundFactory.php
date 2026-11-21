@@ -15,7 +15,7 @@ class RefundFactory extends Factory
     {
         return [
             'payment_id' => Payment::factory(),
-            'reference' => 'APT-R-' . now()->year . '-' . fake()->unique()->numerify('######'),
+            'reference' => 'APT-R-'.now()->year.'-'.fake()->unique()->numerify('######'),
             'provider_reference' => null,
             'amount' => '1000.00',
             'status' => Refund::STATUS_PENDING,

@@ -3,7 +3,6 @@
 
 use App\Models\Order;
 use App\Models\Payment;
-use Illuminate\Support\Facades\Http;
 
 it('accepts a valid PayHero callback and returns HTTP 200', function () {
     $order = Order::factory()->create([
@@ -48,7 +47,6 @@ it('accepts a valid PayHero callback and returns HTTP 200', function () {
         ->toBe('paid');
 });
 
-
 it('acknowledges callbacks for unknown checkout requests', function () {
     $response = $this->postJson(route('payhero.callback'), [
         'status' => true,
@@ -70,8 +68,6 @@ it('acknowledges callbacks for unknown checkout requests', function () {
         ]);
 });
 
-
-
 it('returns HTTP 500 when PayHero sends an invalid callback', function () {
     $response = $this->postJson(route('payhero.callback'), [
         'status' => true,
@@ -91,4 +87,3 @@ it('returns HTTP 500 when PayHero sends an invalid callback', function () {
             'message' => 'Callback processing failed.',
         ]);
 });
-

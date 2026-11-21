@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('pricing_rules', function (Blueprint $table) {
-             $table->dropColumn('unit');
+            $table->dropColumn('unit');
         });
     }
 };

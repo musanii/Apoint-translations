@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Override;
 
 class QuoteRequestDocument extends Model
 {
@@ -19,11 +18,10 @@ class QuoteRequestDocument extends Model
         'size',
     ];
 
-
-    protected  function casts()
+    protected function casts()
     {
         return [
-            'size' => 'integer'
+            'size' => 'integer',
         ];
     }
 

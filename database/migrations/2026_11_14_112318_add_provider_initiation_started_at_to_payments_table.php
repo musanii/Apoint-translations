@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-              $table->timestamp('provider_initiation_started_at')->nullable();
+            $table->timestamp('provider_initiation_started_at')->nullable();
         });
     }
 

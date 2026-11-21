@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Language;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Io238\ISOCountries\Models\Language as IsoLanguage;
 
@@ -14,7 +13,7 @@ class LanguageSeeder extends Seeder
      */
     public function run(): void
     {
-          // Languages available in the ISO reference database.
+        // Languages available in the ISO reference database.
         $isoLanguages = [
             'en' => ['region' => 'Global', 'sort_order' => 1],
             'sw' => ['region' => 'East Africa', 'sort_order' => 2],
@@ -27,7 +26,7 @@ class LanguageSeeder extends Seeder
             'ki' => ['region' => 'East Africa', 'sort_order' => 9],
         ];
 
-         foreach ($isoLanguages as $code => $details) {
+        foreach ($isoLanguages as $code => $details) {
             $isoLanguage = IsoLanguage::findOrFail($code);
 
             Language::updateOrCreate(
@@ -41,44 +40,44 @@ class LanguageSeeder extends Seeder
                 ]
             );
 
-       // Additional Kenyan languages not covered by ISO 639-1.
-        $kenyanLanguages = [
-            [
-                'name' => 'Dholuo',
-                'code' => 'luo',
-                'native_name' => 'Dholuo',
-                'sort_order' => 10,
-            ],
-            [
-                'name' => 'Luhya',
-                'code' => 'luy',
-                'native_name' => 'Luhya',
-                'sort_order' => 11,
-            ],
-            [
-                'name' => 'Kalenjin',
-                'code' => 'kln',
-                'native_name' => 'Kalenjin',
-                'sort_order' => 12,
-            ],
-            [
-                'name' => 'Maasai',
-                'code' => 'mas',
-                'native_name' => 'Maa',
-                'sort_order' => 13,
-            ],
-        ];
-
-        foreach ($kenyanLanguages as $language) {
-            Language::updateOrCreate(
-                ['code' => $language['code']],
+            // Additional Kenyan languages not covered by ISO 639-1.
+            $kenyanLanguages = [
                 [
-                    ...$language,
-                    'region' => 'Kenya',
-                    'is_active' => true,
-                ]
-            );
+                    'name' => 'Dholuo',
+                    'code' => 'luo',
+                    'native_name' => 'Dholuo',
+                    'sort_order' => 10,
+                ],
+                [
+                    'name' => 'Luhya',
+                    'code' => 'luy',
+                    'native_name' => 'Luhya',
+                    'sort_order' => 11,
+                ],
+                [
+                    'name' => 'Kalenjin',
+                    'code' => 'kln',
+                    'native_name' => 'Kalenjin',
+                    'sort_order' => 12,
+                ],
+                [
+                    'name' => 'Maasai',
+                    'code' => 'mas',
+                    'native_name' => 'Maa',
+                    'sort_order' => 13,
+                ],
+            ];
+
+            foreach ($kenyanLanguages as $language) {
+                Language::updateOrCreate(
+                    ['code' => $language['code']],
+                    [
+                        ...$language,
+                        'region' => 'Kenya',
+                        'is_active' => true,
+                    ]
+                );
+            }
         }
-    }
     }
 }

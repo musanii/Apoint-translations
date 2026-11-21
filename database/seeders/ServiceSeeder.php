@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Service;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -47,7 +46,6 @@ class ServiceSeeder extends Seeder
             ],
 
         ];
-
 
         foreach ($services as $service) {
             Service::updateOrCreate(

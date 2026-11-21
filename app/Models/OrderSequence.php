@@ -7,14 +7,14 @@ use Override;
 
 class OrderSequence extends Model
 {
-    protected$fillable = ['year','last_number'];
+    protected $fillable = ['year', 'last_number'];
 
     #[Override]
     protected function casts()
     {
         return [
-            'year'=>'integer',
-            'last_number'=>'integer'
+            'year' => 'integer',
+            'last_number' => 'integer',
         ];
     }
 }

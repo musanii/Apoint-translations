@@ -67,12 +67,12 @@ it('prevents cumulative active refunds from exceeding the payment amount', funct
         'status' => Payment::STATUS_SUCCESSFUL,
     ]);
 
-  Refund::create([
-    'payment_id' => $payment->id,
-    'reference' => 'APT-R-2026-000100',
-    'amount' => '7000.00',
-    'status' => Refund::STATUS_PENDING,
-]);
+    Refund::create([
+        'payment_id' => $payment->id,
+        'reference' => 'APT-R-2026-000100',
+        'amount' => '7000.00',
+        'status' => Refund::STATUS_PENDING,
+    ]);
 
     expect(fn () => app(RefundCreationService::class)->create(
         $payment,

@@ -3,8 +3,8 @@
 use App\Models\Quote;
 use App\Services\QuoteStatusService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use InvalidArgumentException;
 use Illuminate\Support\Carbon;
+use InvalidArgumentException;
 
 uses(RefreshDatabase::class);
 

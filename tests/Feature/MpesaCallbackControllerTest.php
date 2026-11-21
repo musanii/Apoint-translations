@@ -9,7 +9,7 @@ uses(RefreshDatabase::class);
 it('accepts a successful Daraja callback and returns an acknowledgement', function () {
     $payment = Payment::factory()->create([
         'provider' => 'daraja',
-'payment_method' => 'mpesa',
+        'payment_method' => 'mpesa',
         'amount' => 100,
         'provider_checkout_request_id' => 'ws_CO_CONTROLLER_123',
         'provider_merchant_request_id' => 'merchant-controller-123',
@@ -46,7 +46,7 @@ it('accepts a successful Daraja callback and returns an acknowledgement', functi
 it('acknowledges a failed payment callback and records the failure', function () {
     $payment = Payment::factory()->create([
         'provider' => 'daraja',
-'payment_method' => 'mpesa',
+        'payment_method' => 'mpesa',
         'provider_checkout_request_id' => 'ws_CO_CONTROLLER_FAILED',
         'provider_merchant_request_id' => 'merchant-controller-failed',
     ]);
@@ -73,11 +73,10 @@ it('acknowledges a failed payment callback and records the failure', function ()
         ->toBe('Request cancelled by user.');
 });
 
-
 it('acknowledges duplicate callbacks without processing the payment twice', function () {
     $payment = Payment::factory()->create([
         'provider' => 'daraja',
-'payment_method' => 'mpesa',
+        'payment_method' => 'mpesa',
         'amount' => 100,
         'provider_checkout_request_id' => 'ws_CO_CONTROLLER_DUPLICATE',
         'provider_merchant_request_id' => 'merchant-controller-duplicate',

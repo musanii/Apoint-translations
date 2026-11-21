@@ -3,6 +3,7 @@
 Apoint Translations is a multilingual translation and localization platform for individuals and businesses worldwide.
 
 The platform will allow customers to:
+
 - Explore translation and localization services.
 - Request instant or manually reviewed quotations.
 - Upload documents securely.
@@ -21,6 +22,7 @@ The platform will allow customers to:
 ## Development Setup
 
 ### Requirements
+
 - PHP 8.3+
 - Composer
 - Node.js and npm

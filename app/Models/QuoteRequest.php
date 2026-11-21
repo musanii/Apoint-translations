@@ -27,15 +27,15 @@ class QuoteRequest extends Model
         'delivery_postal_code',
     ];
 
-
     protected $attributes = [
-        'status' => 'pending'
+        'status' => 'pending',
     ];
+
     protected function casts()
     {
         return [
             'quantity' => 'integer',
-            'delivery_date' => 'date'
+            'delivery_date' => 'date',
         ];
     }
 

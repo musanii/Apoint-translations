@@ -1,8 +1,8 @@
 <?php
 
+use App\Services\MpesaAccessTokenService;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
-use App\Services\MpesaAccessTokenService;
 
 it('retrieves an access token from the Daraja sandbox', function () {
     config([
@@ -27,7 +27,7 @@ it('retrieves an access token from the Daraja sandbox', function () {
             && $request->url() === 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
             && $request->hasHeader(
                 'Authorization',
-                'Basic ' . base64_encode('test-consumer-key:test-consumer-secret')
+                'Basic '.base64_encode('test-consumer-key:test-consumer-secret')
             );
     });
 });

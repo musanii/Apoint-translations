@@ -50,7 +50,6 @@ class PricingCalculatorTest extends TestCase
         $this->assertEquals(100, $result['quantity']);
     }
 
-
     public function test_it_applies_the_minimum_charge(): void
     {
         $service = Service::create([
@@ -102,7 +101,6 @@ class PricingCalculatorTest extends TestCase
         $calculator->calculate($pricingRule, 0);
     }
 
-
     public function test_it_calculates_per_page_pricing(): void
     {
         $service = Service::create([
@@ -139,7 +137,6 @@ class PricingCalculatorTest extends TestCase
         $this->assertEquals('page', $result['unit']);
     }
 
-
     public function test_it_calculates_fixed_pricing(): void
     {
         $service = Service::create([
@@ -175,7 +172,6 @@ class PricingCalculatorTest extends TestCase
         $this->assertEquals(25.00, $result['total']);
         $this->assertEquals('fixed', $result['pricing_type']);
     }
-
 
     public function test_it_respects_currency_decimal_places(): void
     {
@@ -244,7 +240,6 @@ class PricingCalculatorTest extends TestCase
         $calculator->calculate($pricingRule, 100);
     }
 
-
     public function test_it_rejects_inactive_currencies(): void
     {
         $service = Service::create([
@@ -279,7 +274,6 @@ class PricingCalculatorTest extends TestCase
         $calculator->calculate($pricingRule, 100);
     }
 
-
     public function test_it_rejects_negative_rates(): void
     {
         $service = Service::create([
@@ -313,7 +307,6 @@ class PricingCalculatorTest extends TestCase
 
         $calculator->calculate($pricingRule, 100);
     }
-
 
     public function test_it_rejects_negative_minimum_charges(): void
     {
@@ -351,36 +344,36 @@ class PricingCalculatorTest extends TestCase
     }
 
     public function test_it_rejects_pricing_rules_for_inactive_services(): void
-{
-    $service = Service::create([
-        'name' => 'Certified Translation',
-        'slug' => 'certified-translation',
-        'is_active' => false,
-        'sort_order' => 1,
-    ]);
+    {
+        $service = Service::create([
+            'name' => 'Certified Translation',
+            'slug' => 'certified-translation',
+            'is_active' => false,
+            'sort_order' => 1,
+        ]);
 
-    $currency = Currency::create([
-        'code' => 'USD',
-        'name' => 'US Dollar',
-        'symbol' => '$',
-        'decimal_places' => 2,
-        'is_active' => true,
-        'is_default' => false,
-    ]);
+        $currency = Currency::create([
+            'code' => 'USD',
+            'name' => 'US Dollar',
+            'symbol' => '$',
+            'decimal_places' => 2,
+            'is_active' => true,
+            'is_default' => false,
+        ]);
 
-    $pricingRule = PricingRule::create([
-        'service_id' => $service->id,
-        'currency_id' => $currency->id,
-        'pricing_type' => 'per_word',
-        'unit' => 'word',
-        'rate' => 0.10,
-        'is_active' => true,
-    ]);
+        $pricingRule = PricingRule::create([
+            'service_id' => $service->id,
+            'currency_id' => $currency->id,
+            'pricing_type' => 'per_word',
+            'unit' => 'word',
+            'rate' => 0.10,
+            'is_active' => true,
+        ]);
 
-    $calculator = app(PricingCalculator::class);
+        $calculator = app(PricingCalculator::class);
 
-    $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
-    $calculator->calculate($pricingRule, 100);
-}
+        $calculator->calculate($pricingRule, 100);
+    }
 }

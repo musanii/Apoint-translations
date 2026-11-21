@@ -34,24 +34,18 @@ class PricingRule extends Model
         return $this->belongsTo(Service::class);
     }
 
-       public function currency(): BelongsTo
+    public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
     }
 
-
-       public function sourceLanguage(): BelongsTo
+    public function sourceLanguage(): BelongsTo
     {
-        return $this->belongsTo(Language::class,'source_language_id');
+        return $this->belongsTo(Language::class, 'source_language_id');
     }
 
-
-        public function targetLanguage(): BelongsTo
+    public function targetLanguage(): BelongsTo
     {
-        return $this->belongsTo(Language::class,'target_language_id');
+        return $this->belongsTo(Language::class, 'target_language_id');
     }
-
-
-
-
 }

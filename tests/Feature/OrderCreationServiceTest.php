@@ -39,7 +39,6 @@ it('creates an order when a sent quote is accepted', function () {
     expect(Order::where('quote_id', $quote->id)->count())->toBe(1);
 });
 
-
 it('does not create another order from an already accepted quote', function () {
     $quote = Quote::factory()->create([
         'status' => Quote::STATUS_ACCEPTED,

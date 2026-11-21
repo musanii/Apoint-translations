@@ -27,6 +27,10 @@
         <env name="DB_DATABASE" value=":memory:"/>
         <env name="DB_URL" value=""/>
         <env name="MAIL_MAILER" value="array"/>
+        <env name="MPESA_CONSUMER_KEY" value="test-consumer-key"/>
+        <env name="MPESA_CONSUMER_SECRET" value="test-consumer-secret"/>
+        <env name="PAYHERO_USERNAME" value="test-payhero-username"/>
+        <env name="PAYHERO_PASSWORD" value="test-payhero-password"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="PULSE_ENABLED" value="false"/>
