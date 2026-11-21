@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\RefundFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,7 @@ use Override;
 
 class Refund extends Model
 {
+    /** @use HasFactory<RefundFactory> */
     use HasFactory;
 
     public const STATUS_PENDING = 'pending';
@@ -42,12 +44,12 @@ class Refund extends Model
         ];
     }
 
-    public function payment(): BelongsTo
+    public function payment(): BelongsTo<Payment, $this>
     {
         return $this->belongsTo(Payment::class);
     }
 
-    public function refunds(): HasMany
+    public function refunds(): HasMany<Refund, $this>
     {
         return $this->hasMany(Refund::class);
     }
