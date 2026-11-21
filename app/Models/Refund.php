@@ -12,7 +12,6 @@ use Override;
 class Refund extends Model
 {
     /** @use HasFactory<RefundFactory> */
-    /** @use HasFactory<RefundFactory> */
     use HasFactory;
 
     public const STATUS_PENDING = 'pending';
@@ -45,12 +44,14 @@ class Refund extends Model
         ];
     }
 
-    public function payment(): BelongsTo<Payment, $this><Payment, $this>
+    /** @return BelongsTo<Payment, $this> */
+    public function payment(): BelongsTo
     {
         return $this->belongsTo(Payment::class);
     }
 
-    public function refunds(): HasMany<Refund, $this><Refund, $this>
+    /** @return HasMany<Refund, $this> */
+    public function refunds(): HasMany
     {
         return $this->hasMany(Refund::class);
     }
