@@ -97,8 +97,9 @@ class QuoteRequestController extends Controller
             // A request without an instant pricing rule is still valid.
         }
 
-        $hasVariablePricing = $pricingRule !== null
-            && in_array($pricingRule->pricing_type, ['per_word', 'per_page'], true);
+        $unit = $pricingRule?->pricing_type === 'fixed'
+            ? null
+            : ($pricingRule?->unit ?? $quoteService->inferUnitForService((int) $data['service_id']));
 
         $quoteRequest = QuoteRequest::create([
             'user_id' => $request->user()->id,
@@ -109,7 +110,7 @@ class QuoteRequestController extends Controller
             'quantity' => $pricingRule?->pricing_type === 'fixed'
                 ? null
                 : ($data['quantity'] ?? null),
-            'unit' => $hasVariablePricing ? $pricingRule->unit : null,
+            'unit' => $unit,
             'delivery_date' => $data['delivery_date'] ?? null,
             'instructions' => $data['instructions'] ?? null,
             'delivery_method' => $data['delivery_method'],
