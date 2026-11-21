@@ -13,7 +13,6 @@ class Payment extends Model
 {
     /** @use HasFactory<PaymentFactory> */
     /** @use HasFactory<PaymentFactory> */
-    /** @use HasFactory<PaymentFactory> */
     use HasFactory;
 
     public const STATUS_PENDING = 'pending';
@@ -59,17 +58,20 @@ class Payment extends Model
         ];
     }
 
-    public function order(): BelongsTo<Order, $this><Order, $this>
+    /** @return BelongsTo<Order, $this> */
+    public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
     }
 
-    public function currency(): BelongsTo<Currency, $this><Currency, $this>
+    /** @return BelongsTo<Currency, $this> */
+    public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
     }
 
-    public function refunds(): HasMany<Refund, $this><Refund, $this>
+    /** @return HasMany<Refund, $this> */
+    public function refunds(): HasMany
     {
         return $this->hasMany(Refund::class);
     }
