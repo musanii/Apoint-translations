@@ -52,6 +52,7 @@ return [
         'username' => env('PAYHERO_USERNAME'),
         'password' => env('PAYHERO_PASSWORD'),
         'callback_url' => env('PAYHERO_CALLBACK_URL'),
+        'channel_id' => env('PAYHERO_CHANNEL_ID'),
     ],
 
 ];
