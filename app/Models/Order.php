@@ -12,7 +12,6 @@ use Override;
 class Order extends Model
 {
     /** @use HasFactory<OrderFactory> */
-    /** @use HasFactory<OrderFactory> */
     use HasFactory;
 
     public const STATUS_PENDING_PAYMENT = 'pending_payment';
@@ -70,22 +69,26 @@ class Order extends Model
         ];
     }
 
-    public function quote(): BelongsTo<Quote, $this><Quote, $this>
+    /** @return BelongsTo<Quote, $this> */
+    public function quote(): BelongsTo
     {
         return $this->belongsTo(Quote::class);
     }
 
-    public function user(): BelongsTo<User, $this><User, $this>
+    /** @return BelongsTo<User, $this> */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function currency(): BelongsTo<Currency, $this><Currency, $this>
+    /** @return BelongsTo<Currency, $this> */
+    public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class, 'currency_id');
     }
 
-    public function payments(): HasMany<Payment, $this><Payment, $this>
+    /** @return HasMany<Payment, $this> */
+    public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
