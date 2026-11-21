@@ -13,7 +13,7 @@ class QuoteRequestController extends Controller
         $search = trim((string) $request->query('search', ''));
         $query = QuoteRequest::with(['user:id,name,email','service:id,name','currency:id,code,symbol'])
             ->withCount('documents')->latest();
-        if (in_array($status, ['pending','under_review','quote_draft','quote_sent','quote_sent'], true)) $query->where('status', $status);
+        if (in_array($status, ['pending','under_review','quote_draft','quote_sent'], true)) $query->where('status', $status);
         if ($search !== '') $query->where(function ($q) use ($search) {
             $q->where('id', is_numeric($search) ? (int) $search : -1)
                 ->orWhereHas('user', fn ($u) => $u->where('name','like',"%{$search}%")->orWhere('email','like',"%{$search}%"))
@@ -21,7 +21,7 @@ class QuoteRequestController extends Controller
         });
         return Inertia::render('admin/quote-requests/index', [
             'quoteRequests' => $query->paginate(15)->withQueryString(),
-            'filters' => ['status' => in_array($status,['pending','under_review','quote_draft','quote_sent','quote_sent'],true) ? $status : '', 'search' => $search],
+            'filters' => ['status' => in_array($status,['pending','under_review','quote_draft','quote_sent'],true) ? $status : '', 'search' => $search],
             'counts' => ['pending'=>QuoteRequest::where('status','pending')->count(),'under_review'=>QuoteRequest::where('status','under_review')->count(),'quote_draft'=>QuoteRequest::where('status','quote_draft')->count(),'quote_sent'=>QuoteRequest::where('status','quote_sent')->count(),'total'=>QuoteRequest::count()],
         ]);
     }
