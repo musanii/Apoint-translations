@@ -9,21 +9,46 @@ type FlashPayload = {
     error?: string | null;
 };
 
+type InertiaPageFlashEvent = CustomEvent<{
+    page?: {
+        props?: {
+            flash?: FlashPayload;
+        };
+    };
+}>;
+
+type InertiaFlashEvent = CustomEvent<{
+    flash?: FlashPayload;
+}>;
+
+function showFlash(flash?: FlashPayload): void {
+    if (!flash) return;
+
+    if (flash.toast?.message) {
+        toast[flash.toast.type](flash.toast.message);
+        return;
+    }
+
+    if (flash.success) toast.success(flash.success);
+    if (flash.error) toast.error(flash.error);
+}
+
 export function useFlashToast(): void {
     useEffect(() => {
-        return router.on('flash', (event) => {
-            const flash = (event as CustomEvent<{ flash?: FlashPayload }>)
-                .detail?.flash;
+        const removeNavigateListener = router.on('navigate', (event) => {
+            const flash = (event as InertiaPageFlashEvent).detail?.page?.props
+                ?.flash;
 
-            if (!flash) return;
-
-            if (flash.toast?.message) {
-                toast[flash.toast.type](flash.toast.message);
-                return;
-            }
-
-            if (flash.success) toast.success(flash.success);
-            if (flash.error) toast.error(flash.error);
+            showFlash(flash);
         });
+
+        const removeFlashListener = router.on('flash', (event) => {
+            showFlash((event as InertiaFlashEvent).detail?.flash);
+        });
+
+        return () => {
+            removeNavigateListener();
+            removeFlashListener();
+        };
     }, []);
 }
