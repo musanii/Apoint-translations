@@ -6,6 +6,8 @@ type ServiceOption = {
     id: number;
     name: string;
     slug: string;
+    quantity_unit: string | null;
+    quantity_is_fixed: boolean;
 };
 
 type LanguageOption = {
@@ -93,6 +95,26 @@ export default function CreateQuoteRequest({
             preserveScroll: true,
         });
     }
+
+    const selectedService = services.find(
+        (service) => service.id === data.service_id,
+    );
+    const quantityUnit = selectedService?.quantity_unit ?? null;
+    const quantityIsFixed = selectedService?.quantity_is_fixed ?? false;
+    const quantityLabel = quantityUnit === 'word'
+        ? 'Approximate word count (optional)'
+        : quantityUnit === 'page'
+          ? 'Approximate page count (optional)'
+          : quantityUnit
+            ? `Approximate ${quantityUnit} count (optional)`
+            : 'Approximate quantity (optional)';
+    const quantityHelp = quantityUnit === 'word'
+        ? 'A rough word count is enough. You can find it in most document editors.'
+        : quantityUnit === 'page'
+          ? 'Enter the approximate number of pages to be translated.'
+          : quantityUnit
+            ? `Enter an approximate number of ${quantityUnit}s if known.`
+            : 'If you are unsure, leave this blank and upload your documents after submitting.';
 
     const fieldClass =
         'w-full rounded-xl border border-[#3A091A]/15 bg-white px-4 py-3 text-sm text-[#3A091A] outline-none transition placeholder:text-[#806D70]/60 focus:border-[#9B6877] focus:ring-2 focus:ring-[#E8B4B8]/40';
@@ -346,12 +368,13 @@ export default function CreateQuoteRequest({
                                             />
                                         </div>
 
+                                        {!quantityIsFixed && (
                                         <div>
                                             <label
                                                 htmlFor="quantity"
                                                 className={labelClass}
                                             >
-                                                Approximate quantity (optional)
+                                                {quantityLabel}
                                             </label>
                                             <input
                                                 id="quantity"
@@ -371,19 +394,24 @@ export default function CreateQuoteRequest({
                                                             : null,
                                                     )
                                                 }
-                                                placeholder="e.g. 1200 words or 8 pages"
+                                                placeholder={
+                                                    quantityUnit === 'word'
+                                                        ? 'e.g. 1,200'
+                                                        : quantityUnit === 'page'
+                                                          ? 'e.g. 8'
+                                                          : 'Enter an estimate'
+                                                }
                                                 className={fieldClass}
                                             />
                                             <p className="mt-2 text-xs leading-5 text-[#806D70]">
-                                                Enter an approximate word or
-                                                page count if known. You can
-                                                leave this blank.
+                                                {quantityHelp}
                                             </p>
                                             <InputError
                                                 message={errors.quantity}
                                                 className="mt-2"
                                             />
                                         </div>
+                                        )}
 
                                         <div>
                                             <label
