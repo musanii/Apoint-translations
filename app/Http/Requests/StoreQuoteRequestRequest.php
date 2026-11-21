@@ -87,7 +87,7 @@ class StoreQuoteRequestRequest extends FormRequest
                 'required_if:delivery_method,physical',
                 'nullable',
                 'string',
-                'max:1000',
+                'max:255',
             ],
 
             'delivery_postal_code' => [
