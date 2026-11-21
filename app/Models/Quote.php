@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Quote extends Model
 {
     /** @use HasFactory<QuoteFactory> */
+    /** @use HasFactory<QuoteFactory> */
     use HasFactory;
 
     public const STATUS_DRAFT = 'draft';
@@ -61,12 +62,12 @@ class Quote extends Model
         ];
     }
 
-    public function quoteRequest(): BelongsTo<QuoteRequest, $this>
+    public function quoteRequest(): BelongsTo<QuoteRequest, $this><QuoteRequest, $this>
     {
         return $this->belongsTo(QuoteRequest::class);
     }
 
-    public function currency(): BelongsTo<Currency, $this>
+    public function currency(): BelongsTo<Currency, $this><Currency, $this>
     {
         return $this->belongsTo(Currency::class);
     }
