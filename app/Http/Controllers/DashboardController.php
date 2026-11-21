@@ -1,14 +1,13 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\Order;
-use App\\Models\\Quote;
-use App\\Models\\QuoteRequest;
-use Illuminate\\Database\\Eloquent\\Builder;
-use Illuminate\\Http\\Request;
-use Inertia\\Inertia;
-use Inertia\\Response;
+use App\Models\Order;
+use App\Models\Quote;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class DashboardController extends Controller
 {
@@ -48,9 +47,8 @@ class DashboardController extends Controller
         return Inertia::render('dashboard', [
             'summary' => [
                 'requests' => $user->quoteRequests()->count(),
-                'quotesAwaitingDecision' => Quote::query()
-                    ->whereIn('status', [Quote::STATUS_SENT])
-                    ->whereHas('quoteRequest', fn (Builder $query) => $query->where('user_id', $user->id))
+                'quotesAwaitingDecision' => $user->quoteRequests()
+                    ->whereHas('quotes', fn (Builder $query) => $query->where('status', Quote::STATUS_SENT))
                     ->count(),
                 'activeOrders' => $user->orders()
                     ->whereIn('status', [
