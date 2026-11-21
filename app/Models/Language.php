@@ -27,12 +27,12 @@ class Language extends Model
         ];
     }
 
-    public function sourcePricingRules(): HasMany
+    public function sourcePricingRules(): HasMany<PricingRule, $this>
     {
         return $this->hasMany(PricingRule::class, 'source_language_id');
     }
 
-    public function targetPricingRules(): HasMany
+    public function targetPricingRules(): HasMany<PricingRule, $this>
     {
         return $this->hasMany(PricingRule::class, 'target_language_id');
     }
