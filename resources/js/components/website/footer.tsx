@@ -93,7 +93,7 @@ export default function Footer() {
                         </p>
 
                         <a
-                            href="#quote"
+                            href="/quote-requests/create"
                             className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#E8B4B8] px-6 py-3 text-sm font-semibold text-[#3A091A] transition hover:bg-white"
                         >
                             Request a Quote
