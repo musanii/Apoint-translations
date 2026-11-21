@@ -3,6 +3,7 @@ use App\Http\Controllers\Admin\QuoteDraftController;
 use App\Http\Controllers\Admin\QuoteRequestController as AdminQuoteRequestController;
 use App\Http\Controllers\Admin\QuoteRequestDocumentController as AdminQuoteRequestDocumentController;
 use App\Http\Controllers\CalculatorController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MpesaCallbackController;
 use App\Http\Controllers\PayHeroCallbackController;
 use App\Http\Controllers\QuoteRequestController;
