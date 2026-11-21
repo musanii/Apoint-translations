@@ -452,6 +452,38 @@ export default function PriceCalculator() {
           }).format(estimate.minimum_charge)
         : null;
 
+    const quoteRequestUrl = useMemo(() => {
+        if (!selection) {
+            return '/quote-requests/create';
+        }
+
+        const params = new URLSearchParams({
+            service_id: String(selection.serviceId),
+            currency_id: String(selection.currencyId),
+        });
+
+        if (selection.sourceLanguageId !== null) {
+            params.set('source_language_id', String(selection.sourceLanguageId));
+        }
+
+        if (selection.targetLanguageId !== null) {
+            params.set('target_language_id', String(selection.targetLanguageId));
+        }
+
+        if (!isFixed && quantity > 0) {
+            params.set('quantity', String(quantity));
+        }
+
+        return `/quote-requests/create?${params.toString()}`;
+    }, [
+        selection?.serviceId,
+        selection?.sourceLanguageId,
+        selection?.targetLanguageId,
+        selection?.currencyId,
+        quantity,
+        isFixed,
+    ]);
+
     if (loadingOptions) {
         return <CalculatorSkeleton />;
     }
@@ -806,6 +838,16 @@ export default function PriceCalculator() {
                             complexity, formatting and any additional
                             requirements.
                         </p>
+
+                        {selection && (
+                            <a
+                                href={quoteRequestUrl}
+                                className="mt-6 inline-flex items-center justify-center rounded-full bg-[#E8B4B8] px-7 py-3.5 text-sm font-semibold text-[#3A091A] transition hover:bg-white"
+                            >
+                                Request this quote
+                                <span className="ml-3">→</span>
+                            </a>
+                        )}
                     </div>
                 </div>
             </div>
