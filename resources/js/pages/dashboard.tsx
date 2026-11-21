@@ -204,7 +204,10 @@ export default function Dashboard({ summary, recentRequests, recentOrders }: Pro
                                             <p className="font-semibold">{order.reference}</p>
                                             <p className="mt-1 text-xs capitalize text-[#806D70]">{order.quote.quote_request.service.name} · {humanize(order.status)} · payment {humanize(order.payment_status)}</p>
                                         </div>
-                                        <p className="font-semibold tabular-nums">{money(order.total, order.currency.symbol)}</p>
+                                        <div className="flex items-center gap-3">
+                                            <p className="font-semibold tabular-nums">{money(order.total, order.currency.symbol)}</p>
+                                            <Link href={`/orders/${order.id}`} className="text-sm font-semibold text-[#3A091A] underline decoration-[#D4AF37] underline-offset-4">View order</Link>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
