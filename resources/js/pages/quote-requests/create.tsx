@@ -376,7 +376,7 @@ export default function CreateQuoteRequest({
                                             </div>
                                             <div className="md:col-span-2">
                                                 <label htmlFor="delivery_address" className={labelClass}>Full delivery address *</label>
-                                                <textarea id="delivery_address" rows={3} value={data.delivery_address} onChange={event => setData('delivery_address', event.target.value)} className={fieldClass} />
+                                                <textarea id="delivery_address" rows={3} maxLength={255} value={data.delivery_address} onChange={event => setData('delivery_address', event.target.value)} className={fieldClass} />
                                                 <InputError message={errors.delivery_address} className="mt-2" />
                                             </div>
                                         </div>
