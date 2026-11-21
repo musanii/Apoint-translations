@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreQuoteRequestRequest;
 use App\Models\Currency;
 use App\Models\Language;
+use App\Models\PricingRule;
 use App\Models\QuoteRequest;
 use App\Models\Service;
 use App\Services\QuoteService;
@@ -23,6 +24,28 @@ class QuoteRequestController extends Controller
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->get(['id', 'name', 'slug']);
+
+        $pricingRules = PricingRule::query()
+            ->whereIn('service_id', $services->modelKeys())
+            ->where('is_active', true)
+            ->get(['service_id', 'pricing_type', 'unit'])
+            ->groupBy('service_id');
+
+        $services->each(function (Service $service) use ($pricingRules): void {
+            $rules = $pricingRules->get($service->id, collect());
+            $units = $rules->pluck('unit')->filter()->unique();
+
+            $service->setAttribute(
+                'quantity_unit',
+                $units->count() === 1 ? $units->first() : null
+            );
+            $service->setAttribute(
+                'quantity_is_fixed',
+                $rules->isNotEmpty() && $rules->every(
+                    fn (PricingRule $rule): bool => $rule->pricing_type === 'fixed'
+                )
+            );
+        });
 
         $languages = Language::query()
             ->where('is_active', true)
