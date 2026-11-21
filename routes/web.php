@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\QuoteRequestController as AdminQuoteRequestContro
 use App\Http\Controllers\Admin\QuoteRequestDocumentController as AdminQuoteRequestDocumentController;
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CustomerQuoteController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MpesaCallbackController;
 use App\Http\Controllers\PayHeroCallbackController;
 use App\Http\Controllers\QuoteRequestController;
@@ -16,6 +18,10 @@ Route::get('/calculator/options',[CalculatorController::class,'options'])->name(
 Route::get('/calculator/calculate',[CalculatorController::class,'calculate'])->name('calculator.calculate');
 Route::middleware('auth')->group(function(){
  Route::get('/quote-requests/create',[QuoteRequestController::class,'create'])->name('quote-requests.create');
+ Route::get('/quotes/{quote}',[CustomerQuoteController::class,'show'])->name('quotes.show');
+ Route::post('/quotes/{quote}/accept',[CustomerQuoteController::class,'accept'])->name('quotes.accept');
+ Route::post('/quotes/{quote}/reject',[CustomerQuoteController::class,'reject'])->name('quotes.reject');
+ Route::get('/orders/{order}',[OrderController::class,'show'])->name('orders.show');
  Route::post('/quote-requests',[QuoteRequestController::class,'store'])->name('quote-requests.store');
  Route::get('/quote-requests/{quoteRequest}',[QuoteRequestController::class,'show'])->name('quote-requests.show');
  Route::post('/quote-requests/{quoteRequest}/documents',[QuoteRequestDocumentController::class,'store'])->name('quote-requests.documents.store');
@@ -26,6 +32,7 @@ Route::middleware(['auth','can:admin'])->prefix('admin')->name('admin.')->group(
  Route::get('/quote-requests/{quoteRequest}',[AdminQuoteRequestController::class,'show'])->name('quote-requests.show');
  Route::post('/quote-requests/{quoteRequest}/review',[AdminQuoteRequestController::class,'markUnderReview'])->name('quote-requests.review');
  Route::post('/quote-requests/{quoteRequest}/quotes',[QuoteDraftController::class,'store'])->name('quote-requests.quotes.store');
+ Route::post('/quotes/{quote}/send',[QuoteDraftController::class,'send'])->name('quotes.send');
  Route::get('/quote-request-documents/{document}/download',[AdminQuoteRequestDocumentController::class,'download'])->name('quote-request-documents.download');
 });
 Route::post('/mpesa/callback',[MpesaCallbackController::class,'handle'])->name('mpesa.callback');
