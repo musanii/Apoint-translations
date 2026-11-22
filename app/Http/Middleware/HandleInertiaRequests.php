@@ -1,42 +1,31 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace App\\Http\\Middleware;
 
-use Illuminate\Http\Request;
-use Inertia\Middleware;
+use Illuminate\\Http\\Request;
+use Inertia\\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-    /**
-     * The root template that's loaded on the first page visit.
-     *
-     * @see https://inertiajs.com/server-side-setup#root-template
-     *
-     * @var string
-     */
     protected $rootView = 'app';
 
-    /**
-     * Determines the current asset version.
-     */
     public function version(Request $request): ?string
     {
         return parent::version($request);
     }
 
-    /**
-     * Define the props that are shared by default.
-     *
-     * @return array<string, mixed>
-     */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'auth' => [
-                'user' => $request->user(),
-            ],
+            'auth' => ['user' => $user],
+            'notifications' => fn () => $user ? [
+                'unreadCount' => $user->unreadNotifications()->count(),
+                'items' => $user->notifications()->latest()->limit(8)->get(['id', 'data', 'read_at', 'created_at']),
+            ] : ['unreadCount' => 0, 'items' => []],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
