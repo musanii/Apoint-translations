@@ -74,7 +74,7 @@ class OrderStatusService
                 'status' => Order::STATUS_COMPLETED,
             ]);
             $order->loadMissing('user');
-            $this->notifications->user($order->user, 'Your order is complete', 'Order '.$order->reference.' has been completed. Please check your order page for collection or delivery details.', route('orders.show', $order), 'order', true);
+            $this->notifications->user($order->user, 'Your order is complete', 'Order '.$order->reference.' has been completed. Please contact Apoint to arrange collection or delivery.', route('orders.show', $order), 'order', true);
 
             return $order;
         });
