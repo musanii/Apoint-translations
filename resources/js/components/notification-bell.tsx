@@ -40,7 +40,6 @@ export function NotificationBell() {
             if (document.visibilityState === 'visible') {
                 router.reload({
                     only: ['notifications'],
-                    preserveScroll: true,
                 });
             }
         }, 30000);
