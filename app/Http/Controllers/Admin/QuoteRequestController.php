@@ -29,7 +29,7 @@ class QuoteRequestController extends Controller
         $quoteRequest->load(['user:id,name,email','service:id,name','sourceLanguage:id,name','targetLanguage:id,name','currency:id,code,symbol,name','documents','quotes.currency:id,code,symbol']);
         return Inertia::render('admin/quote-requests/show', ['quoteRequest'=>$quoteRequest]);
     }
-    public function markUnderReview(QuoteRequest $quoteRequest): RedirectResponse {
+    public function markUnderReview(QuoteRequest $quoteRequest, \App\Services\NotificationService $notifications): RedirectResponse {
         if ($quoteRequest->status === 'pending') $quoteRequest->update(['status'=>'under_review']);
         return back()->with('success','Request marked as under review.');
     }
