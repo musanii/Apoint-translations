@@ -4,10 +4,12 @@ use App\Mail\ApointNotificationMail;
 use App\Models\Order;
 use App\Models\User;
 use App\Services\OrderStatusService;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Mail;
 
-uses(DatabaseMigrations::class);
+beforeEach(function () {
+    Artisan::call('migrate:fresh', ['--force' => true]);
+});
 
 it('notifies the customer when fulfilment starts and emails them when it completes', function () {
     Mail::fake();
