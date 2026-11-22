@@ -4,8 +4,8 @@ use App\Mail\ApointNotificationMail;
 use App\Models\User;
 use App\Services\NotificationService;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {
     Schema::dropIfExists('notifications');
