@@ -1,6 +1,6 @@
 # Notification delivery in production
 
-Apoint stores in-app notifications in the database and queues branded transactional email separately. Do not use the synchronous queue driver in production.
+Apoint stores in-app notifications in the database and queues branded transactional email separately. Retryable payment failures remain in-app so another payment attempt does not generate repeated email. Do not use the synchronous queue driver in production.
 
 ## Required environment
 
