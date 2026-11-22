@@ -25,7 +25,7 @@ Route::get('/calculator/options', [CalculatorController::class, 'options'])->nam
 Route::get('/calculator/calculate', [CalculatorController::class, 'calculate'])->name('calculator.calculate');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/notifications/{notification}/read', [NotificationController::class, 'read'])->name('notifications.read');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'read'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
     Route::get('/quote-requests/create', [QuoteRequestController::class, 'create'])->name('quote-requests.create');
     Route::get('/quotes/{quote}', [CustomerQuoteController::class, 'show'])->name('quotes.show');
