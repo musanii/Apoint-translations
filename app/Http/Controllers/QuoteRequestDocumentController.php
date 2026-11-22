@@ -12,7 +12,8 @@ class QuoteRequestDocumentController extends Controller
     public function store(
         StoreQuoteRequestDocumentRequest $request,
         QuoteRequest $quoteRequest,
-        QuoteRequestDocumentService $documentService
+        QuoteRequestDocumentService $documentService,
+        \\App\\Services\\NotificationService $notifications
     ): RedirectResponse {
         abort_unless(
             $request->user()->can('view', $quoteRequest),
@@ -20,6 +21,7 @@ class QuoteRequestDocumentController extends Controller
         );
 
         $documentService->upload($quoteRequest, $request->file('document'));
+        $notifications->admins('New document uploaded', 'A client uploaded a document for quote request #'.$quoteRequest->id.'.', route('admin.quote-requests.show', $quoteRequest), 'document');
 
         return back()->with(
             'success',
