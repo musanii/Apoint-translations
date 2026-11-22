@@ -101,7 +101,7 @@ class QuoteRequestController extends Controller
     public function store(
         StoreQuoteRequestRequest $request,
         QuoteService $quoteService,
-        \\App\\Services\\NotificationService $notifications
+        \App\Services\NotificationService $notifications
     ): RedirectResponse {
         $data = $request->validated();
 
