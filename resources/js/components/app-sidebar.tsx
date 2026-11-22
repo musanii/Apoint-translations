@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { ClipboardList, LayoutGrid, Plus } from 'lucide-react';
+import { ClipboardList, LayoutGrid, Plus, ShoppingBag } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -22,6 +22,7 @@ export function AppSidebar() {
         ? [
               { title: 'Admin dashboard', href: dashboard(), icon: LayoutGrid },
               { title: 'Quote requests inbox', href: '/admin/quote-requests', icon: ClipboardList },
+              { title: 'Orders', href: '/admin/orders', icon: ShoppingBag },
           ]
         : [
               { title: 'My dashboard', href: dashboard(), icon: LayoutGrid },
