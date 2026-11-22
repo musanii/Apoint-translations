@@ -11,7 +11,7 @@ class DashboardController extends Controller
     public function __invoke(Request $request): Response
     {
         if ($request->user()->is_admin) {
-            return Inertia::render('admin/dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         $user = $request->user();
