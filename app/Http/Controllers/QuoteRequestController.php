@@ -100,7 +100,8 @@ class QuoteRequestController extends Controller
 
     public function store(
         StoreQuoteRequestRequest $request,
-        QuoteService $quoteService
+        QuoteService $quoteService,
+        \\App\\Services\\NotificationService $notifications
     ): RedirectResponse {
         $data = $request->validated();
 
@@ -154,6 +155,10 @@ class QuoteRequestController extends Controller
                 ? ($data['delivery_postal_code'] ?? null)
                 : null,
         ]);
+
+        $requestUrl = route('admin.quote-requests.show', $quoteRequest);
+        $notifications->admins('New quote request received', 'A client submitted a new quote request (#'.$quoteRequest->id.'). Review the request and its documents.', $requestUrl, 'quote_request', true);
+        $notifications->user($request->user(), 'We received your quote request', 'Your request #'.$quoteRequest->id.' has been submitted. You can upload documents and follow its progress from your dashboard.', route('quote-requests.show', $quoteRequest), 'quote_request', true);
 
         return redirect()
             ->route('quote-requests.show', $quoteRequest)
