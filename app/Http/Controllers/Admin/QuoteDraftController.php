@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CreateQuoteDraftRequest;
 use App\Models\Quote;
 use App\Models\QuoteRequest;
+use App\Models\User;
 use App\Services\QuoteCreationService;
 use App\Services\QuoteStatusService;
 use Illuminate\Http\RedirectResponse;
@@ -50,8 +51,11 @@ class QuoteDraftController extends Controller
 
         $service->send($quote, now()->addDays(7));
         $quote->quoteRequest->update(['status' => 'quote_sent']);
-        $customer = $quote->quoteRequest->user;
-        $notifications->user($customer, 'Your quotation is ready', 'Quotation '.$quote->reference.' is ready for your review. It is valid for 7 days.', route('quotes.show', $quote), 'quote', true);
+        $customer = User::query()->find($quote->quoteRequest->getAttribute('user_id'));
+
+        if ($customer instanceof User) {
+            $notifications->user($customer, 'Your quotation is ready', 'Quotation '.$quote->reference.' is ready for your review. It is valid for 7 days.', route('quotes.show', $quote), 'quote', true);
+        }
 
         return back()->with('success', 'Quotation sent to the customer dashboard. It is valid for 7 days.');
     }
