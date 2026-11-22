@@ -8,6 +8,8 @@ use InvalidArgumentException;
 
 class OrderStatusService
 {
+    public function __construct(private readonly NotificationService $notifications) {}
+
     public function confirm(Order $order): Order
     {
         return DB::transaction(function () use ($order) {
@@ -48,6 +50,8 @@ class OrderStatusService
             $order->update([
                 'status' => Order::STATUS_IN_PROGRESS,
             ]);
+            $order->loadMissing('user');
+            $this->notifications->user($order->user, 'Work has started', 'Our team has started processing order '.$order->reference.'.', route('orders.show', $order), 'order');
 
             return $order;
         });
@@ -69,6 +73,8 @@ class OrderStatusService
             $order->update([
                 'status' => Order::STATUS_COMPLETED,
             ]);
+            $order->loadMissing('user');
+            $this->notifications->user($order->user, 'Your order is complete', 'Order '.$order->reference.' has been completed. Please check your order page for collection or delivery details.', route('orders.show', $order), 'order', true);
 
             return $order;
         });
@@ -93,6 +99,8 @@ class OrderStatusService
             $order->update([
                 'status' => Order::STATUS_CANCELLED,
             ]);
+            $order->loadMissing('user');
+            $this->notifications->user($order->user, 'Your order was cancelled', 'Order '.$order->reference.' has been cancelled. Please contact Apoint if you need assistance.', route('orders.show', $order), 'order', true);
 
             return $order;
         });
