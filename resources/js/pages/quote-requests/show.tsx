@@ -125,6 +125,11 @@ export default function ShowQuoteRequest({ quoteRequest }: Props) {
                                 </p>
                             )}
 
+                            <div className="mb-6 rounded-2xl border border-[#D4AF37]/45 bg-[#FAF6F0] p-5">
+                                <p className="text-xs font-semibold tracking-[.2em] text-[#9B6877] uppercase">Your reference number</p>
+                                <p className="mt-2 font-serif text-2xl font-semibold">APT-RQ-{quoteRequest.id.toString().padStart(6, '0')}</p>
+                                <p className="mt-1 text-sm text-[#705B60]">Keep this reference when contacting Apoint about your request.</p>
+                            </div>
                             <div className="mt-8 grid gap-5 rounded-2xl bg-[#FAF6F0] p-5 sm:grid-cols-2">
                                 <div>
                                     <p className="text-xs font-semibold tracking-wider text-[#9B6877] uppercase">
