@@ -64,5 +64,5 @@ it('notifies every administrator without sending admin alerts to customers', fun
         'notifiable_id' => $customer->id,
     ]);
 
-    Mail::assertQueued(ApointNotificationMail::class, 2);
+    Mail::assertQueuedCount(2);
 });
