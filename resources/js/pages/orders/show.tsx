@@ -15,6 +15,7 @@ export default function ShowOrder({ order, canPayOnline }: { order: Order; canPa
     const { data, setData, post, processing, errors } = useForm({ phone_number: '' });
     const page = usePage();
     const flash = (page.props as { flash?: { success?: string; error?: string } }).flash;
+    const pageErrors = (page.props as { errors?: { payment?: string } }).errors;
     const money = (value: string) => order.currency.code + ' ' + Number(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const rows: [string, string][] = [['Subtotal', order.subtotal], ['Express service', order.express_fee], ['Certification', order.certification_fee], ['Courier / delivery', order.courier_fee]];
 
@@ -54,7 +55,7 @@ export default function ShowOrder({ order, canPayOnline }: { order: Order; canPa
                             <label className="block text-sm font-semibold" htmlFor="phone_number">M-Pesa phone number</label>
                             <input id="phone_number" inputMode="numeric" autoComplete="tel" placeholder="2547XXXXXXXX" value={data.phone_number} onChange={event => setData('phone_number', event.target.value)} className="w-full rounded-xl border border-[#3A091A]/15 bg-white px-4 py-3 text-sm outline-none focus:border-[#D4AF37]"/>
                             {errors.phone_number && <p className="text-xs text-red-700">{errors.phone_number}</p>}
-                            {errors.payment && <p className="text-xs text-red-700">{errors.payment}</p>}
+                            {pageErrors?.payment && <p className="text-xs text-red-700">{pageErrors.payment}</p>}
                             <button disabled={processing || !data.phone_number.trim()} className="w-full rounded-full bg-[#3A091A] px-5 py-3.5 text-sm font-semibold text-white hover:bg-[#4A1525] disabled:opacity-50">{processing ? 'Requesting prompt…' : 'Request M-Pesa payment prompt'}</button>
                         </form>
                     </div> : <div className="mt-7 rounded-2xl border border-[#D4AF37]/40 bg-[#FAF6F0] p-5">
