@@ -50,7 +50,7 @@ class NotificationService
             Mail::to($user->email)->queue(new ApointNotificationMail(
                 recipientName: $user->name ?: 'there',
                 title: $title,
-                message: $message,
+                bodyText: $message,
                 actionUrl: $url,
                 category: $category,
             ));
