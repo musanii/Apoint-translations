@@ -24,7 +24,7 @@ class ApointNotificationMail extends Mailable implements ShouldQueue
     public function __construct(
         public readonly string $recipientName,
         public readonly string $title,
-        public readonly string $message,
+        public readonly string $bodyText,
         public readonly string $actionUrl,
         public readonly string $category,
     ) {
@@ -53,7 +53,7 @@ class ApointNotificationMail extends Mailable implements ShouldQueue
             with: [
                 'recipientName' => $this->recipientName,
                 'title' => $this->title,
-                'message' => $this->message,
+                'bodyText' => $this->bodyText,
                 'actionUrl' => $this->actionUrl,
                 'category' => $this->category,
             ],
