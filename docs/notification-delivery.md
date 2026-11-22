@@ -16,9 +16,9 @@ QUEUE_CONNECTION=database
 MAIL_MAILER=smtp
 MAIL_HOST=your-authenticated-smtp-host
 MAIL_PORT=587
+MAIL_SCHEME=smtp
 MAIL_USERNAME=your-smtp-username
 MAIL_PASSWORD=your-smtp-password
-MAIL_ENCRYPTION=tls
 MAIL_FROM_ADDRESS=notifications@your-domain.example
 MAIL_FROM_NAME="Apoint Translations"
 ```
