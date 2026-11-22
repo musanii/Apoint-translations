@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
  * @property int $id
@@ -40,7 +42,15 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new ApointVerifyEmail);
+        try {
+            $this->notify(new ApointVerifyEmail);
+        } catch (Throwable $exception) {
+            Log::error('Apoint verification email could not be delivered.', [
+                'user_id' => $this->id,
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
+        }
     }
 
     public function sendPasswordResetNotification($token): void
