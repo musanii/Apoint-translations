@@ -47,6 +47,11 @@ export default function AdminDashboard({ counts }: Props) {
                             </div>
                         ))}
                     </div>
+                    <section className="mt-5 rounded-2xl border border-[#3A091A]/10 bg-white p-6">
+                        <h2 className="font-serif text-2xl">Order fulfilment</h2>
+                        <p className="mt-2 text-sm leading-6 text-[#705B60]">Review accepted orders, begin processing, and mark completed work. Customers receive updates when their order changes.</p>
+                        <a href="/admin/orders" className="mt-5 inline-flex rounded-full bg-[#3A091A] px-5 py-3 text-sm font-semibold text-white hover:bg-[#4A1525]">Manage orders</a>
+                    </section>
                     <section className="mt-8 rounded-2xl border border-[#D4AF37]/35 bg-white p-6">
                         <h2 className="font-serif text-2xl">Quote requests</h2>
                         <p className="mt-2 text-sm leading-6 text-[#705B60]">Review customer submissions, securely access their documents, and prepare or publish quotations.</p>
