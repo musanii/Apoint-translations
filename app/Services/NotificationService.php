@@ -1,10 +1,10 @@
 <?php
 
-namespace App\\Services;
+namespace App\Services;
 
-use App\\Models\\User;
-use App\\Notifications\\ApointNotification;
-use Illuminate\\Support\\Facades\\DB;
+use App\Models\User;
+use App\Notifications\ApointNotification;
+use Illuminate\Support\Facades\DB;
 
 class NotificationService
 {
