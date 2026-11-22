@@ -10,7 +10,7 @@ it('renders the branded Apoint email with the intended action link', function ()
     $mail = new ApointNotificationMail(
         recipientName: 'Test Customer',
         title: 'Your quotation is ready',
-        message: 'Please review your quotation.',
+        bodyText: 'Please review your quotation.',
         actionUrl: $url,
         category: 'quote',
     );
