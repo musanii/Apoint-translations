@@ -101,7 +101,7 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
                         )}
                         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#3A091A]/10 px-5 py-4 text-sm text-[#705B60]">
                             <span>Showing {orders.from ?? 0}–{orders.to ?? 0} of {orders.total}</span>
-                            <div className="flex flex-wrap gap-1">{orders.links.map((link, index) => <button key={index} disabled={!link.url} onClick={() => link.url && router.visit(link.url)} {...{}} className={`rounded-lg px-3 py-1.5 ${link.active ? 'bg-[#3A091A] text-white' : 'bg-[#FAF6F0]'} disabled:opacity-40`} />)}</div>
+                            <div className="flex flex-wrap gap-1">{orders.links.map((link, index) => <button key={index} disabled={!link.url} onClick={() => link.url && router.visit(link.url)}  className={`rounded-lg px-3 py-1.5 ${link.active ? 'bg-[#3A091A] text-white' : 'bg-[#FAF6F0]'} disabled:opacity-40`}>{link.label.replace('&laquo;', '«').replace('&raquo;', '»')}</button>)}</div>
                         </div>
                     </section>
                 </div>
