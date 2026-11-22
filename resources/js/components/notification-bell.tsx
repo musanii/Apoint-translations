@@ -43,7 +43,7 @@ export function NotificationBell() {
                     <div className="max-h-96 overflow-y-auto">
                         {items.map((item) => (
                             <DropdownMenuItem key={item.id} asChild className="cursor-pointer items-start whitespace-normal px-4 py-3 focus:bg-[#FAF6F0]">
-                                <Link href={`/notifications/${item.id}/read`} className="flex w-full gap-3">
+                                <Link href={`/notifications/${item.id}/read`} method="post" as="button" className="flex w-full gap-3 text-left">
                                     <span className={`mt-1.5 size-2 shrink-0 rounded-full ${item.read_at ? 'bg-transparent' : 'bg-[#D4AF37]'}`} />
                                     <span className="min-w-0 flex-1">
                                         <span className="block text-sm font-medium text-[#3A091A]">{item.data.title ?? 'Apoint update'}</span>
