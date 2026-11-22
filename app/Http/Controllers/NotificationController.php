@@ -43,7 +43,8 @@ class NotificationController extends Controller
             && is_string($host)
             && hash_equals($request->getHost(), $host)
             && ($port === null || $port === $request->getPort())
-            && ! isset($parts['user'], $parts['pass'])
+            && ! array_key_exists('user', $parts)
+            && ! array_key_exists('pass', $parts)
             && in_array($parts['scheme'] ?? null, ['http', 'https'], true);
     }
 }
