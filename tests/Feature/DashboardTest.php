@@ -115,3 +115,20 @@ test('an authenticated but unverified customer can access the dashboard', functi
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page->component('dashboard'));
 });
+
+test('administrators are redirected to their dedicated dashboard', function () {
+    $admin = User::factory()->create(['is_admin' => true]);
+
+    $this->actingAs($admin)
+        ->get(route('dashboard'))
+        ->assertRedirect(route('admin.dashboard'));
+
+    $this->actingAs($admin)
+        ->get(route('admin.dashboard'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('admin/dashboard')
+            ->where('counts.totalRequests', 0)
+            ->where('counts.orders', 0)
+        );
+});
