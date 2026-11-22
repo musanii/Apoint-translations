@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\QuoteDraftController;
 use App\Http\Controllers\Admin\QuoteRequestController as AdminQuoteRequestController;
 use App\Http\Controllers\Admin\QuoteRequestDocumentController as AdminQuoteRequestDocumentController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CustomerQuoteController;
@@ -42,6 +43,10 @@ Route::middleware('auth')->get('/dashboard', DashboardController::class)->name('
 Route::middleware(['auth', 'can:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', AdminDashboardController::class)->name('dashboard');
     Route::get('/quote-requests', [AdminQuoteRequestController::class, 'index'])->name('quote-requests.index');
+    Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::post('/orders/{order}/start-processing', [AdminOrderController::class, 'startProcessing'])->name('orders.start-processing');
+    Route::post('/orders/{order}/complete', [AdminOrderController::class, 'complete'])->name('orders.complete');
+    Route::post('/orders/{order}/cancel', [AdminOrderController::class, 'cancel'])->name('orders.cancel');
     Route::get('/quote-requests/{quoteRequest}', [AdminQuoteRequestController::class, 'show'])->name('quote-requests.show');
     Route::post('/quote-requests/{quoteRequest}/review', [AdminQuoteRequestController::class, 'markUnderReview'])->name('quote-requests.review');
     Route::post('/quote-requests/{quoteRequest}/quotes', [QuoteDraftController::class, 'store'])->name('quote-requests.quotes.store');
