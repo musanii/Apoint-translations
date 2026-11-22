@@ -36,11 +36,15 @@ class NotificationController extends Controller
         }
 
         $parts = parse_url($url);
+
+        if (! is_array($parts)) {
+            return false;
+        }
+
         $host = $parts['host'] ?? null;
         $port = $parts['port'] ?? null;
 
-        return is_array($parts)
-            && is_string($host)
+        return is_string($host)
             && hash_equals($request->getHost(), $host)
             && ($port === null || $port === $request->getPort())
             && ! array_key_exists('user', $parts)
