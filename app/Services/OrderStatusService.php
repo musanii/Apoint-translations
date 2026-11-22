@@ -89,13 +89,10 @@ class OrderStatusService
 
             if (
                 $order->status !== Order::STATUS_PENDING_PAYMENT ||
-                ! in_array($order->payment_status, [
-                    Order::PAYMENT_STATUS_UNPAID,
-                    Order::PAYMENT_STATUS_FAILED,
-                ], true)
+                $order->payment_status !== Order::PAYMENT_STATUS_UNPAID
             ) {
                 throw new InvalidArgumentException(
-                    'Only orders awaiting payment with no successful or pending payment can be cancelled. Paid orders must go through the refund process.'
+                    'Only orders that have not had a payment attempt initiated can be cancelled. Orders with payment activity must be reconciled first.'
                 );
             }
 
