@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\QuoteRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -32,7 +33,11 @@ class QuoteRequestController extends Controller
     public function markUnderReview(QuoteRequest $quoteRequest, \App\Services\NotificationService $notifications): RedirectResponse {
         if ($quoteRequest->status === 'pending') {
             $quoteRequest->update(['status' => 'under_review']);
-            $notifications->user($quoteRequest->user, 'Your request is under review', 'Our team has started reviewing quote request #'.$quoteRequest->id.'.', route('quote-requests.show', $quoteRequest), 'quote_request');
+            $customer = User::query()->find($quoteRequest->getAttribute('user_id'));
+
+            if ($customer instanceof User) {
+                $notifications->user($customer, 'Your request is under review', 'Our team has started reviewing quote request #'.$quoteRequest->id.'.', route('quote-requests.show', $quoteRequest), 'quote_request');
+            }
         }
         return back()->with('success','Request marked as under review.');
     }
