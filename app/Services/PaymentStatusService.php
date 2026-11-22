@@ -46,7 +46,9 @@ class PaymentStatusService
                 ->lockForUpdate()
                 ->findOrFail($payment->order_id);
 
-            if ($order->payment_status !== Order::PAYMENT_STATUS_PAID) {
+            $paymentStatusChanged = $order->payment_status !== Order::PAYMENT_STATUS_PAID;
+
+            if ($paymentStatusChanged) {
                 $order->update([
                     'payment_status' => Order::PAYMENT_STATUS_PAID,
                     'paid_at' => $payment->paid_at,
@@ -57,9 +59,11 @@ class PaymentStatusService
                 $this->orderStatusService->confirm($order);
             }
 
-            $order->loadMissing('user');
-            $this->notifications->user($order->user, 'Payment received', 'We have received payment for order '.$order->reference.'. Your order is confirmed.', route('orders.show', $order), 'payment', true);
-            $this->notifications->admins('Payment received', 'Payment for order '.$order->reference.' has been confirmed.', route('admin.dashboard'), 'payment', true);
+            if ($paymentStatusChanged) {
+                $order->loadMissing('user');
+                $this->notifications->user($order->user, 'Payment received', 'We have received payment for order '.$order->reference.'. Your order is confirmed.', route('orders.show', $order), 'payment', true);
+                $this->notifications->admins('Payment received', 'Payment for order '.$order->reference.' has been confirmed.', route('admin.dashboard'), 'payment', true);
+            }
 
             return $payment->refresh();
         });
@@ -177,7 +181,7 @@ class PaymentStatusService
                     Payment::STATUS_SUCCESSFUL,
                 ])->exists();
 
-            if (! $hasOtherActiveAttempt) {
+            if (! $hasOtherActiveAttempt && $order->payment_status !== Order::PAYMENT_STATUS_FAILED) {
                 $order->update([
                     'payment_status' => Order::PAYMENT_STATUS_FAILED,
                 ]);
