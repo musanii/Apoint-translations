@@ -30,11 +30,7 @@ class OrderController extends Controller
             && $order->currency->code === 'KES'
             && floor((float) $order->total) === (float) $order->total
             && $order->status === Order::STATUS_PENDING_PAYMENT
-            && in_array($order->payment_status, [
-                Order::PAYMENT_STATUS_UNPAID,
-                Order::PAYMENT_STATUS_FAILED,
-                Order::PAYMENT_STATUS_PENDING,
-            ], true);
+            && in_array($order->payment_status, [Order::PAYMENT_STATUS_UNPAID, Order::PAYMENT_STATUS_FAILED, Order::PAYMENT_STATUS_PENDING], true);
 
         return Inertia::render('orders/show', [
             'order' => [
