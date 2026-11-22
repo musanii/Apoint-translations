@@ -25,7 +25,7 @@ export default function ShowOrder({ order, canPayOnline }: { order: Order; canPa
         if (!paymentPending) return;
 
         const interval = window.setInterval(() => {
-            router.reload({ only: ['order'], preserveState: true, preserveScroll: true });
+            router.reload({ only: ['order'], preserveScroll: true });
         }, 4000);
 
         return () => window.clearInterval(interval);
