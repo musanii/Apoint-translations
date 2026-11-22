@@ -5,10 +5,12 @@ use App\Mail\ApointNotificationMail;
 use App\Models\Quote;
 use App\Services\NotificationService;
 use App\Services\QuoteStatusService;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Mail;
 
-uses(DatabaseMigrations::class);
+beforeEach(function () {
+    Artisan::call('migrate:fresh', ['--force' => true]);
+});
 
 it('sends the customer a branded email when an admin publishes a quotation', function () {
     Mail::fake();
