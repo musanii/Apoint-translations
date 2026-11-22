@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\\Http\\Controllers;
 
-use App\Models\Order;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
+use App\\Models\\Order;
+use Illuminate\\Http\\Request;
+use Inertia\\Inertia;
+use Inertia\\Response;
 
 class OrderController extends Controller
 {
@@ -21,16 +21,21 @@ class OrderController extends Controller
         ]);
 
         $latestPayment = $order->payments->first();
-        $payHeroConfigured = filled(config('services.payhero.username'))
-            && filled(config('services.payhero.password'))
-            && filled(config('services.payhero.callback_url'))
-            && filled(config('services.payhero.channel_id'));
+        $darajaConfigured = filled(config('services.mpesa.consumer_key'))
+            && filled(config('services.mpesa.consumer_secret'))
+            && filled(config('services.mpesa.shortcode'))
+            && filled(config('services.mpesa.passkey'))
+            && filled(config('services.mpesa.callback_url'));
 
-        $canPayOnline = $payHeroConfigured
+        $canPayOnline = $darajaConfigured
             && $order->currency->code === 'KES'
             && floor((float) $order->total) === (float) $order->total
             && $order->status === Order::STATUS_PENDING_PAYMENT
-            && in_array($order->payment_status, [Order::PAYMENT_STATUS_UNPAID, Order::PAYMENT_STATUS_FAILED, Order::PAYMENT_STATUS_PENDING], true);
+            && in_array($order->payment_status, [
+                Order::PAYMENT_STATUS_UNPAID,
+                Order::PAYMENT_STATUS_FAILED,
+                Order::PAYMENT_STATUS_PENDING,
+            ], true);
 
         return Inertia::render('orders/show', [
             'order' => [
