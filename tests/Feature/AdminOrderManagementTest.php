@@ -46,7 +46,7 @@ it('allows administrators to move a paid order through fulfilment', function () 
     expect($order->fresh()->status)->toBe(Order::STATUS_COMPLETED);
 });
 
-it('allows cancellation only for unpaid or failed orders still awaiting payment', function () {
+it('allows cancellation only before a payment attempt is started', function () {
     $admin = makeOrderAdmin();
     $order = Order::factory()->create([
         'status' => Order::STATUS_PENDING_PAYMENT,
@@ -59,6 +59,20 @@ it('allows cancellation only for unpaid or failed orders still awaiting payment'
         ->assertSessionHas('success');
 
     expect($order->fresh()->status)->toBe(Order::STATUS_CANCELLED);
+});
+
+it('does not cancel an order after a payment attempt has failed', function () {
+    $admin = makeOrderAdmin();
+    $order = Order::factory()->create([
+        'status' => Order::STATUS_PENDING_PAYMENT,
+        'payment_status' => Order::PAYMENT_STATUS_FAILED,
+    ]);
+
+    $this->actingAs($admin)
+        ->post(route('admin.orders.cancel', $order))
+        ->assertSessionHasErrors('order');
+
+    expect($order->fresh()->status)->toBe(Order::STATUS_PENDING_PAYMENT);
 });
 
 it('does not cancel an order while payment is pending', function () {
