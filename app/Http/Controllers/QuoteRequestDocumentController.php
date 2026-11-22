@@ -13,7 +13,7 @@ class QuoteRequestDocumentController extends Controller
         StoreQuoteRequestDocumentRequest $request,
         QuoteRequest $quoteRequest,
         QuoteRequestDocumentService $documentService,
-        \\App\\Services\\NotificationService $notifications
+        \App\Services\NotificationService $notifications
     ): RedirectResponse {
         abort_unless(
             $request->user()->can('view', $quoteRequest),
