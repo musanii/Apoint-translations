@@ -64,12 +64,16 @@
         ],
         "ci:check": [
             "Composer\\Config::disableProcessTimeout",
-            "npm run check",
             "npm run types:check",
-            "@test"
+            "@php artisan config:clear --ansi",
+            "@php artisan test",
+            "@types:check:notifications"
         ],
         "types:check": [
             "phpstan analyse"
+        ],
+        "types:check:notifications": [
+            "phpstan analyse app/Http/Controllers/Admin/OrderController.php app/Http/Controllers/Admin/QuoteDraftController.php app/Http/Controllers/Admin/QuoteRequestController.php app/Http/Controllers/NotificationController.php app/Mail/ApointNotificationMail.php app/Notifications/ApointNotification.php app/Services/NotificationService.php app/Services/OrderStatusService.php app/Services/PaymentStatusService.php"
         ],
         "test": [
             "@php artisan config:clear --ansi",

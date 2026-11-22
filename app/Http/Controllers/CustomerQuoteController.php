@@ -53,7 +53,7 @@ class CustomerQuoteController extends Controller
         ]);
     }
 
-    public function accept(Request $request, Quote $quote, OrderCreationService $orderService): RedirectResponse
+    public function accept(Request $request, Quote $quote, OrderCreationService $orderService, \App\Services\NotificationService $notifications): RedirectResponse
     {
         abort_unless($quote->quoteRequest()->where('user_id', $request->user()->id)->exists(), 404);
 
@@ -67,11 +67,13 @@ class CustomerQuoteController extends Controller
         }
 
         $order = $orderService->createFromAcceptedQuote($quote);
+        $notifications->admins('Quotation accepted', 'A client accepted quotation '.$quote->reference.'. Order '.$order->reference.' is awaiting payment.', route('admin.quote-requests.show', $quote->quoteRequest), 'order', true);
+        $notifications->user($request->user(), 'Quotation accepted', 'Your order '.$order->reference.' has been created and is awaiting payment. You can review the order and payment options from your account.', route('orders.show', $order), 'order', true);
 
         return redirect()->route('orders.show', $order)->with('success', 'Quotation accepted. Your order has been created and is awaiting payment.');
     }
 
-    public function reject(Request $request, Quote $quote, QuoteStatusService $statusService): RedirectResponse
+    public function reject(Request $request, Quote $quote, QuoteStatusService $statusService, \App\Services\NotificationService $notifications): RedirectResponse
     {
         abort_unless($quote->quoteRequest()->where('user_id', $request->user()->id)->exists(), 404);
 
@@ -85,6 +87,8 @@ class CustomerQuoteController extends Controller
         }
 
         $statusService->reject($quote);
+        $notifications->admins('Quotation declined', 'A client declined quotation '.$quote->reference.'.', route('admin.quote-requests.show', $quote->quoteRequest), 'quote', true);
+        $notifications->user($request->user(), 'Quotation declined', 'You declined quotation '.$quote->reference.'. Contact Apoint if you would like to discuss it.', route('dashboard'), 'quote');
 
         return redirect()->route('dashboard')->with('success', 'You declined the quotation. You can contact Apoint if you would like to discuss it.');
     }
