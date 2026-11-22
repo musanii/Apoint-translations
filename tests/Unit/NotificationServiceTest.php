@@ -36,8 +36,10 @@ it('stores an in-app notification and queues its branded email after commit', fu
 it('notifies every administrator without sending admin alerts to customers', function () {
     Mail::fake();
 
-    $firstAdmin = User::factory()->create(['is_admin' => true]);
-    $secondAdmin = User::factory()->create(['is_admin' => true]);
+    $firstAdmin = User::factory()->create();
+    $firstAdmin->forceFill(['is_admin' => true])->save();
+    $secondAdmin = User::factory()->create();
+    $secondAdmin->forceFill(['is_admin' => true])->save();
     $customer = User::factory()->create();
 
     app(NotificationService::class)->admins(
