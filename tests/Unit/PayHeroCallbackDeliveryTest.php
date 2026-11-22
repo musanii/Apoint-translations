@@ -5,10 +5,12 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\User;
 use App\Services\PayHeroCallbackService;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Mail;
 
-uses(DatabaseMigrations::class);
+beforeEach(function () {
+    Artisan::call('migrate:fresh', ['--force' => true]);
+});
 
 function makePayHeroCallbackForDelivery(Payment $payment): array
 {
