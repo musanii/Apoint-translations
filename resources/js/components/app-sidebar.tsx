@@ -20,7 +20,7 @@ export function AppSidebar() {
     const isAdmin = Boolean(auth.user.is_admin);
     const mainNavItems: NavItem[] = isAdmin
         ? [
-              { title: 'Admin dashboard', href: dashboard(), icon: LayoutGrid },
+              { title: 'Admin dashboard', href: '/admin', icon: LayoutGrid },
               { title: 'Quote requests inbox', href: '/admin/quote-requests', icon: ClipboardList },
               { title: 'Orders', href: '/admin/orders', icon: ShoppingBag },
           ]
