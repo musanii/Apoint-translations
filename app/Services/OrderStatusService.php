@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
@@ -50,8 +51,12 @@ class OrderStatusService
             $order->update([
                 'status' => Order::STATUS_IN_PROGRESS,
             ]);
-            $order->loadMissing('user');
-            $this->notifications->user($order->user, 'Work has started', 'Our team has started processing order '.$order->reference.'.', route('orders.show', $order), 'order');
+            $this->notifyCustomer(
+                $order,
+                'Work has started',
+                'Our team has started processing order '.$order->reference.'.',
+                'order',
+            );
 
             return $order;
         });
@@ -73,8 +78,13 @@ class OrderStatusService
             $order->update([
                 'status' => Order::STATUS_COMPLETED,
             ]);
-            $order->loadMissing('user');
-            $this->notifications->user($order->user, 'Your order is complete', 'Order '.$order->reference.' has been completed. Please contact Apoint to arrange collection or delivery.', route('orders.show', $order), 'order', true);
+            $this->notifyCustomer(
+                $order,
+                'Your order is complete',
+                'Order '.$order->reference.' has been completed. Please contact Apoint to arrange collection or delivery.',
+                'order',
+                true,
+            );
 
             return $order;
         });
@@ -99,10 +109,36 @@ class OrderStatusService
             $order->update([
                 'status' => Order::STATUS_CANCELLED,
             ]);
-            $order->loadMissing('user');
-            $this->notifications->user($order->user, 'Your order was cancelled', 'Order '.$order->reference.' has been cancelled. Please contact Apoint if you need assistance.', route('orders.show', $order), 'order', true);
+            $this->notifyCustomer(
+                $order,
+                'Your order was cancelled',
+                'Order '.$order->reference.' has been cancelled. Please contact Apoint if you need assistance.',
+                'order',
+                true,
+            );
 
             return $order;
         });
+    }
+
+    private function notifyCustomer(
+        Order $order,
+        string $title,
+        string $message,
+        string $category,
+        bool $email = false,
+    ): void {
+        $user = User::query()->find($order->getAttribute('user_id'));
+
+        if ($user instanceof User) {
+            $this->notifications->user(
+                $user,
+                $title,
+                $message,
+                route('orders.show', $order),
+                $category,
+                $email,
+            );
+        }
     }
 }
