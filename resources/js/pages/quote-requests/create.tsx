@@ -142,12 +142,17 @@ export default function CreateQuoteRequest({
                             </span>
                         </a>
 
-                        <a
-                            href="/"
-                            className="text-sm font-medium text-[#705B60] transition hover:text-[#3A091A]"
-                        >
-                            Back to website
-                        </a>
+                        <div className="flex items-center gap-4">
+                            <a href="/dashboard" className="text-sm font-semibold text-[#3A091A] transition hover:text-[#8B5362]">
+                                ← My dashboard
+                            </a>
+                            <a
+                                href="/"
+                                className="text-sm font-medium text-[#705B60] transition hover:text-[#3A091A]"
+                            >
+                                Back to website
+                            </a>
+                        </div>
                     </div>
                 </header>
 

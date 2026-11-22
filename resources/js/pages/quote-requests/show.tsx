@@ -1,4 +1,4 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import InputError from '@/components/input-error';
 
@@ -83,12 +83,14 @@ export default function ShowQuoteRequest({ quoteRequest }: Props) {
                                 </span>
                             </span>
                         </a>
-                        <a
-                            href="/"
-                            className="text-sm font-medium text-[#705B60] hover:text-[#3A091A]"
-                        >
-                            Back to website
-                        </a>
+                        <div className="flex items-center gap-4">
+                            <Link href="/dashboard" className="text-sm font-semibold text-[#3A091A] hover:text-[#8B5362]">
+                                My dashboard
+                            </Link>
+                            <a href="/" className="text-sm font-medium text-[#705B60] hover:text-[#3A091A]">
+                                Back to website
+                            </a>
+                        </div>
                     </div>
                 </header>
 
@@ -123,6 +125,11 @@ export default function ShowQuoteRequest({ quoteRequest }: Props) {
                                 </p>
                             )}
 
+                            <div className="mb-6 rounded-2xl border border-[#D4AF37]/45 bg-[#FAF6F0] p-5">
+                                <p className="text-xs font-semibold tracking-[.2em] text-[#9B6877] uppercase">Your reference number</p>
+                                <p className="mt-2 font-serif text-2xl font-semibold">APT-RQ-{quoteRequest.id.toString().padStart(6, '0')}</p>
+                                <p className="mt-1 text-sm text-[#705B60]">Keep this reference when contacting Apoint about your request.</p>
+                            </div>
                             <div className="mt-8 grid gap-5 rounded-2xl bg-[#FAF6F0] p-5 sm:grid-cols-2">
                                 <div>
                                     <p className="text-xs font-semibold tracking-wider text-[#9B6877] uppercase">
@@ -265,6 +272,16 @@ export default function ShowQuoteRequest({ quoteRequest }: Props) {
                                     </div>
                                 )}
                             </section>
+
+                            <div className="mt-8 flex flex-col gap-3 rounded-2xl border border-[#D4AF37]/35 bg-[#FAF6F0] p-5 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <h2 className="font-serif text-xl font-semibold">You're all set for now</h2>
+                                    <p className="mt-1 text-sm leading-6 text-[#705B60]">Your request and uploaded files are saved. Return to your dashboard any time to follow its progress and review your quotation.</p>
+                                </div>
+                                <Link href="/dashboard" className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#3A091A] px-5 py-3 text-sm font-semibold text-white hover:bg-[#4A1525]">
+                                    Go to my dashboard
+                                </Link>
+                            </div>
 
                             {quoteRequest.instructions && (
                                 <section className="mt-8 border-t border-[#3A091A]/10 pt-7">
