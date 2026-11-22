@@ -53,7 +53,7 @@ class CustomerQuoteController extends Controller
         ]);
     }
 
-    public function accept(Request $request, Quote $quote, OrderCreationService $orderService): RedirectResponse
+    public function accept(Request $request, Quote $quote, OrderCreationService $orderService, \\App\\Services\\NotificationService $notifications): RedirectResponse
     {
         abort_unless($quote->quoteRequest()->where('user_id', $request->user()->id)->exists(), 404);
 
@@ -67,6 +67,8 @@ class CustomerQuoteController extends Controller
         }
 
         $order = $orderService->createFromAcceptedQuote($quote);
+        $notifications->admins('Quotation accepted', 'A client accepted quotation '.$quote->reference.'. Order '.$order->reference.' is awaiting payment.', route('admin.quote-requests.show', $quote->quoteRequest), 'order', true);
+        $notifications->user($request->user(), 'Quotation accepted', 'Your order '.$order->reference.' has been created and is awaiting payment.', route('orders.show', $order), 'order');
 
         return redirect()->route('orders.show', $order)->with('success', 'Quotation accepted. Your order has been created and is awaiting payment.');
     }
