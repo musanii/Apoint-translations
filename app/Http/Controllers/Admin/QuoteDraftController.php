@@ -40,7 +40,7 @@ class QuoteDraftController extends Controller
         return back()->with('success', 'Quotation draft saved. It has not been sent to the customer.');
     }
 
-    public function send(Quote $quote, QuoteStatusService $service, \\App\\Services\\NotificationService $notifications): RedirectResponse
+    public function send(Quote $quote, QuoteStatusService $service, \App\Services\NotificationService $notifications): RedirectResponse
     {
         $quote->load('quoteRequest');
 
