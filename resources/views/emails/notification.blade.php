@@ -17,7 +17,7 @@
             <td style="padding:36px;">
                 <p style="margin:0 0 18px;color:#6c5961;font-size:14px;">Hello {{ $recipientName }},</p>
                 <h1 style="margin:0 0 16px;color:#3A091A;font-family:Georgia,serif;font-size:25px;line-height:1.3;font-weight:normal;">{{ $title }}</h1>
-                <p style="margin:0 0 28px;color:#55454b;font-size:15px;line-height:1.7;">{{ $message }}</p>
+                <p style="margin:0 0 28px;color:#55454b;font-size:15px;line-height:1.7;">{{ $bodyText }}</p>
                 <a href="{{ $actionUrl }}" style="display:inline-block;padding:13px 23px;background:#3A091A;color:#ffffff;text-decoration:none;border-radius:7px;font-size:14px;font-weight:bold;">View details</a>
                 <p style="margin:30px 0 0;color:#897b80;font-size:12px;line-height:1.6;">If the button does not work, copy and paste this link into your browser:<br><a href="{{ $actionUrl }}" style="color:#7a344c;word-break:break-all;">{{ $actionUrl }}</a></p>
             </td>
