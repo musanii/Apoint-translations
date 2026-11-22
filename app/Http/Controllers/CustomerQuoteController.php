@@ -68,7 +68,7 @@ class CustomerQuoteController extends Controller
 
         $order = $orderService->createFromAcceptedQuote($quote);
         $notifications->admins('Quotation accepted', 'A client accepted quotation '.$quote->reference.'. Order '.$order->reference.' is awaiting payment.', route('admin.quote-requests.show', $quote->quoteRequest), 'order', true);
-        $notifications->user($request->user(), 'Quotation accepted', 'Your order '.$order->reference.' has been created and is awaiting payment.', route('orders.show', $order), 'order');
+        $notifications->user($request->user(), 'Quotation accepted', 'Your order '.$order->reference.' has been created and is awaiting payment. You can review the order and payment options from your account.', route('orders.show', $order), 'order', true);
 
         return redirect()->route('orders.show', $order)->with('success', 'Quotation accepted. Your order has been created and is awaiting payment.');
     }
