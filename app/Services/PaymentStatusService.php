@@ -10,7 +10,8 @@ use InvalidArgumentException;
 class PaymentStatusService
 {
     public function __construct(
-        private readonly OrderStatusService $orderStatusService
+        private readonly OrderStatusService $orderStatusService,
+        private readonly NotificationService $notifications
     ) {}
 
     public function markSuccessful(Payment $payment, ?string $providerReference): Payment
@@ -55,6 +56,10 @@ class PaymentStatusService
             if ($order->status === Order::STATUS_PENDING_PAYMENT) {
                 $this->orderStatusService->confirm($order);
             }
+
+            $order->loadMissing('user');
+            $this->notifications->user($order->user, 'Payment received', 'We have received payment for order '.$order->reference.'. Your order is confirmed.', route('orders.show', $order), 'payment', true);
+            $this->notifications->admins('Payment received', 'Payment for order '.$order->reference.' has been confirmed.', route('admin.dashboard'), 'payment', true);
 
             return $payment->refresh();
         });
@@ -173,6 +178,9 @@ class PaymentStatusService
                 $order->update([
                     'payment_status' => Order::PAYMENT_STATUS_FAILED,
                 ]);
+                $order->loadMissing('user');
+                $this->notifications->user($order->user, 'Payment was unsuccessful', 'We could not confirm payment for order '.$order->reference.'. Please review the payment details or contact Apoint for assistance.', route('orders.show', $order), 'payment', true);
+                $this->notifications->admins('Payment failed', 'A payment attempt for order '.$order->reference.' failed.', route('admin.dashboard'), 'payment', true);
             }
 
             return $payment->refresh();
