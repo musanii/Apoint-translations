@@ -15,7 +15,7 @@ export default function ShowOrder({ order, canPayOnline }: { order: Order; canPa
     const { data, setData, post, processing, errors } = useForm({ phone_number: '' });
     const page = usePage();
     const flash = (page.props as { flash?: { success?: string; error?: string } }).flash;
-    const money = (value: string) => order.currency.symbol + ' ' + Number(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const money = (value: string) => order.currency.code + ' ' + Number(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const rows: [string, string][] = [['Subtotal', order.subtotal], ['Express service', order.express_fee], ['Certification', order.certification_fee], ['Courier / delivery', order.courier_fee]];
 
     function pay(event: FormEvent<HTMLFormElement>) {
