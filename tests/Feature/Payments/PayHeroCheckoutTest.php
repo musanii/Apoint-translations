@@ -1,11 +1,11 @@
 <?php
 
-use App\\Models\\Order;
-use App\\Models\\Payment;
-use App\\Models\\User;
-use Illuminate\\Support\\Facades\\Cache;
-use Illuminate\\Support\\Facades\\Http;
-use Inertia\\Testing\\AssertableInertia as Assert;
+use App\Models\Order;
+use App\Models\Payment;
+use App\Models\User;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Inertia\Testing\AssertableInertia as Assert;
 
 function configureDarajaCheckout(): void
 {
