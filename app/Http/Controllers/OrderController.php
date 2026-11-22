@@ -55,6 +55,7 @@ class OrderController extends Controller
                 'latest_payment' => $latestPayment ? [
                     'status' => $latestPayment->status,
                     'provider_checkout_request_id' => $latestPayment->provider_checkout_request_id,
+                    'provider_initiation_started_at' => $latestPayment->provider_initiation_started_at?->toIso8601String(),
                     'failure_reason' => $latestPayment->failure_reason,
                 ] : null,
             ],
