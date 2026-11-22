@@ -1,4 +1,5 @@
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
 import { Bell, CheckCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -15,6 +16,14 @@ export function NotificationBell() {
     const { notifications } = usePage<SharedProps>().props;
     const items = notifications?.items ?? [];
     const unreadCount = notifications?.unreadCount ?? 0;
+
+    useEffect(() => {
+        const interval = window.setInterval(() => {
+            router.reload({ only: ['notifications'], preserveState: true, preserveScroll: true });
+        }, 30000);
+
+        return () => window.clearInterval(interval);
+    }, []);
 
     return (
         <DropdownMenu>
