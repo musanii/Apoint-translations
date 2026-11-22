@@ -5,13 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\OrderStatusService;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 use InvalidArgumentException;
+use stdClass;
 
 class OrderController extends Controller
 {
@@ -24,42 +27,54 @@ class OrderController extends Controller
         $status = $filters['status'] ?? '';
         $search = trim($filters['search'] ?? '');
 
-        $orders = Order::query()
-            ->with([
-                'user:id,name,email',
-                'currency:id,code',
-                'quote.quoteRequest.service:id,name',
+        $orders = DB::table('orders')
+            ->join('users', 'orders.user_id', '=', 'users.id')
+            ->join('quotes', 'orders.quote_id', '=', 'quotes.id')
+            ->join('quote_requests', 'quotes.quote_request_id', '=', 'quote_requests.id')
+            ->join('services', 'quote_requests.service_id', '=', 'services.id')
+            ->join('currencies', 'orders.currency_id', '=', 'currencies.id')
+            ->select([
+                'orders.id',
+                'orders.reference',
+                'users.name as customer',
+                'users.email',
+                'services.name as service',
+                'orders.status',
+                'orders.payment_status',
+                'orders.total',
+                'currencies.code as currency',
+                'orders.created_at',
             ])
-            ->when(in_array($status, [
-                Order::STATUS_PENDING_PAYMENT,
-                Order::STATUS_CONFIRMED,
-                Order::STATUS_IN_PROGRESS,
-                Order::STATUS_COMPLETED,
-                Order::STATUS_CANCELLED,
-            ], true), fn (Builder $query) => $query->where('status', $status))
+            ->when(
+                $status !== '',
+                fn (Builder $query) => $query->where('orders.status', $status),
+            )
             ->when($search !== '', function (Builder $query) use ($search): void {
                 $query->where(function (Builder $nested) use ($search): void {
-                    $nested->where('reference', 'like', '%'.$search.'%')
-                        ->orWhereHas('user', fn (Builder $user) => $user
-                            ->where('name', 'like', '%'.$search.'%')
-                            ->orWhere('email', 'like', '%'.$search.'%'));
+                    $nested->where('orders.reference', 'like', '%'.$search.'%')
+                        ->orWhere('users.name', 'like', '%'.$search.'%')
+                        ->orWhere('users.email', 'like', '%'.$search.'%');
                 });
             })
-            ->latest()
+            ->orderByDesc('orders.created_at')
             ->paginate(15)
             ->withQueryString()
-            ->through(fn (Order $order): array => [
-                'id' => $order->id,
-                'reference' => $order->reference,
-                'customer' => $order->user->name,
-                'email' => $order->user->email,
-                'service' => $order->quote->quoteRequest->service->name,
-                'status' => $order->status,
-                'payment_status' => $order->payment_status,
-                'total' => $order->total,
-                'currency' => $order->currency->code,
-                'created_at' => $order->created_at?->toIso8601String(),
-            ]);
+            ->through(function (stdClass $order): array {
+                return [
+                    'id' => (int) $order->id,
+                    'reference' => (string) $order->reference,
+                    'customer' => (string) $order->customer,
+                    'email' => (string) $order->email,
+                    'service' => (string) $order->service,
+                    'status' => (string) $order->status,
+                    'payment_status' => (string) $order->payment_status,
+                    'total' => (string) $order->total,
+                    'currency' => (string) $order->currency,
+                    'created_at' => is_string($order->created_at)
+                        ? Carbon::parse($order->created_at)->toIso8601String()
+                        : null,
+                ];
+            });
 
         return Inertia::render('admin/orders/index', [
             'orders' => $orders,
