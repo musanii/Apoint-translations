@@ -17,8 +17,12 @@ class OrderController extends Controller
 {
     public function index(Request $request): Response
     {
-        $status = $request->query('status');
-        $search = trim((string) $request->query('search', ''));
+        $filters = $request->validate([
+            'status' => ['nullable', 'string', 'in:pending_payment,confirmed,in_progress,completed,cancelled'],
+            'search' => ['nullable', 'string', 'max:120'],
+        ]);
+        $status = $filters['status'] ?? '';
+        $search = trim($filters['search'] ?? '');
 
         $orders = Order::query()
             ->with([
@@ -60,7 +64,7 @@ class OrderController extends Controller
         return Inertia::render('admin/orders/index', [
             'orders' => $orders,
             'filters' => [
-                'status' => is_string($status) ? $status : '',
+                'status' => $status,
                 'search' => $search,
             ],
         ]);
