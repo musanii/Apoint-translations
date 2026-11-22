@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
-use App\Models\Quote;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -13,12 +10,16 @@ class DashboardController extends Controller
 {
     public function __invoke(Request $request): Response
     {
+        if ($request->user()->is_admin) {
+            return Inertia::render('admin/dashboard');
+        }
+
         $user = $request->user();
         $visibleQuoteStatuses = [
-            Quote::STATUS_SENT,
-            Quote::STATUS_ACCEPTED,
-            Quote::STATUS_REJECTED,
-            Quote::STATUS_EXPIRED,
+            \App\Models\Quote::STATUS_SENT,
+            \App\Models\Quote::STATUS_ACCEPTED,
+            \App\Models\Quote::STATUS_REJECTED,
+            \App\Models\Quote::STATUS_EXPIRED,
         ];
 
         $recentRequests = $user->quoteRequests()
@@ -48,17 +49,17 @@ class DashboardController extends Controller
             'summary' => [
                 'requests' => $user->quoteRequests()->count(),
                 'quotesAwaitingDecision' => $user->quoteRequests()
-                    ->whereHas('quotes', fn (Builder $query) => $query->where('status', Quote::STATUS_SENT))
+                    ->whereHas('quotes', fn ($query) => $query->where('status', \App\Models\Quote::STATUS_SENT))
                     ->count(),
                 'activeOrders' => $user->orders()
                     ->whereIn('status', [
-                        Order::STATUS_PENDING_PAYMENT,
-                        Order::STATUS_CONFIRMED,
-                        Order::STATUS_IN_PROGRESS,
+                        \App\Models\Order::STATUS_PENDING_PAYMENT,
+                        \App\Models\Order::STATUS_CONFIRMED,
+                        \App\Models\Order::STATUS_IN_PROGRESS,
                     ])
                     ->count(),
                 'completedOrders' => $user->orders()
-                    ->where('status', Order::STATUS_COMPLETED)
+                    ->where('status', \App\Models\Order::STATUS_COMPLETED)
                     ->count(),
             ],
             'recentRequests' => $recentRequests,
