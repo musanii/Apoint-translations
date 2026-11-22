@@ -17,7 +17,7 @@ export default function ShowQuote({ quote }: { quote: Quote }) {
         event.preventDefault();
         router.post('/quotes/' + quote.id + '/' + action);
     }
-    const money = (value: string) => quote.currency.symbol + ' ' + Number(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const money = (value: string) => quote.currency.code + ' ' + Number(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     return <>
         <Head title={'Quotation ' + quote.reference} />
