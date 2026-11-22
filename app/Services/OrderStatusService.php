@@ -87,12 +87,15 @@ class OrderStatusService
                 ->lockForUpdate()
                 ->findOrFail($order->id);
 
-            if (! in_array($order->status, [
-                Order::STATUS_PENDING_PAYMENT,
-                Order::STATUS_CONFIRMED,
-            ], true)) {
+            if (
+                $order->status !== Order::STATUS_PENDING_PAYMENT ||
+                ! in_array($order->payment_status, [
+                    Order::PAYMENT_STATUS_UNPAID,
+                    Order::PAYMENT_STATUS_FAILED,
+                ], true)
+            ) {
                 throw new InvalidArgumentException(
-                    'Only orders awaiting payment or confirmed orders can be cancelled.'
+                    'Only orders awaiting payment with no successful or pending payment can be cancelled. Paid orders must go through the refund process.'
                 );
             }
 
