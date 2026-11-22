@@ -1,11 +1,11 @@
 <?php
 
-namespace App\\Services;
+namespace App\Services;
 
-use App\\Models\\Payment;
-use Illuminate\\Http\\Client\\RequestException;
-use Illuminate\\Support\\Facades\\DB;
-use Illuminate\\Support\\Facades\\Http;
+use App\Models\Payment;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -29,7 +29,7 @@ class MpesaStkPushService
             throw new InvalidArgumentException('M-Pesa payments must use whole-number amounts.');
         }
 
-        if (! preg_match('/^254[17]\\d{8}$/', $phoneNumber)) {
+        if (! preg_match('/^254[17]\d{8}$/', $phoneNumber)) {
             throw new InvalidArgumentException('The phone number must use the format 2547XXXXXXXX or 2541XXXXXXXX.');
         }
 
