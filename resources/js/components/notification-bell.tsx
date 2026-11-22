@@ -9,7 +9,7 @@ type NotificationItem = {
     read_at: string | null;
     created_at: string;
 };
-type SharedProps = { notifications?: { items: NotificationItem[]; unreadCount: number } };
+type SharedProps = Record<string, unknown> & { notifications?: { items: NotificationItem[]; unreadCount: number } };
 
 export function NotificationBell() {
     const { notifications } = usePage<SharedProps>().props;
