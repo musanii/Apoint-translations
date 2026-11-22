@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
+use DateTimeInterface;
 use App\Models\Quote;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class QuoteStatusService
 {
-    public function send(Quote $quote, ?Carbon $validUntil = null): Quote
+    public function send(Quote $quote, ?DateTimeInterface $validUntil = null): Quote
     {
         return DB::transaction(function () use ($quote, $validUntil) {
             $quote = Quote::query()->lockForUpdate()->findOrFail($quote->id);
