@@ -35,10 +35,15 @@ class NotificationController extends Controller
             return true;
         }
 
-        $host = parse_url($url, PHP_URL_HOST);
+        $parts = parse_url($url);
+        $host = $parts['host'] ?? null;
+        $port = $parts['port'] ?? null;
 
-        return is_string($host)
+        return is_array($parts)
+            && is_string($host)
             && hash_equals($request->getHost(), $host)
-            && in_array(parse_url($url, PHP_URL_SCHEME), ['http', 'https'], true);
+            && ($port === null || $port === $request->getPort())
+            && ! isset($parts['user'], $parts['pass'])
+            && in_array($parts['scheme'] ?? null, ['http', 'https'], true);
     }
 }
