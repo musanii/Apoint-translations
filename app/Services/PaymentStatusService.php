@@ -186,8 +186,8 @@ class PaymentStatusService
                     'payment_status' => Order::PAYMENT_STATUS_FAILED,
                 ]);
                 $order->loadMissing('user');
-                $this->notifications->user($order->user, 'Payment was unsuccessful', 'We could not confirm payment for order '.$order->reference.'. Please review the payment details or contact Apoint for assistance.', route('orders.show', $order), 'payment', true);
-                $this->notifications->admins('Payment failed', 'A payment attempt for order '.$order->reference.' failed.', route('admin.orders.index', ['search' => $order->reference]), 'payment', true);
+                $this->notifications->user($order->user, 'Payment was unsuccessful', 'We could not confirm payment for order '.$order->reference.'. Please review the payment details or contact Apoint for assistance.', route('orders.show', $order), 'payment');
+                $this->notifications->admins('Payment failed', 'A payment attempt for order '.$order->reference.' failed.', route('admin.orders.index', ['search' => $order->reference]), 'payment');
             }
 
             return $payment->refresh();
