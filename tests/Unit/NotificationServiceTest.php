@@ -3,10 +3,39 @@
 use App\Mail\ApointNotificationMail;
 use App\Models\User;
 use App\Services\NotificationService;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Mail;
 
-uses(DatabaseMigrations::class);
+beforeEach(function () {
+    Schema::dropIfExists('notifications');
+    Schema::dropIfExists('users');
+
+    Schema::create('users', function (Blueprint $table): void {
+        $table->id();
+        $table->string('name');
+        $table->string('email')->unique();
+        $table->timestamp('email_verified_at')->nullable();
+        $table->string('password');
+        $table->boolean('is_admin')->default(false);
+        $table->rememberToken();
+        $table->timestamps();
+    });
+
+    Schema::create('notifications', function (Blueprint $table): void {
+        $table->uuid('id')->primary();
+        $table->string('type');
+        $table->morphs('notifiable');
+        $table->text('data');
+        $table->timestamp('read_at')->nullable();
+        $table->timestamps();
+    });
+});
+
+afterEach(function () {
+    Schema::dropIfExists('notifications');
+    Schema::dropIfExists('users');
+});
 
 it('stores an in-app notification and queues its branded email after commit', function () {
     Mail::fake();
