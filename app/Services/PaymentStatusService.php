@@ -62,7 +62,7 @@ class PaymentStatusService
             if ($paymentStatusChanged) {
                 $order->loadMissing('user');
                 $this->notifications->user($order->user, 'Payment received', 'We have received payment for order '.$order->reference.'. Your order is confirmed.', route('orders.show', $order), 'payment', true);
-                $this->notifications->admins('Payment received', 'Payment for order '.$order->reference.' has been confirmed.', route('admin.dashboard'), 'payment', true);
+                $this->notifications->admins('Payment received', 'Payment for order '.$order->reference.' has been confirmed.', route('admin.orders.index', ['search' => $order->reference]), 'payment', true);
             }
 
             return $payment->refresh();
@@ -146,7 +146,7 @@ class PaymentStatusService
             $this->orderStatusService->confirm($order);
             $order->loadMissing('user');
             $this->notifications->user($order->user, 'Payment received', 'We have received payment for order '.$order->reference.'. Your order is confirmed.', route('orders.show', $order), 'payment', true);
-            $this->notifications->admins('Payment received', 'Payment for order '.$order->reference.' has been confirmed.', route('admin.dashboard'), 'payment', true);
+            $this->notifications->admins('Payment received', 'Payment for order '.$order->reference.' has been confirmed.', route('admin.orders.index', ['search' => $order->reference]), 'payment', true);
 
             return $payment->refresh();
         });
@@ -187,7 +187,7 @@ class PaymentStatusService
                 ]);
                 $order->loadMissing('user');
                 $this->notifications->user($order->user, 'Payment was unsuccessful', 'We could not confirm payment for order '.$order->reference.'. Please review the payment details or contact Apoint for assistance.', route('orders.show', $order), 'payment', true);
-                $this->notifications->admins('Payment failed', 'A payment attempt for order '.$order->reference.' failed.', route('admin.dashboard'), 'payment', true);
+                $this->notifications->admins('Payment failed', 'A payment attempt for order '.$order->reference.' failed.', route('admin.orders.index', ['search' => $order->reference]), 'payment', true);
             }
 
             return $payment->refresh();
