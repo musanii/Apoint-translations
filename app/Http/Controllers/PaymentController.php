@@ -79,7 +79,7 @@ class PaymentController extends Controller
             ]);
 
             return redirect()->route('orders.show', $order)
-                ->with('error', 'We could not confirm that the payment prompt was sent. Please do not retry immediately; refresh this page or contact Apoint so the payment status can be checked.');
+                ->with('success', 'We are checking your M-Pesa request. Keep this page open and check your phone. Do not start another payment while we verify its status.');
         }
     }
 }
