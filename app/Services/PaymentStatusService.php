@@ -140,6 +140,9 @@ class PaymentStatusService
             ]);
 
             $this->orderStatusService->confirm($order);
+            $order->loadMissing('user');
+            $this->notifications->user($order->user, 'Payment received', 'We have received payment for order '.$order->reference.'. Your order is confirmed.', route('orders.show', $order), 'payment', true);
+            $this->notifications->admins('Payment received', 'Payment for order '.$order->reference.' has been confirmed.', route('admin.dashboard'), 'payment', true);
 
             return $payment->refresh();
         });
