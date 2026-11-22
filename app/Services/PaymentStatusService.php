@@ -4,13 +4,15 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class PaymentStatusService
 {
     public function __construct(
-        private readonly OrderStatusService $orderStatusService
+        private readonly OrderStatusService $orderStatusService,
+        private readonly NotificationService $notifications
     ) {}
 
     public function markSuccessful(Payment $payment, ?string $providerReference): Payment
@@ -45,7 +47,9 @@ class PaymentStatusService
                 ->lockForUpdate()
                 ->findOrFail($payment->order_id);
 
-            if ($order->payment_status !== Order::PAYMENT_STATUS_PAID) {
+            $paymentStatusChanged = $order->payment_status !== Order::PAYMENT_STATUS_PAID;
+
+            if ($paymentStatusChanged) {
                 $order->update([
                     'payment_status' => Order::PAYMENT_STATUS_PAID,
                     'paid_at' => $payment->paid_at,
@@ -54,6 +58,17 @@ class PaymentStatusService
 
             if ($order->status === Order::STATUS_PENDING_PAYMENT) {
                 $this->orderStatusService->confirm($order);
+            }
+
+            if ($paymentStatusChanged) {
+                $this->notifyCustomer(
+                    $order,
+                    'Payment received',
+                    'We have received payment for order '.$order->reference.'. Your order is confirmed.',
+                    'payment',
+                    true,
+                );
+                $this->notifications->admins('Payment received', 'Payment for order '.$order->reference.' has been confirmed.', route('admin.orders.index', ['search' => $order->reference]), 'payment', true);
             }
 
             return $payment->refresh();
@@ -135,6 +150,14 @@ class PaymentStatusService
             ]);
 
             $this->orderStatusService->confirm($order);
+            $this->notifyCustomer(
+                $order,
+                'Payment received',
+                'We have received payment for order '.$order->reference.'. Your order is confirmed.',
+                'payment',
+                true,
+            );
+            $this->notifications->admins('Payment received', 'Payment for order '.$order->reference.' has been confirmed.', route('admin.orders.index', ['search' => $order->reference]), 'payment', true);
 
             return $payment->refresh();
         });
@@ -169,10 +192,17 @@ class PaymentStatusService
                     Payment::STATUS_SUCCESSFUL,
                 ])->exists();
 
-            if (! $hasOtherActiveAttempt) {
+            if (! $hasOtherActiveAttempt && $order->payment_status !== Order::PAYMENT_STATUS_FAILED) {
                 $order->update([
                     'payment_status' => Order::PAYMENT_STATUS_FAILED,
                 ]);
+                $this->notifyCustomer(
+                    $order,
+                    'Payment was unsuccessful',
+                    'We could not confirm payment for order '.$order->reference.'. Please review the payment details or contact Apoint for assistance.',
+                    'payment',
+                );
+                $this->notifications->admins('Payment failed', 'A payment attempt for order '.$order->reference.' failed.', route('admin.orders.index', ['search' => $order->reference]), 'payment');
             }
 
             return $payment->refresh();
@@ -227,5 +257,26 @@ class PaymentStatusService
 
             return $payment->refresh();
         });
+    }
+
+    private function notifyCustomer(
+        Order $order,
+        string $title,
+        string $message,
+        string $category,
+        bool $email = false,
+    ): void {
+        $user = User::query()->find($order->getAttribute('user_id'));
+
+        if ($user instanceof User) {
+            $this->notifications->user(
+                $user,
+                $title,
+                $message,
+                route('orders.show', $order),
+                $category,
+                $email,
+            );
+        }
     }
 }

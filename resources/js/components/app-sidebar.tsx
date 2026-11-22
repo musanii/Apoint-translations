@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { ClipboardList, LayoutGrid, Plus } from 'lucide-react';
+import { ClipboardList, LayoutGrid, Plus, ShoppingBag } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -18,15 +18,41 @@ import type { Auth, NavItem } from '@/types';
 export function AppSidebar() {
     const { auth } = usePage<{ auth: Auth }>().props;
     const isAdmin = Boolean(auth.user.is_admin);
+
     const mainNavItems: NavItem[] = isAdmin
         ? [
-              { title: 'Admin dashboard', href: dashboard(), icon: LayoutGrid },
-              { title: 'Quote requests inbox', href: '/admin/quote-requests', icon: ClipboardList },
+              {
+                  title: 'Admin dashboard',
+                  href: '/admin',
+                  icon: LayoutGrid,
+              },
+              {
+                  title: 'Quote requests inbox',
+                  href: '/admin/quote-requests',
+                  icon: ClipboardList,
+              },
+              {
+                  title: 'Orders',
+                  href: '/admin/orders',
+                  icon: ShoppingBag,
+              },
           ]
         : [
-              { title: 'My dashboard', href: dashboard(), icon: LayoutGrid },
-              { title: 'My requests', href: '/dashboard#requests', icon: ClipboardList },
-              { title: 'New quote request', href: '/quote-requests/create', icon: Plus },
+              {
+                  title: 'My dashboard',
+                  href: dashboard(),
+                  icon: LayoutGrid,
+              },
+              {
+                  title: 'My requests',
+                  href: '/dashboard#requests',
+                  icon: ClipboardList,
+              },
+              {
+                  title: 'New quote request',
+                  href: '/quote-requests/create',
+                  icon: Plus,
+              },
           ];
 
     return (
@@ -35,7 +61,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href={isAdmin ? '/admin' : dashboard()} prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

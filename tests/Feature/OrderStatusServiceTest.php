@@ -63,6 +63,18 @@ it('cancels an order awaiting payment', function () {
         ->toBe(Order::STATUS_CANCELLED);
 });
 
+it('does not allow a paid confirmed order to be cancelled outside the refund process', function () {
+    $order = Order::factory()->create([
+        'status' => Order::STATUS_CONFIRMED,
+        'payment_status' => Order::PAYMENT_STATUS_PAID,
+    ]);
+
+    expect(fn () => app(OrderStatusService::class)->cancel($order))
+        ->toThrow(InvalidArgumentException::class);
+
+    expect($order->fresh()->status)->toBe(Order::STATUS_CONFIRMED);
+});
+
 it('does not allow an order in progress to be cancelled', function () {
     $order = Order::factory()->create([
         'status' => Order::STATUS_IN_PROGRESS,
