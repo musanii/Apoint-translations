@@ -33,7 +33,7 @@ class ApointNotification extends Notification
         ];
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(User $notifiable): MailMessage
     {
         return (new MailMessage)
             ->subject($this->title.' | Apoint Translations')
