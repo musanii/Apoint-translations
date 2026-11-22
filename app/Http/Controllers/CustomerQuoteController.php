@@ -73,7 +73,7 @@ class CustomerQuoteController extends Controller
         return redirect()->route('orders.show', $order)->with('success', 'Quotation accepted. Your order has been created and is awaiting payment.');
     }
 
-    public function reject(Request $request, Quote $quote, QuoteStatusService $statusService): RedirectResponse
+    public function reject(Request $request, Quote $quote, QuoteStatusService $statusService, \\App\\Services\\NotificationService $notifications): RedirectResponse
     {
         abort_unless($quote->quoteRequest()->where('user_id', $request->user()->id)->exists(), 404);
 
@@ -87,6 +87,8 @@ class CustomerQuoteController extends Controller
         }
 
         $statusService->reject($quote);
+        $notifications->admins('Quotation declined', 'A client declined quotation '.$quote->reference.'.', route('admin.quote-requests.show', $quote->quoteRequest), 'quote', true);
+        $notifications->user($request->user(), 'Quotation declined', 'You declined quotation '.$quote->reference.'. Contact Apoint if you would like to discuss it.', route('dashboard'), 'quote');
 
         return redirect()->route('dashboard')->with('success', 'You declined the quotation. You can contact Apoint if you would like to discuss it.');
     }
