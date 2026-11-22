@@ -40,7 +40,7 @@ class QuoteDraftController extends Controller
         return back()->with('success', 'Quotation draft saved. It has not been sent to the customer.');
     }
 
-    public function send(Quote $quote, QuoteStatusService $service): RedirectResponse
+    public function send(Quote $quote, QuoteStatusService $service, \\App\\Services\\NotificationService $notifications): RedirectResponse
     {
         $quote->load('quoteRequest');
 
@@ -50,6 +50,8 @@ class QuoteDraftController extends Controller
 
         $service->send($quote, now()->addDays(7));
         $quote->quoteRequest->update(['status' => 'quote_sent']);
+        $customer = $quote->quoteRequest->user;
+        $notifications->user($customer, 'Your quotation is ready', 'Quotation '.$quote->reference.' is ready for your review. It is valid for 7 days.', route('quotes.show', $quote), 'quote', true);
 
         return back()->with('success', 'Quotation sent to the customer dashboard. It is valid for 7 days.');
     }
