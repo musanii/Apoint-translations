@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
+use App\Notifications\ApointResetPassword;
 use Illuminate\Support\Facades\Notification;
 use Laravel\Fortify\Features;
 
@@ -15,14 +15,14 @@ test('reset password link screen can be rendered', function () {
     $response->assertOk();
 });
 
-test('reset password link can be requested', function () {
+test('reset password link can be requested using the branded notification', function () {
     Notification::fake();
 
     $user = User::factory()->create();
 
     $this->post(route('password.email'), ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class);
+    Notification::assertSentTo($user, ApointResetPassword::class);
 });
 
 test('reset password screen can be rendered', function () {
@@ -32,7 +32,7 @@ test('reset password screen can be rendered', function () {
 
     $this->post(route('password.email'), ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
+    Notification::assertSentTo($user, ApointResetPassword::class, function ($notification) {
         $response = $this->get(route('password.reset', $notification->token));
 
         $response->assertOk();
@@ -41,14 +41,14 @@ test('reset password screen can be rendered', function () {
     });
 });
 
-test('password can be reset with valid token', function () {
+test('password can be reset with a valid token', function () {
     Notification::fake();
 
     $user = User::factory()->create();
 
     $this->post(route('password.email'), ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+    Notification::assertSentTo($user, ApointResetPassword::class, function ($notification) use ($user) {
         $response = $this->post(route('password.update'), [
             'token' => $notification->token,
             'email' => $user->email,
@@ -64,7 +64,7 @@ test('password can be reset with valid token', function () {
     });
 });
 
-test('password cannot be reset with invalid token', function () {
+test('password cannot be reset with an invalid token', function () {
     $user = User::factory()->create();
 
     $response = $this->post(route('password.update'), [
