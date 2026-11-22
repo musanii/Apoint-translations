@@ -1,11 +1,11 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\Order;
-use Illuminate\\Http\\Request;
-use Inertia\\Inertia;
-use Inertia\\Response;
+use App\Models\Order;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class OrderController extends Controller
 {
