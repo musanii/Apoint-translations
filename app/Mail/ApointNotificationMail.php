@@ -19,6 +19,7 @@ class ApointNotificationMail extends Mailable implements ShouldQueue
 
     public int $timeout = 30;
 
+    /** @var list<int> */
     public array $backoff = [60, 300, 900, 3600];
 
     public function __construct(
