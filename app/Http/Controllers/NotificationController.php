@@ -16,7 +16,7 @@ class NotificationController extends Controller
         $url = $record->data['url'] ?? null;
 
         if (! is_string($url) || ! $this->isSafeInternalUrl($request, $url)) {
-            $url = route('dashboard');
+            $url = $request->user()->is_admin ? route('admin.dashboard') : route('dashboard');
         }
 
         return redirect()->to($url);
