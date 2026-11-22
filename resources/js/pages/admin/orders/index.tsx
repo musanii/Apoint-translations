@@ -1,4 +1,4 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Search, ShoppingBag } from 'lucide-react';
@@ -17,6 +17,7 @@ type OrderRow = {
 };
 type Pagination<T> = { data: T[]; links: { url: string | null; label: string; active: boolean }[]; from: number | null; to: number | null; total: number };
 type Props = { orders: Pagination<OrderRow>; filters: { status: string; search: string } };
+type SharedProps = Record<string, unknown> & { errors?: { order?: string }; flash?: { success?: string } };
 
 const statuses = [
     { value: '', label: 'All statuses' },
@@ -30,6 +31,7 @@ const statuses = [
 export default function AdminOrdersIndex({ orders, filters }: Props) {
     const [search, setSearch] = useState(filters.search);
     const [status, setStatus] = useState(filters.status);
+    const { errors, flash } = usePage<SharedProps>().props;
 
     function filter(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -64,6 +66,8 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
                         </select>
                         <button className="rounded-full bg-[#3A091A] px-5 py-2.5 text-sm font-semibold text-white">Apply filters</button>
                     </form>
+                    {flash?.success && <p role="status" className="mt-4 rounded-xl border border-[#9B6877]/25 bg-white px-4 py-3 text-sm">{flash.success}</p>}
+                    {errors?.order && <p role="alert" className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{errors.order}</p>}
                     <section className="mt-5 overflow-hidden rounded-2xl border border-[#3A091A]/10 bg-white">
                         {orders.data.length === 0 ? (
                             <div className="px-6 py-16 text-center">
