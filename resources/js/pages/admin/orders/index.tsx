@@ -1,5 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
+import type { FormEvent } from 'react';
 import { Search, ShoppingBag } from 'lucide-react';
 
 type OrderRow = {
@@ -30,7 +31,7 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
     const [search, setSearch] = useState(filters.search);
     const [status, setStatus] = useState(filters.status);
 
-    function filter(event: React.FormEvent<HTMLFormElement>) {
+    function filter(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         router.get('/admin/orders', { search, status }, { preserveState: true, preserveScroll: true });
     }
@@ -89,7 +90,7 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
                                                     <div className="mt-2 flex flex-wrap gap-2">
                                                         {order.status === 'confirmed' && <button onClick={() => transition(`/admin/orders/${order.id}/start-processing`, 'Start processing this order? The customer will receive an in-app notification.')} className="rounded-full bg-[#3A091A] px-3 py-1.5 text-xs font-semibold text-white">Start work</button>}
                                                         {order.status === 'in_progress' && <button onClick={() => transition(`/admin/orders/${order.id}/complete`, 'Mark this order as completed? The customer will receive an email.')} className="rounded-full bg-[#3A091A] px-3 py-1.5 text-xs font-semibold text-white">Complete</button>}
-                                                        {['pending_payment', 'confirmed'].includes(order.status) && <button onClick={() => transition(`/admin/orders/${order.id}/cancel`, 'Cancel this order? The customer will be notified by email.')} className="rounded-full border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700">Cancel</button>}
+                                                        {order.status === 'pending_payment' && ['unpaid', 'failed'].includes(order.payment_status) && <button onClick={() => transition(`/admin/orders/${order.id}/cancel`, 'Cancel this order? The customer will be notified by email.')} className="rounded-full border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700">Cancel</button>}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -100,7 +101,7 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
                         )}
                         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#3A091A]/10 px-5 py-4 text-sm text-[#705B60]">
                             <span>Showing {orders.from ?? 0}–{orders.to ?? 0} of {orders.total}</span>
-                            <div className="flex flex-wrap gap-1">{orders.links.map((link, index) => <button key={index} disabled={!link.url} onClick={() => link.url && router.visit(link.url)} dangerouslySetInnerHTML={{ __html: link.label }} className={`rounded-lg px-3 py-1.5 ${link.active ? 'bg-[#3A091A] text-white' : 'bg-[#FAF6F0]'} disabled:opacity-40`} />)}</div>
+                            <div className="flex flex-wrap gap-1">{orders.links.map((link, index) => <button key={index} disabled={!link.url} onClick={() => link.url && router.visit(link.url)} {...{}} className={`rounded-lg px-3 py-1.5 ${link.active ? 'bg-[#3A091A] text-white' : 'bg-[#FAF6F0]'} disabled:opacity-40`} />)}</div>
                         </div>
                     </section>
                 </div>
