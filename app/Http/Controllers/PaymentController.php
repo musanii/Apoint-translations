@@ -1,15 +1,15 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\Order;
-use App\\Models\\Payment;
-use App\\Services\\MpesaStkPushService;
-use App\\Services\\PaymentCreationService;
-use Illuminate\\Http\\RedirectResponse;
-use Illuminate\\Http\\Request;
-use Illuminate\\Support\\Facades\\Log;
-use Illuminate\\Validation\\ValidationException;
+use App\Models\Order;
+use App\Models\Payment;
+use App\Services\MpesaStkPushService;
+use App\Services\PaymentCreationService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class PaymentController extends Controller
