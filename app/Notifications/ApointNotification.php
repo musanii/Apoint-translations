@@ -2,9 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class ApointNotification extends Notification
@@ -16,12 +14,11 @@ class ApointNotification extends Notification
         public readonly string $message,
         public readonly string $url,
         public readonly string $category,
-        private readonly bool $sendEmail = false,
     ) {}
 
     public function via(object $notifiable): array
     {
-        return $this->sendEmail ? ['database', 'mail'] : ['database'];
+        return ['database'];
     }
 
     public function toDatabase(object $notifiable): array
@@ -32,18 +29,5 @@ class ApointNotification extends Notification
             'url' => $this->url,
             'category' => $this->category,
         ];
-    }
-
-    public function toMail(User $notifiable): MailMessage
-    {
-        return (new MailMessage)
-            ->subject($this->title.' | Apoint Translations')
-            ->view('emails.notification', [
-                'recipientName' => $notifiable->name ?? 'there',
-                'title' => $this->title,
-                'message' => $this->message,
-                'actionUrl' => $this->url,
-                'category' => $this->category,
-            ]);
     }
 }
