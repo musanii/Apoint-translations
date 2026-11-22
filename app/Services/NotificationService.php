@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Mail\ApointNotificationMail;
 use App\Models\User;
 use App\Notifications\ApointNotification;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -18,7 +19,7 @@ class NotificationService
             User::query()
                 ->where('is_admin', true)
                 ->orderBy('id')
-                ->chunkById(100, function ($admins) use ($title, $message, $url, $category, $email): void {
+                ->chunkById(100, function (Collection $admins) use ($title, $message, $url, $category, $email): void {
                     foreach ($admins as $admin) {
                         $this->deliver($admin, $title, $message, $url, $category, $email);
                     }
