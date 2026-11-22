@@ -57,8 +57,8 @@ const requestStatus: Record<string, { label: string; className: string }> = {
     quote_sent: { label: 'Quotation ready', className: 'bg-[#E7F1E8] text-[#386547]' },
 };
 
-function money(value: string, symbol: string) {
-    return `${symbol} ${Number(value).toLocaleString(undefined, {
+function money(value: string, code: string) {
+    return `${code} ${Number(value).toLocaleString(undefined, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     })}`;
@@ -160,7 +160,7 @@ export default function Dashboard({ summary, recentRequests, recentOrders }: Pro
                                                 {latestQuote && (
                                                     <div className="mt-2 flex flex-wrap items-center gap-3">
                                                         <p className="text-sm font-medium text-[#8B5362]">
-                                                            Quotation {latestQuote.reference}: {money(latestQuote.total, latestQuote.currency.symbol)} · {humanize(latestQuote.status)}
+                                                            Quotation {latestQuote.reference}: {money(latestQuote.total, latestQuote.currency.code)} · {humanize(latestQuote.status)}
                                                         </p>
                                                         {latestQuote.status === 'sent' && (
                                                             <Link href={`/quotes/${latestQuote.id}`} className="text-sm font-semibold text-[#3A091A] underline decoration-[#D4AF37] underline-offset-4">
@@ -205,7 +205,7 @@ export default function Dashboard({ summary, recentRequests, recentOrders }: Pro
                                             <p className="mt-1 text-xs capitalize text-[#806D70]">{order.quote.quote_request.service.name} · {humanize(order.status)} · payment {humanize(order.payment_status)}</p>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <p className="font-semibold tabular-nums">{money(order.total, order.currency.symbol)}</p>
+                                            <p className="font-semibold tabular-nums">{money(order.total, order.currency.code)}</p>
                                             <Link href={`/orders/${order.id}`} className="text-sm font-semibold text-[#3A091A] underline decoration-[#D4AF37] underline-offset-4">View order</Link>
                                         </div>
                                     </div>
