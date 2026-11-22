@@ -14,7 +14,9 @@ export function AppSidebarHeader({
                 <SidebarTrigger className="-ml-1" />
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
-            <div className="ml-auto"><NotificationBell /></div>
+            <div className="ml-auto">
+                <NotificationBell />
+            </div>
         </header>
     );
 }
