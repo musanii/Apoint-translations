@@ -2,13 +2,10 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
 class ApointNotification extends Notification
 {
-    use Queueable;
-
     public function __construct(
         public readonly string $title,
         public readonly string $message,
