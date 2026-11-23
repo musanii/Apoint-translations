@@ -9,6 +9,7 @@ type Order = {
     courier_fee: string; total: string; delivery_method: string;
     currency: { code: string; symbol: string }; service: string;
     quote_reference: string;
+    delivery_documents: { id: number; name: string; size: number; mime_type: string; preview_url: string | null; download_url: string }[];
     latest_payment: { status: string; provider_checkout_request_id: string | null; provider_initiation_started_at: string | null; failure_reason: string | null } | null;
 };
 
