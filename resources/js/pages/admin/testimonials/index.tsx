@@ -1,5 +1,6 @@
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import type { FormEvent } from 'react';
 import { Star, Plus, Pencil, Trash2, MessageSquareQuote } from 'lucide-react';
 
 type Testimonial = {
@@ -22,7 +23,7 @@ export default function AdminTestimonials({ testimonials }: Props) {
         setData(item ? { customer_name: item.customer_name, company: item.company ?? '', service: item.service ?? '', quote: item.quote, rating: String(item.rating ?? 5), is_published: item.is_published, is_featured: item.is_featured, sort_order: String(item.sort_order), avatar: null } : empty);
         setShowForm(true);
     }
-    function submit(event: React.FormEvent) {
+    function submit(event: FormEvent) {
         event.preventDefault();
         const options = { forceFormData: true, preserveScroll: true, onSuccess: () => { setShowForm(false); setEditing(null); reset(); }, onFinish: () => transform(formData => formData) };
         if (editing) {
