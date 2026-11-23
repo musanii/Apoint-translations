@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\QuoteDraftController;
 use App\Http\Controllers\Admin\QuoteRequestController as AdminQuoteRequestController;
 use App\Http\Controllers\Admin\QuoteRequestDocumentController as AdminQuoteRequestDocumentController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CustomerQuoteController;
@@ -16,11 +17,22 @@ use App\Http\Controllers\PayHeroCallbackController;
 use App\Http\Controllers\QuoteRequestController;
 use App\Http\Controllers\QuoteRequestDocumentController;
 use App\Models\Service;
+use App\Models\Testimonial;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', fn () => Inertia::render('welcome', [
     'services' => Service::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'slug', 'description']),
+    'testimonials' => Testimonial::query()->where('is_published', true)->orderByDesc('is_featured')->orderBy('sort_order')->orderByDesc('created_at')->get()->map(fn (Testimonial $testimonial) => [
+        'id' => $testimonial->id,
+        'customer_name' => $testimonial->customer_name,
+        'company' => $testimonial->company,
+        'service' => $testimonial->service,
+        'quote' => $testimonial->quote,
+        'rating' => $testimonial->rating,
+        'avatar_url' => $testimonial->avatar_path ? asset('storage/'.$testimonial->avatar_path) : null,
+        'is_featured' => $testimonial->is_featured,
+    ]),
 ]))->name('home');
 Route::get('/calculator/options', [CalculatorController::class, 'options'])->name('calculator.options');
 Route::get('/calculator/calculate', [CalculatorController::class, 'calculate'])->name('calculator.calculate');
@@ -47,6 +59,10 @@ Route::middleware(['auth', 'can:admin'])->prefix('admin')->name('admin.')->group
     Route::post('/orders/{order}/start-processing', [AdminOrderController::class, 'startProcessing'])->name('orders.start-processing');
     Route::post('/orders/{order}/complete', [AdminOrderController::class, 'complete'])->name('orders.complete');
     Route::post('/orders/{order}/cancel', [AdminOrderController::class, 'cancel'])->name('orders.cancel');
+    Route::get('/testimonials', [AdminTestimonialController::class, 'index'])->name('testimonials.index');
+    Route::post('/testimonials', [AdminTestimonialController::class, 'store'])->name('testimonials.store');
+    Route::put('/testimonials/{testimonial}', [AdminTestimonialController::class, 'update'])->name('testimonials.update');
+    Route::delete('/testimonials/{testimonial}', [AdminTestimonialController::class, 'destroy'])->name('testimonials.destroy');
     Route::get('/quote-requests/{quoteRequest}', [AdminQuoteRequestController::class, 'show'])->name('quote-requests.show');
     Route::post('/quote-requests/{quoteRequest}/review', [AdminQuoteRequestController::class, 'markUnderReview'])->name('quote-requests.review');
     Route::post('/quote-requests/{quoteRequest}/quotes', [QuoteDraftController::class, 'store'])->name('quote-requests.quotes.store');
