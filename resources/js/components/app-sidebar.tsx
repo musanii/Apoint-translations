@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { ClipboardList, LayoutGrid, Plus, ShoppingBag } from 'lucide-react';
+import { ClipboardList, LayoutGrid, MessageSquareQuote, Plus, ShoppingBag } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -21,59 +21,22 @@ export function AppSidebar() {
 
     const mainNavItems: NavItem[] = isAdmin
         ? [
-              {
-                  title: 'Admin dashboard',
-                  href: '/admin',
-                  icon: LayoutGrid,
-              },
-              {
-                  title: 'Quote requests inbox',
-                  href: '/admin/quote-requests',
-                  icon: ClipboardList,
-              },
-              {
-                  title: 'Orders',
-                  href: '/admin/orders',
-                  icon: ShoppingBag,
-              },
+              { title: 'Admin dashboard', href: '/admin', icon: LayoutGrid },
+              { title: 'Quote requests inbox', href: '/admin/quote-requests', icon: ClipboardList },
+              { title: 'Orders', href: '/admin/orders', icon: ShoppingBag },
+              { title: 'Testimonials', href: '/admin/testimonials', icon: MessageSquareQuote },
           ]
         : [
-              {
-                  title: 'My dashboard',
-                  href: dashboard(),
-                  icon: LayoutGrid,
-              },
-              {
-                  title: 'My requests',
-                  href: '/dashboard#requests',
-                  icon: ClipboardList,
-              },
-              {
-                  title: 'New quote request',
-                  href: '/quote-requests/create',
-                  icon: Plus,
-              },
+              { title: 'My dashboard', href: dashboard(), icon: LayoutGrid },
+              { title: 'My requests', href: '/dashboard#requests', icon: ClipboardList },
+              { title: 'New quote request', href: '/quote-requests/create', icon: Plus },
           ];
 
     return (
         <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href={isAdmin ? '/admin' : dashboard()} prefetch>
-                                <AppLogo />
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarHeader>
-            <SidebarContent>
-                <NavMain items={mainNavItems} />
-            </SidebarContent>
-            <SidebarFooter>
-                <NavUser />
-            </SidebarFooter>
+            <SidebarHeader><SidebarMenu><SidebarMenuItem><SidebarMenuButton size="lg" asChild><Link href={isAdmin ? '/admin' : dashboard()} prefetch><AppLogo /></Link></SidebarMenuButton></SidebarMenuItem></SidebarHeader>
+            <SidebarContent><NavMain items={mainNavItems} /></SidebarContent>
+            <SidebarFooter><NavUser /></SidebarFooter>
         </Sidebar>
     );
 }
