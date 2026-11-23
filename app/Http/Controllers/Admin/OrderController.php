@@ -40,6 +40,7 @@ class OrderController extends Controller
                 'users.email',
                 'services.name as service',
                 'orders.status',
+                'orders.delivery_method',
                 'orders.payment_status',
                 'orders.total',
                 'currencies.code as currency',
@@ -67,6 +68,7 @@ class OrderController extends Controller
                     'email' => (string) $order->email,
                     'service' => (string) $order->service,
                     'status' => (string) $order->status,
+                    'delivery_method' => (string) $order->delivery_method,
                     'payment_status' => (string) $order->payment_status,
                     'total' => (string) $order->total,
                     'currency' => (string) $order->currency,
@@ -92,6 +94,10 @@ class OrderController extends Controller
 
     public function complete(Order $order, OrderStatusService $service): RedirectResponse
     {
+        if ($order->delivery_method === 'digital') {
+            throw ValidationException::withMessages(['order' => 'Upload the final documents to complete an online-delivery order.']);
+        }
+
         return $this->transition(fn () => $service->complete($order), 'Order marked as completed.');
     }
 
