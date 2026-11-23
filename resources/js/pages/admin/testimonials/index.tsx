@@ -13,7 +13,8 @@ const empty = { customer_name: '', company: '', service: '', quote: '', rating: 
 export default function AdminTestimonials({ testimonials }: Props) {
     const [editing, setEditing] = useState<Testimonial | null>(null);
     const [showForm, setShowForm] = useState(false);
-    const { data, setData, post, processing, errors, reset } = useForm(empty);
+    const [deleteTarget, setDeleteTarget] = useState<Testimonial | null>(null);
+    const { data, setData, post, transform, processing, errors, reset } = useForm(empty);
     const { flash } = usePage<Props>().props;
 
     function open(item?: Testimonial) {
@@ -24,8 +25,12 @@ export default function AdminTestimonials({ testimonials }: Props) {
     function submit(event: React.FormEvent) {
         event.preventDefault();
         const options = { forceFormData: true, preserveScroll: true, onSuccess: () => { setShowForm(false); setEditing(null); reset(); } };
-        if (editing) post(`/admin/testimonials/${editing.id}?_method=PUT`, options);
-        else post('/admin/testimonials', options);
+        if (editing) {
+            transform((formData) => ({ ...formData, _method: 'put' }));
+            post(`/admin/testimonials/${editing.id}`, options);
+        } else {
+            post('/admin/testimonials', options);
+        }
     }
     return <><Head title="Testimonials · Apoint Admin" /><main className="min-h-screen bg-[#FAF6F0] px-5 py-9 text-[#3A091A]"><div className="mx-auto max-w-7xl">
         <a href="/admin" className="text-sm font-semibold text-[#705B60]">← Admin dashboard</a>
@@ -45,7 +50,19 @@ export default function AdminTestimonials({ testimonials }: Props) {
             </div>
             <div className="mt-6 flex justify-end gap-3"><button type="button" onClick={() => setShowForm(false)} className="rounded-full border px-5 py-2.5 text-sm">Cancel</button><button disabled={processing} className="rounded-full bg-[#3A091A] px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{processing ? 'Saving…' : 'Save testimonial'}</button></div>
         </form>}
-        <section className="mt-7 grid gap-4 lg:grid-cols-2">{testimonials.map(item => <article key={item.id} className="rounded-2xl border border-[#3A091A]/10 bg-white p-6"><div className="flex items-start justify-between gap-4"><div><div className="flex flex-wrap items-center gap-2"><h3 className="font-semibold">{item.customer_name}</h3><span className={`rounded-full px-2.5 py-1 text-xs ${item.is_published ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-800'}`}>{item.is_published ? 'Published' : 'Draft'}</span>{item.is_featured && <span className="text-xs text-[#A76D78]">Featured</span>}</div><p className="mt-1 text-xs text-[#806D70]">{[item.company, item.service].filter(Boolean).join(' · ') || 'No additional details'}</p></div><MessageSquareQuote className="size-5 text-[#D4AF37]" /></div><p className="mt-4 line-clamp-4 text-sm leading-7 text-[#705B60]">“{item.quote}”</p><div className="mt-4 flex items-center justify-between border-t pt-4"><span className="flex items-center gap-1 text-xs text-[#A76D78]">{item.rating ? <><Star className="size-3 fill-[#D4AF37] text-[#D4AF37]" /> {item.rating}/5</> : 'No rating'} · Order {item.sort_order}</span><div className="flex gap-2"><button onClick={() => open(item)} className="inline-flex items-center gap-1 rounded-full border px-3 py-2 text-xs"><Pencil className="size-3" /> Edit</button><button onClick={() => { if (window.confirm('Delete this testimonial permanently?')) router.delete(`/admin/testimonials/${item.id}`, { preserveScroll: true }); }} className="inline-flex items-center gap-1 rounded-full border border-red-200 px-3 py-2 text-xs text-red-700"><Trash2 className="size-3" /> Delete</button></div></div></article>)}</section>
+        <section className="mt-7 grid gap-4 lg:grid-cols-2">{testimonials.map(item => <article key={item.id} className="rounded-2xl border border-[#3A091A]/10 bg-white p-6"><div className="flex items-start justify-between gap-4"><div><div className="flex flex-wrap items-center gap-2"><h3 className="font-semibold">{item.customer_name}</h3><span className={`rounded-full px-2.5 py-1 text-xs ${item.is_published ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-800'}`}>{item.is_published ? 'Published' : 'Draft'}</span>{item.is_featured && <span className="text-xs text-[#A76D78]">Featured</span>}</div><p className="mt-1 text-xs text-[#806D70]">{[item.company, item.service].filter(Boolean).join(' · ') || 'No additional details'}</p></div><MessageSquareQuote className="size-5 text-[#D4AF37]" /></div><p className="mt-4 line-clamp-4 text-sm leading-7 text-[#705B60]">“{item.quote}”</p><div className="mt-4 flex items-center justify-between border-t pt-4"><span className="flex items-center gap-1 text-xs text-[#A76D78]">{item.rating ? <><Star className="size-3 fill-[#D4AF37] text-[#D4AF37]" /> {item.rating}/5</> : 'No rating'} · Order {item.sort_order}</span><div className="flex gap-2"><button onClick={() => open(item)} className="inline-flex items-center gap-1 rounded-full border px-3 py-2 text-xs"><Pencil className="size-3" /> Edit</button><button onClick={() => setDeleteTarget(item)} className="inline-flex items-center gap-1 rounded-full border border-red-200 px-3 py-2 text-xs text-red-700"><Trash2 className="size-3" /> Delete</button></div></div></article>)}</section>
         {testimonials.length === 0 && !showForm && <div className="mt-7 rounded-3xl border border-dashed border-[#3A091A]/20 bg-white p-14 text-center"><MessageSquareQuote className="mx-auto size-9 text-[#A76D78]" /><h2 className="mt-4 font-serif text-2xl">No testimonials yet</h2><p className="mt-2 text-sm text-[#705B60]">Add genuine customer feedback when the client has permission to publish it.</p></div>}
-    </div></main></>;
+    </div></main>
+        {deleteTarget && <div className="fixed inset-0 z-50 grid place-items-center bg-[#260611]/60 p-4 backdrop-blur-sm" onMouseDown={event => { if (event.target === event.currentTarget) setDeleteTarget(null); }}>
+            <div role="dialog" aria-modal="true" aria-labelledby="delete-title" className="w-full max-w-md rounded-3xl border border-[#D4AF37]/30 bg-[#FAF6F0] p-7 shadow-2xl">
+                <p className="text-xs font-semibold tracking-[.2em] text-[#A76D78]">CONFIRM DELETION</p>
+                <h2 id="delete-title" className="mt-3 font-serif text-2xl">Delete this testimonial?</h2>
+                <p className="mt-3 text-sm leading-6 text-[#705B60]">The feedback from {deleteTarget.customer_name} and its uploaded photo will be permanently deleted. This cannot be undone.</p>
+                <div className="mt-7 flex justify-end gap-3">
+                    <button onClick={() => setDeleteTarget(null)} className="rounded-full border border-[#3A091A]/20 px-5 py-2.5 text-sm">Keep testimonial</button>
+                    <button onClick={() => router.delete(`/admin/testimonials/${deleteTarget.id}`, { preserveScroll: true, onFinish: () => setDeleteTarget(null) })} className="rounded-full bg-[#3A091A] px-5 py-2.5 text-sm font-semibold text-white">Delete permanently</button>
+                </div>
+            </div>
+        </div>}
+    </>;
 }
