@@ -20,7 +20,7 @@ type Testimonial = {
     is_featured: boolean;
 };
 
-export default function Welcome({ services, testimonials }: { services: Service[]; testimonials: Testimonial[] }) {
+export default function Welcome({ services, languages, testimonials }: { services: Service[]; languages: { id: number; name: string; region: string | null; native_name: string | null }[]; testimonials: Testimonial[] }) {
     return (
         <>
             <Head title="Professional Translation Services" />
@@ -49,7 +49,7 @@ export default function Welcome({ services, testimonials }: { services: Service[
                     </section>
                     <ServicesSection services={services} />
                     <PriceCalculator />
-                    <LanguagesSection />
+                    <LanguagesSection languages={languages} />
                     <AboutSection />
                     <TestimonialsSection testimonials={testimonials} />
                     <ContactSection />
