@@ -70,6 +70,11 @@ export default function Footer() {
                                 </a>
                             </li>
                             <li>
+                                <a href="#testimonials" className="transition hover:text-white">
+                                    Testimonials
+                                </a>
+                            </li>
+                            <li>
                                 <a
                                     href="#contact"
                                     className="transition hover:text-white"
