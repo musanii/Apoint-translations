@@ -24,7 +24,7 @@ export default function AdminTestimonials({ testimonials }: Props) {
     }
     function submit(event: React.FormEvent) {
         event.preventDefault();
-        const options = { forceFormData: true, preserveScroll: true, onSuccess: () => { setShowForm(false); setEditing(null); reset(); } };
+        const options = { forceFormData: true, preserveScroll: true, onSuccess: () => { setShowForm(false); setEditing(null); reset(); }, onFinish: () => transform(formData => formData) };
         if (editing) {
             transform((formData) => ({ ...formData, _method: 'put' }));
             post(`/admin/testimonials/${editing.id}`, options);
