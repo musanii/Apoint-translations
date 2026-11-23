@@ -323,6 +323,7 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
                             <input type="file" multiple accept=".pdf,.docx,.jpg,.jpeg,.png,.xlsx,.csv,.pptx,.zip" onChange={event => setDeliveryFiles(Array.from(event.target.files ?? []))} className="mt-4 block w-full text-sm"/>
                         </label>
                         {deliveryFiles.length > 0 && <div className="mt-3 rounded-xl bg-white p-3 text-sm"><p className="font-semibold">{deliveryFiles.length} file(s) selected</p><ul className="mt-2 space-y-1 text-xs text-[#705B60]">{deliveryFiles.map((file,index)=><li key={index} className="truncate">{file.name} · {(file.size/1024/1024).toFixed(2)} MB</li>)}</ul></div>}
+                        {(errors?.documents || errors?.['documents.0']) && <p role="alert" className="mt-3 text-sm text-red-700">{errors.documents || errors['documents.0']}</p>}
                         <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                             <button type="button" disabled={isUploading} onClick={()=>{setUploadingOrder(null);setDeliveryFiles([]);}} className="rounded-full border border-[#3A091A]/20 bg-white px-5 py-3 text-sm font-semibold text-[#3A091A]">Cancel</button>
                             <button type="button" disabled={isUploading || deliveryFiles.length===0} onClick={submitDelivery} className="rounded-full bg-[#3A091A] px-5 py-3 text-sm font-semibold text-white disabled:opacity-50">{isUploading?'Uploading securely…':'Upload & notify customer'}</button>
