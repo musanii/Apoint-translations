@@ -34,7 +34,7 @@ class CurrencyController extends Controller
     {
         $data = $this->validated($request, $currency);
         DB::transaction(function () use ($currency, $data): void {
-            if ($data['is_default']) Currency::query()->whereKeyNot($currency->id)->update(['is_default' => false]);
+            if ($data['is_default']) Currency::query()->where('id', '!=', $currency->id)->update(['is_default' => false]);
             $currency->update($data);
         });
         return back()->with('success', 'Currency updated.');
