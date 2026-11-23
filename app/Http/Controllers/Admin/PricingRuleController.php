@@ -70,7 +70,7 @@ class PricingRuleController extends Controller
             ->where('service_id', $data['service_id'])
             ->where('currency_id', $data['currency_id'])
             ->where('pricing_type', $data['pricing_type'])
-            ->when($ignore, fn (Builder $q) => $q->whereKeyNot($ignore->id));
+            ->when($ignore, fn (Builder $q) => $q->where('id', '!=', $ignore->id));
 
         foreach (['source_language_id', 'target_language_id'] as $field) {
             $data[$field] === null
