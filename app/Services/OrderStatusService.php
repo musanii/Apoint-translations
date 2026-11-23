@@ -80,8 +80,10 @@ class OrderStatusService
             ]);
             $this->notifyCustomer(
                 $order,
-                'Your order is complete',
-                'Your completed documents for order '.$order->reference.' are now available in your Apoint account. Open your order to view or download them.',
+                $order->delivery_method === 'digital' ? 'Your documents are ready' : 'Your order is complete',
+                $order->delivery_method === 'digital'
+                    ? 'Your completed documents for order '.$order->reference.' are now available in your Apoint account. Open your order to view or download them.'
+                    : 'The work for order '.$order->reference.' is complete. Please contact Apoint to arrange collection or confirm the dispatch of your physical documents.',
                 'order',
                 true,
             );
