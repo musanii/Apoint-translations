@@ -81,7 +81,7 @@ class OrderStatusService
             $this->notifyCustomer(
                 $order,
                 'Your order is complete',
-                'Order '.$order->reference.' has been completed. Please contact Apoint to arrange collection or delivery.',
+                'Your completed documents for order '.$order->reference.' are now available in your Apoint account. Open your order to view or download them.',
                 'order',
                 true,
             );
