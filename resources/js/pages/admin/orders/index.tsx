@@ -31,7 +31,7 @@ type Props = {
 };
 
 type SharedProps = Record<string, unknown> & {
-    errors?: { order?: string };
+    errors?: { order?: string; documents?: string; 'documents.0'?: string };
     flash?: { success?: string };
 };
 
