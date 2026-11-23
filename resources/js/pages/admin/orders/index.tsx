@@ -46,6 +46,8 @@ const statuses = [
 export default function AdminOrdersIndex({ orders, filters }: Props) {
     const [search, setSearch] = useState(filters.search);
     const [status, setStatus] = useState(filters.status);
+    const [pendingAction, setPendingAction] = useState<{ url: string; title: string; description: string; confirmLabel: string } | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const { errors, flash } = usePage<SharedProps>().props;
 
     function filter(event: FormEvent<HTMLFormElement>) {
@@ -57,10 +59,21 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
         );
     }
 
-    function transition(url: string, label: string) {
-        if (window.confirm(label)) {
-            router.post(url, {}, { preserveScroll: true });
-        }
+    function confirmTransition(url: string, title: string, description: string, confirmLabel: string) {
+        setPendingAction({ url, title, description, confirmLabel });
+    }
+
+    function submitTransition() {
+        if (!pendingAction || isSubmitting) return;
+
+        router.post(pendingAction.url, {}, {
+            preserveScroll: true,
+            onStart: () => setIsSubmitting(true),
+            onFinish: () => {
+                setIsSubmitting(false);
+                setPendingAction(null);
+            },
+        });
     }
 
     return (
@@ -201,9 +214,11 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
                                                         {order.status === 'confirmed' && (
                                                             <button
                                                                 onClick={() =>
-                                                                    transition(
+                                                                    confirmTransition(
                                                                         `/admin/orders/${order.id}/start-processing`,
-                                                                        'Start processing this order? The customer will receive an in-app notification.',
+                                                                        'Start processing this order?',
+                                                                        'This will move the order into processing and notify the customer that work has started.',
+                                                                        'Start processing',
                                                                     )
                                                                 }
                                                                 className="rounded-full bg-[#3A091A] px-3 py-1.5 text-xs font-semibold text-white"
@@ -214,9 +229,11 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
                                                         {order.status === 'in_progress' && (
                                                             <button
                                                                 onClick={() =>
-                                                                    transition(
+                                                                    confirmTransition(
                                                                         `/admin/orders/${order.id}/complete`,
-                                                                        'Mark this order as completed? The customer will receive an email.',
+                                                                        'Mark this order as complete?',
+                                                                        'This will mark the order as completed and send the customer a completion notification.',
+                                                                        'Mark complete',
                                                                     )
                                                                 }
                                                                 className="rounded-full bg-[#3A091A] px-3 py-1.5 text-xs font-semibold text-white"
@@ -271,6 +288,27 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
                     </section>
                 </div>
             </main>
+            {pendingAction && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-[#210610]/55 p-4 backdrop-blur-sm"
+                    onMouseDown={(event) => {
+                        if (event.target === event.currentTarget && !isSubmitting) setPendingAction(null);
+                    }}
+                >
+                    <section role="dialog" aria-modal="true" aria-labelledby="order-action-title" aria-describedby="order-action-description" className="w-full max-w-md rounded-3xl border border-[#D4AF37]/30 bg-[#FAF6F0] p-6 shadow-2xl">
+                        <div className="grid size-12 place-items-center rounded-2xl bg-[#E8B4B8]/35 text-[#3A091A]"><ShoppingBag className="size-6" /></div>
+                        <h2 id="order-action-title" className="mt-5 font-serif text-2xl text-[#3A091A]">{pendingAction.title}</h2>
+                        <p id="order-action-description" className="mt-2 text-sm leading-6 text-[#705B60]">{pendingAction.description}</p>
+                        <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                            <button type="button" disabled={isSubmitting} onClick={() => setPendingAction(null)} className="rounded-full border border-[#3A091A]/20 bg-white px-5 py-3 text-sm font-semibold text-[#3A091A] transition hover:bg-[#FAF6F0] disabled:cursor-not-allowed disabled:opacity-50">Cancel</button>
+                            <button type="button" disabled={isSubmitting} onClick={submitTransition} className="inline-flex items-center justify-center gap-2 rounded-full bg-[#3A091A] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4A1525] disabled:cursor-not-allowed disabled:opacity-60">
+                                {isSubmitting && <span className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />}
+                                {isSubmitting ? 'Please wait…' : pendingAction.confirmLabel}
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            )}
         </>
     );
 }
