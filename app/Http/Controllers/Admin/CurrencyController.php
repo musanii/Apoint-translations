@@ -40,7 +40,7 @@ class CurrencyController extends Controller
         return back()->with('success', 'Currency updated.');
     }
 
-    private function validated(Request $request, ?Currency $currency = null): array
+    private function ensureDefaultIsActive(array $data): void\n    {\n        if ($data['is_default'] && ! $data['is_active']) {\n            throw ValidationException::withMessages(['is_default' => 'The default currency must also be active.']);\n        }\n    }\n\n    private function validated(Request $request, ?Currency $currency = null): array
     {
         return $request->validate([
             'code' => ['required', 'string', 'size:3', 'alpha', Rule::unique('currencies', 'code')->ignore($currency?->id)],
