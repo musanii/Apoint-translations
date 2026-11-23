@@ -17,7 +17,8 @@ class OrderController extends Controller
             'currency:id,code,symbol',
             'quote.currency:id,code,symbol',
             'quote.quoteRequest.service:id,name',
-            'payments' => fn ($query) => $query->latest()->limit(1),\n            'deliveryDocuments' => fn ($query) => $query->latest(),
+            'payments' => fn ($query) => $query->latest()->limit(1),
+            'deliveryDocuments' => fn ($query) => $query->latest(),
         ]);
 
         $latestPayment = $order->payments->first();
@@ -52,7 +53,15 @@ class OrderController extends Controller
                 'currency' => $order->currency,
                 'service' => $order->quote->quoteRequest->service->name,
                 'quote_reference' => $order->quote->reference,
-                'delivery_documents' => $order->deliveryDocuments->map(fn ($document) => [\n                    'id' => $document->id,\n                    'name' => $document->original_name,\n                    'size' => $document->size,\n                    'mime_type' => $document->mime_type,\n                    'preview_url' => in_array($document->mime_type, ['application/pdf', 'image/jpeg', 'image/png'], true) ? route('orders.documents.preview', [$order, $document]) : null,\n                    'download_url' => route('orders.documents.download', [$order, $document]),\n                ])->values(),\n                'latest_payment' => $latestPayment ? [
+                'delivery_documents' => $order->deliveryDocuments->map(fn ($document) => [
+                    'id' => $document->id,
+                    'name' => $document->original_name,
+                    'size' => $document->size,
+                    'mime_type' => $document->mime_type,
+                    'preview_url' => in_array($document->mime_type, ['application/pdf', 'image/jpeg', 'image/png'], true) ? route('orders.documents.preview', [$order, $document]) : null,
+                    'download_url' => route('orders.documents.download', [$order, $document]),
+                ])->values(),
+                'latest_payment' => $latestPayment ? [
                     'status' => $latestPayment->status,
                     'provider_checkout_request_id' => $latestPayment->provider_checkout_request_id,
                     'provider_initiation_started_at' => $latestPayment->provider_initiation_started_at?->toIso8601String(),
