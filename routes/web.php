@@ -50,7 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/quotes/{quote}', [CustomerQuoteController::class, 'show'])->name('quotes.show');
     Route::post('/quotes/{quote}/accept', [CustomerQuoteController::class, 'accept'])->name('quotes.accept');
     Route::post('/quotes/{quote}/reject', [CustomerQuoteController::class, 'reject'])->name('quotes.reject');
-    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');\n    Route::get('/orders/{order}/documents/{document}/preview', [OrderDeliveryDocumentController::class, 'preview'])->name('orders.documents.preview');\n    Route::get('/orders/{order}/documents/{document}/download', [OrderDeliveryDocumentController::class, 'download'])->name('orders.documents.download');
     Route::post('/orders/{order}/payments', [PaymentController::class, 'store'])->name('orders.payments.store');
     Route::post('/quote-requests', [QuoteRequestController::class, 'store'])->name('quote-requests.store');
     Route::get('/quote-requests/{quoteRequest}', [QuoteRequestController::class, 'show'])->name('quote-requests.show');
@@ -63,7 +63,7 @@ Route::middleware(['auth', 'can:admin'])->prefix('admin')->name('admin.')->group
     Route::get('/quote-requests', [AdminQuoteRequestController::class, 'index'])->name('quote-requests.index');
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::post('/orders/{order}/start-processing', [AdminOrderController::class, 'startProcessing'])->name('orders.start-processing');
-    Route::post('/orders/{order}/complete', [AdminOrderController::class, 'complete'])->name('orders.complete');
+    Route::post('/orders/{order}/complete', [AdminOrderController::class, 'complete'])->name('orders.complete');\n    Route::post('/orders/{order}/delivery-documents', [AdminOrderDeliveryController::class, 'store'])->name('orders.delivery-documents.store');
     Route::post('/orders/{order}/cancel', [AdminOrderController::class, 'cancel'])->name('orders.cancel');
     Route::get('/services', [AdminServiceController::class, 'index'])->name('services.index');
     Route::post('/services', [AdminServiceController::class, 'store'])->name('services.store');
