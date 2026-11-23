@@ -75,6 +75,10 @@ class OrderStatusService
                 );
             }
 
+            if ($order->delivery_method === 'digital' && ! $order->deliveryDocuments()->exists()) {
+                throw new InvalidArgumentException('Upload the completed documents before completing a digital-delivery order.');
+            }
+
             $order->update([
                 'status' => Order::STATUS_COMPLETED,
             ]);
