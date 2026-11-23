@@ -23,7 +23,7 @@ use Inertia\Inertia;
 
 Route::get('/', fn () => Inertia::render('welcome', [
     'services' => Service::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'slug', 'description']),
-    'testimonials' => Testimonial::query()->where('is_published', true)->orderByDesc('is_featured')->orderBy('sort_order')->orderByDesc('created_at')->get()->map(fn (Testimonial $testimonial) => [
+    'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(['id', 'name', 'code', 'native_name', 'region']),\n    'testimonials' => Testimonial::query()->where('is_published', true)->orderByDesc('is_featured')->orderBy('sort_order')->orderByDesc('created_at')->get()->map(fn (Testimonial $testimonial) => [
         'id' => $testimonial->id,
         'customer_name' => $testimonial->customer_name,
         'company' => $testimonial->company,
@@ -59,7 +59,7 @@ Route::middleware(['auth', 'can:admin'])->prefix('admin')->name('admin.')->group
     Route::post('/orders/{order}/start-processing', [AdminOrderController::class, 'startProcessing'])->name('orders.start-processing');
     Route::post('/orders/{order}/complete', [AdminOrderController::class, 'complete'])->name('orders.complete');
     Route::post('/orders/{order}/cancel', [AdminOrderController::class, 'cancel'])->name('orders.cancel');
-    Route::get('/testimonials', [AdminTestimonialController::class, 'index'])->name('testimonials.index');
+    Route::get('/testimonials', [AdminTestimonialController::class, 'index'])->name('testimonials.index');\n    Route::get('/languages', [AdminLanguageController::class, 'index'])->name('languages.index');\n    Route::post('/languages', [AdminLanguageController::class, 'store'])->name('languages.store');\n    Route::put('/languages/{language}', [AdminLanguageController::class, 'update'])->name('languages.update');\n    Route::get('/currencies', [AdminCurrencyController::class, 'index'])->name('currencies.index');\n    Route::post('/currencies', [AdminCurrencyController::class, 'store'])->name('currencies.store');\n    Route::put('/currencies/{currency}', [AdminCurrencyController::class, 'update'])->name('currencies.update');\n    Route::get('/pricing-rules', [AdminPricingRuleController::class, 'index'])->name('pricing-rules.index');\n    Route::post('/pricing-rules', [AdminPricingRuleController::class, 'store'])->name('pricing-rules.store');\n    Route::put('/pricing-rules/{pricingRule}', [AdminPricingRuleController::class, 'update'])->name('pricing-rules.update');\n    Route::delete('/pricing-rules/{pricingRule}', [AdminPricingRuleController::class, 'destroy'])->name('pricing-rules.destroy');
     Route::post('/testimonials', [AdminTestimonialController::class, 'store'])->name('testimonials.store');
     Route::put('/testimonials/{testimonial}', [AdminTestimonialController::class, 'update'])->name('testimonials.update');
     Route::delete('/testimonials/{testimonial}', [AdminTestimonialController::class, 'destroy'])->name('testimonials.destroy');
