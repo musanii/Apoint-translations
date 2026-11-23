@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialControll
 use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
 use App\Http\Controllers\Admin\CurrencyController as AdminCurrencyController;
 use App\Http\Controllers\Admin\PricingRuleController as AdminPricingRuleController;
+use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CustomerQuoteController;
@@ -64,6 +65,9 @@ Route::middleware(['auth', 'can:admin'])->prefix('admin')->name('admin.')->group
     Route::post('/orders/{order}/start-processing', [AdminOrderController::class, 'startProcessing'])->name('orders.start-processing');
     Route::post('/orders/{order}/complete', [AdminOrderController::class, 'complete'])->name('orders.complete');
     Route::post('/orders/{order}/cancel', [AdminOrderController::class, 'cancel'])->name('orders.cancel');
+    Route::get('/services', [AdminServiceController::class, 'index'])->name('services.index');
+    Route::post('/services', [AdminServiceController::class, 'store'])->name('services.store');
+    Route::put('/services/{service}', [AdminServiceController::class, 'update'])->name('services.update');
     Route::get('/testimonials', [AdminTestimonialController::class, 'index'])->name('testimonials.index');
     Route::get('/languages', [AdminLanguageController::class, 'index'])->name('languages.index');
     Route::post('/languages', [AdminLanguageController::class, 'store'])->name('languages.store');
