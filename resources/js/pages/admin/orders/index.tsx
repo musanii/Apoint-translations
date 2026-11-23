@@ -73,7 +73,8 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
             forceFormData: true,
             preserveScroll: true,
             onStart: () => setIsUploading(true),
-            onFinish: () => { setIsUploading(false); setUploadingOrder(null); setDeliveryFiles([]); },
+            onSuccess: () => { setUploadingOrder(null); setDeliveryFiles([]); },
+            onFinish: () => setIsUploading(false),
         });
     }
 
