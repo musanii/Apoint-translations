@@ -3,41 +3,14 @@
 use App\Mail\ApointNotificationMail;
 use App\Models\User;
 use App\Services\NotificationService;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
 
 beforeEach(function () {
-    Schema::dropIfExists('notifications');
-    Schema::dropIfExists('users');
-
-    Schema::create('users', function (Blueprint $table): void {
-        $table->id();
-        $table->string('name');
-        $table->string('email')->unique();
-        $table->timestamp('email_verified_at')->nullable();
-        $table->string('password');
-        $table->boolean('is_admin')->default(false);
-        $table->rememberToken();
-        $table->timestamps();
-    });
-
-    Schema::create('notifications', function (Blueprint $table): void {
-        $table->uuid('id')->primary();
-        $table->string('type');
-        $table->morphs('notifiable');
-        $table->text('data');
-        $table->timestamp('read_at')->nullable();
-        $table->timestamps();
-    });
+    Artisan::call('migrate:fresh', ['--force' => true]);
 });
 
-afterEach(function () {
-    Schema::dropIfExists('notifications');
-    Schema::dropIfExists('users');
-});
-
-it('stores an in-app notification and queues its branded email after commit', function () {
+it('stores an in-app notification and sends its branded email after commit', function () {
     Mail::fake();
     $user = User::factory()->create();
 
@@ -55,7 +28,7 @@ it('stores an in-app notification and queues its branded email after commit', fu
         'notifiable_id' => $user->id,
     ]);
 
-    Mail::assertQueued(ApointNotificationMail::class, fn (ApointNotificationMail $mail): bool => (
+    Mail::assertSent(ApointNotificationMail::class, fn (ApointNotificationMail $mail): bool => (
         $mail->title === 'Your quotation is ready'
         && $mail->recipientName === $user->name
         && $mail->actionUrl === 'https://apoint.example/quotes/123'
@@ -93,5 +66,5 @@ it('notifies every administrator without sending admin alerts to customers', fun
         'notifiable_id' => $customer->id,
     ]);
 
-    Mail::assertQueuedCount(2);
+    Mail::assertSentCount(2);
 });

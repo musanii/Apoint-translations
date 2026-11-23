@@ -51,6 +51,7 @@ Route::middleware(['auth', 'can:admin'])->prefix('admin')->name('admin.')->group
     Route::post('/quote-requests/{quoteRequest}/review', [AdminQuoteRequestController::class, 'markUnderReview'])->name('quote-requests.review');
     Route::post('/quote-requests/{quoteRequest}/quotes', [QuoteDraftController::class, 'store'])->name('quote-requests.quotes.store');
     Route::post('/quotes/{quote}/send', [QuoteDraftController::class, 'send'])->name('quotes.send');
+    Route::get('/quote-request-documents/{document}/preview', [AdminQuoteRequestDocumentController::class, 'preview'])->name('quote-request-documents.preview');
     Route::get('/quote-request-documents/{document}/download', [AdminQuoteRequestDocumentController::class, 'download'])->name('quote-request-documents.download');
 });
 Route::post('/mpesa/callback', [MpesaCallbackController::class, 'handle'])->name('mpesa.callback');

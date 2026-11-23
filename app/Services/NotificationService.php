@@ -47,7 +47,8 @@ class NotificationService
         }
 
         try {
-            Mail::to($user->email)->queue(new ApointNotificationMail(
+            // Send after commit so a rolled-back order or payment never triggers a customer email.
+            Mail::to($user->email)->send(new ApointNotificationMail(
                 recipientName: $user->name ?: 'there',
                 title: $title,
                 bodyText: $message,
@@ -55,7 +56,7 @@ class NotificationService
                 category: $category,
             ));
         } catch (Throwable $exception) {
-            Log::error('Apoint notification email could not be queued.', [
+            Log::error('Apoint notification email could not be delivered.', [
                 'user_id' => $user->id,
                 'category' => $category,
                 'exception' => $exception::class,
