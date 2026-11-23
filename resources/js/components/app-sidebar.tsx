@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { ClipboardList, LayoutGrid, MessageSquareQuote, Plus, ShoppingBag } from 'lucide-react';
+import { ClipboardList, Coins, Languages, LayoutGrid, MessageSquareQuote, Plus, Settings2, ShoppingBag } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -24,7 +24,7 @@ export function AppSidebar() {
               { title: 'Admin dashboard', href: '/admin', icon: LayoutGrid },
               { title: 'Quote requests inbox', href: '/admin/quote-requests', icon: ClipboardList },
               { title: 'Orders', href: '/admin/orders', icon: ShoppingBag },
-              { title: 'Testimonials', href: '/admin/testimonials', icon: MessageSquareQuote },
+              { title: 'Testimonials', href: '/admin/testimonials', icon: MessageSquareQuote },\n              { title: 'Languages', href: '/admin/languages', icon: Languages },\n              { title: 'Currencies', href: '/admin/currencies', icon: Coins },\n              { title: 'Pricing rules', href: '/admin/pricing-rules', icon: Settings2 },
           ]
         : [
               { title: 'My dashboard', href: dashboard(), icon: LayoutGrid },
