@@ -22,15 +22,16 @@ export default function ShowOrder({ order, canPayOnline }: { order: Order; canPa
     useEffect(() => {
         const paymentPending = order.payment_status === 'pending'
             && order.latest_payment?.status === 'pending';
+        const fulfilmentActive = ['confirmed', 'in_progress'].includes(order.status);
 
-        if (!paymentPending) return;
+        if (!paymentPending && !fulfilmentActive) return;
 
         const interval = window.setInterval(() => {
             router.reload({ only: ['order'], preserveScroll: true });
-        }, 4000);
+        }, paymentPending ? 4000 : 15000);
 
         return () => window.clearInterval(interval);
-    }, [order.payment_status, order.latest_payment?.status]);
+    }, [order.status, order.payment_status, order.latest_payment?.status]);
 
     const rows: [string, string][] = [['Subtotal', order.subtotal], ['Express service', order.express_fee], ['Certification', order.certification_fee], ['Courier / delivery', order.courier_fee]];
 
