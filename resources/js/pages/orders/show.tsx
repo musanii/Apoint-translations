@@ -1,7 +1,7 @@
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import type { FormEvent } from 'react';
-import { ArrowLeft, CheckCircle2, Clock3, ReceiptText } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Clock3, Download, Eye, FileText, ReceiptText } from 'lucide-react';
 
 type Order = {
     id: number; reference: string; status: string; payment_status: string;
@@ -97,6 +97,15 @@ export default function ShowOrder({ order, canPayOnline }: { order: Order; canPa
                         <div className="flex items-center gap-2 font-semibold"><Clock3 size={17}/> Payment is the next step</div>
                         <p className="mt-2 text-sm leading-6 text-[#705B60]">Your order is safely recorded and no payment has been taken. Online checkout is not available for this order yet. Please contact Apoint to arrange payment; we will update this page when checkout is available.</p>
                     </div>}
+                    {order.status === 'completed' && order.delivery_method === 'digital' && (
+                        <section className="mt-8 rounded-2xl border border-[#D4AF37]/40 bg-[#FAF6F0] p-5 sm:p-6">
+                            <div className="flex items-start gap-3">
+                                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#E7F1E8] text-[#386547]"><CheckCircle2 size={22}/></span>
+                                <div><h2 className="font-serif text-2xl">Your documents are ready</h2><p className="mt-1 text-sm leading-6 text-[#705B60]">Apoint has completed your work and securely delivered the files below. You can preview supported documents or download them to your device.</p></div>
+                            </div>
+                            {order.delivery_documents.length === 0 ? <p className="mt-5 rounded-xl bg-white p-4 text-sm text-[#705B60]">Your order is marked complete. If you cannot see your files, please contact Apoint.</p> : <div className="mt-5 space-y-3">{order.delivery_documents.map(document => <div key={document.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#3A091A]/10 bg-white p-4"><div className="flex min-w-0 items-center gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-lg bg-[#F4C2C2]/30 text-[#3A091A]"><FileText size={19}/></span><div className="min-w-0"><p className="truncate text-sm font-semibold">{document.name}</p><p className="mt-0.5 text-xs text-[#806D70]">{(document.size/1024/1024).toFixed(2)} MB</p></div></div><div className="flex shrink-0 gap-2">{document.preview_url && <a href={document.preview_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-full border border-[#3A091A]/15 px-3 py-2 text-xs font-semibold"><Eye size={14}/> Preview</a>}<a href={document.download_url} className="inline-flex items-center gap-1 rounded-full bg-[#3A091A] px-3 py-2 text-xs font-semibold text-white"><Download size={14}/> Download</a></div></div>)}</div>}
+                        </section>
+                    )}
                     <p className="mt-6 text-center text-xs text-[#806D70]">Quotation {order.quote_reference} · Delivery preference: {order.delivery_method}</p>
                     <Link href="/dashboard" className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-[#3A091A] px-5 py-3 font-semibold text-white hover:bg-[#4A1525]"><ReceiptText size={17} className="mr-2"/> View my dashboard</Link>
                 </div>
