@@ -82,6 +82,11 @@ class Order extends Model
         return $this->belongsTo(Currency::class, 'currency_id');
     }
 
+    public function deliveryDocuments(): HasMany
+    {
+        return $this->hasMany(OrderDeliveryDocument::class);
+    }
+
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
