@@ -66,6 +66,8 @@ Route::middleware(['auth', 'can:admin'])->prefix('admin')->name('admin.')->group
     Route::get('/', AdminDashboardController::class)->name('dashboard');
     Route::get('/quote-requests', [AdminQuoteRequestController::class, 'index'])->name('quote-requests.index');
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('/payments/reconciliation', [PaymentReconciliationController::class, 'index'])->name('payments.reconciliation');
+    Route::get('/payments/reconciliation/export', [PaymentReconciliationController::class, 'export'])->name('payments.reconciliation.export');
     Route::post('/orders/{order}/start-processing', [AdminOrderController::class, 'startProcessing'])->name('orders.start-processing');
     Route::post('/orders/{order}/complete', [AdminOrderController::class, 'complete'])->name('orders.complete');
     Route::post('/orders/{order}/delivery-documents', [AdminOrderDeliveryController::class, 'store'])->name('orders.delivery-documents.store');
