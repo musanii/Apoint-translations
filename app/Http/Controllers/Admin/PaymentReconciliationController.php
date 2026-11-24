@@ -72,6 +72,7 @@ class PaymentReconciliationController extends Controller
                 $query->where(function (Builder $nested) use ($search): void {
                     $nested->where('reference', 'like', '%'.$search.'%')
                         ->orWhere('provider_reference', 'like', '%'.$search.'%')
+                        ->orWhere('provider_transaction_reference', 'like', '%'.$search.'%')
                         ->orWhere('provider_checkout_request_id', 'like', '%'.$search.'%')
                         ->orWhereHas('order', function (Builder $order) use ($search): void {
                             $order->where('reference', 'like', '%'.$search.'%')
