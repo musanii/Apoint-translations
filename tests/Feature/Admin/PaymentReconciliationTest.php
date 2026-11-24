@@ -88,6 +88,36 @@ it('filters the ledger to payments that need attention', function () {
             ->where('payments.data.0.id', $needsAttention->id));
 });
 
+
+it('displays the recorded reconciliation audit trail for a payment', function () {
+    $admin = paymentReconciliationAdmin();
+    $order = Order::factory()->create([
+        'payment_status' => Order::PAYMENT_STATUS_PAID,
+    ]);
+    $payment = Payment::factory()->create([
+        'order_id' => $order->id,
+        'status' => Payment::STATUS_SUCCESSFUL,
+        'provider' => 'daraja',
+        'payment_method' => 'mpesa',
+        'provider_reference' => 'AUDIT123',
+    ]);
+
+    PaymentReconciliationEvent::query()->create([
+        'payment_id' => $payment->id,
+        'event_type' => 'automatic_check',
+        'outcome' => 'successful',
+        'message' => 'Daraja payment status checked successfully.',
+        'attempt_number' => 1,
+    ]);
+
+    $this->actingAs($admin)
+        ->get(route('admin.payments.reconciliation'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('payments.data.0.events.0.event_type', 'automatic_check')
+            ->where('payments.data.0.events.0.outcome', 'successful'));
+});
+
 it('exports payment reconciliation records as CSV', function () {
     $admin = paymentReconciliationAdmin();
     $order = Order::factory()->create();
