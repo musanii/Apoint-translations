@@ -92,8 +92,11 @@ class PaymentReconciliationController extends Controller
                     })->orWhere(function (Builder $successful): void {
                         $successful->where('status', Payment::STATUS_SUCCESSFUL)
                             ->whereNull('provider_reference');
+                    })->orWhere(function (Builder $mismatch): void {
+                        $mismatch->where('status', Payment::STATUS_SUCCESSFUL)
+                            ->whereHas('order', fn (Builder $order) => $order->where('orders.payment_status', '!=', 'paid'));
                     })->orWhereHas('order', function (Builder $order): void {
-                        $order->where('orders.payment_status', '!=', 'paid');
+                        $order->whereRaw('1 = 0');
                     })->orWhereHas('refunds', function (Builder $refund): void {
                         $refund->whereIn('status', ['pending', 'processing']);
                     });
@@ -161,9 +164,9 @@ class PaymentReconciliationController extends Controller
                     })->orWhere(function (Builder $successful): void {
                         $successful->where('status', Payment::STATUS_SUCCESSFUL)
                             ->whereNull('provider_reference');
-                    })->orWhereHas('order', function (Builder $order): void {
-                        $order->whereColumn('orders.payment_status', '!=', 'payments.status')
-                            ->where('payments.status', Payment::STATUS_SUCCESSFUL);
+                    })->orWhere(function (Builder $mismatch): void {
+                        $mismatch->where('status', Payment::STATUS_SUCCESSFUL)
+                            ->whereHas('order', fn (Builder $order) => $order->where('orders.payment_status', '!=', 'paid'));
                     })->orWhereHas('refunds', function (Builder $refund): void {
                         $refund->whereIn('status', ['pending', 'processing']);
                     });
