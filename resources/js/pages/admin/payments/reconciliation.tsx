@@ -4,6 +4,7 @@ import { AlertTriangle, ArrowDownToLine, CreditCard, Search, WalletCards } from 
 import type { FormEvent } from 'react';
 
 type Refund = { reference: string; amount: string; status: string };
+type ReconciliationEvent = { event_type: string; outcome: string; message: string | null; attempt_number: number | null; created_at: string | null };
 type Payment = {
     id: number;
     reference: string;
@@ -25,6 +26,7 @@ type Payment = {
     next_reconciliation_at: string | null;
     attention_reason: string | null;
     refunds: Refund[];
+    events: ReconciliationEvent[];
 };
 type Pagination<T> = { data: T[]; links: { url: string | null; label: string; active: boolean }[]; from: number | null; to: number | null; total: number };
 type Props = {
@@ -166,6 +168,7 @@ export default function PaymentReconciliation({ payments, stats, filters }: Prop
                                                     <p className="mt-2 text-xs text-[#806D70]">Checks: {payment.reconciliation_attempts}</p>
                                                     <p className="mt-1 text-xs text-[#806D70]">Last: {date(payment.last_reconciled_at)}</p>
                                                     <p className="mt-1 text-xs text-[#806D70]">Next: {date(payment.next_reconciliation_at)}</p>
+                                                    {payment.events.length > 0 && <details className="mt-3 max-w-64 text-xs"><summary className="cursor-pointer font-semibold text-[#705B60]">Recent audit events ({payment.events.length})</summary><ul className="mt-2 space-y-2 border-l border-[#D4AF37] pl-3">{payment.events.map((event, index) => <li key={index}><p className="font-semibold capitalize">{event.event_type.replaceAll('_', ' ')} · {event.outcome}</p><p className="mt-0.5 text-[#806D70]">{event.message}</p><p className="mt-0.5 text-[#806D70]">{date(event.created_at)}{event.attempt_number ? ` · Attempt ${event.attempt_number}` : ''}</p></li>)}</ul></details>}
                                                 </td>
                                             </tr>
                                         ))}
