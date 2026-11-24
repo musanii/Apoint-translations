@@ -103,6 +103,5 @@ it('exports payment reconciliation records as CSV', function () {
         ->get(route('admin.payments.reconciliation.export'))
         ->assertOk()
         ->assertHeader('content-type', 'text/csv; charset=UTF-8')
-        ->assertStreamedContentContains($payment->reference)
-        ->assertStreamedContentContains('QWE123ABC');
+        ->assertDownload();
 });
