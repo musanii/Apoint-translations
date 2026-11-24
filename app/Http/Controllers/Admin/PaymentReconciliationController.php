@@ -6,12 +6,43 @@ use App\\Http\\Controllers\\Controller;
 use App\\Models\\Payment;
 use Illuminate\\Database\\Eloquent\\Builder;
 use Illuminate\\Http\\Request;
+use Symfony\\Component\\HttpFoundation\\StreamedResponse;
 use Illuminate\\Support\\Carbon;
 use Inertia\\Inertia;
 use Inertia\\Response;
 
 class PaymentReconciliationController extends Controller
 {
+    public function export(Request $request): StreamedResponse
+    {
+        $filters = $request->validate([
+            'status' => ['nullable', 'string', 'in:pending,successful,failed,refunded'],
+            'provider' => ['nullable', 'string', 'in:daraja,payhero,flutterwave'],
+            'search' => ['nullable', 'string', 'max:120'],
+        ]);
+
+        $payments = Payment::query()->with(['order.user', 'order', 'currency'])
+            ->when(($filters['status'] ?? '') !== '', fn (Builder $query) => $query->where('status', $filters['status']))
+            ->when(($filters['provider'] ?? '') !== '', fn (Builder $query) => $query->where('provider', $filters['provider']))
+            ->when(trim($filters['search'] ?? '') !== '', function (Builder $query) use ($filters): void {
+                $search = trim($filters['search']);
+                $query->where(function (Builder $nested) use ($search): void {
+                    $nested->where('reference', 'like', '%'.$search.'%')
+                        ->orWhere('provider_reference', 'like', '%'.$search.'%')
+                        ->orWhereHas('order', fn (Builder $order) => $order->where('reference', 'like', '%'.$search.'%')->orWhereHas('user', fn (Builder $user) => $user->where('name', 'like', '%'.$search.'%')->orWhere('email', 'like', '%'.$search.'%')));
+                });
+            })->latest()->get();
+
+        return response()->streamDownload(function () use ($payments): void {
+            $output = fopen('php://output', 'w');
+            fputcsv($output, ['Payment reference', 'Order reference', 'Customer', 'Email', 'Provider', 'Method', 'Provider receipt', 'Checkout request ID', 'Amount', 'Currency', 'Payment status', 'Order payment status', 'Created at', 'Paid at']);
+            foreach ($payments as $payment) {
+                fputcsv($output, [$payment->reference, $payment->order?->reference, $payment->order?->user?->name, $payment->order?->user?->email, $payment->provider, $payment->payment_method, $payment->provider_reference, $payment->provider_checkout_request_id, $payment->amount, $payment->currency?->code, $payment->status, $payment->order?->payment_status, $payment->created_at?->toIso8601String(), $payment->paid_at?->toIso8601String()]);
+            }
+            fclose($output);
+        }, 'apoint-payment-reconciliation-'.now()->format('Y-m-d-His').'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function index(Request $request): Response
     {
         $filters = $request->validate([
@@ -62,8 +93,7 @@ class PaymentReconciliationController extends Controller
                         $successful->where('status', Payment::STATUS_SUCCESSFUL)
                             ->whereNull('provider_reference');
                     })->orWhereHas('order', function (Builder $order): void {
-                        $order->whereColumn('orders.payment_status', '!=', 'payments.status')
-                            ->where('payments.status', Payment::STATUS_SUCCESSFUL);
+                        $order->where('orders.payment_status', '!=', 'paid');
                     })->orWhereHas('refunds', function (Builder $refund): void {
                         $refund->whereIn('status', ['pending', 'processing']);
                     });
