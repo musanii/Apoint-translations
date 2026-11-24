@@ -95,9 +95,7 @@ class PaymentReconciliationController extends Controller
                     })->orWhere(function (Builder $mismatch): void {
                         $mismatch->where('status', Payment::STATUS_SUCCESSFUL)
                             ->whereHas('order', fn (Builder $order) => $order->where('orders.payment_status', '!=', 'paid'));
-                    })->orWhereHas('order', function (Builder $order): void {
-                        $order->whereRaw('1 = 0');
-                    })->orWhereHas('refunds', function (Builder $refund): void {
+                    } )->orWhereHas('refunds', function (Builder $refund): void {
                         $refund->whereIn('status', ['pending', 'processing']);
                     });
                 });
