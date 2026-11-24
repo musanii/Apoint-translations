@@ -64,6 +64,7 @@ class PaymentReconciliationController extends Controller
                 'order:id,reference,payment_status',
                 'currency:id,code',
                 'refunds:id,payment_id,reference,amount,status',
+                'reconciliationEvents' => fn ($query) => $query->latest()->limit(5),
             ])
             ->when($status !== '', fn (Builder $query) => $query->where('status', $status))
             ->when($provider !== '', fn (Builder $query) => $query->where('provider', $provider))
@@ -138,6 +139,13 @@ class PaymentReconciliationController extends Controller
                     'last_reconciled_at' => $payment->last_reconciled_at?->toIso8601String(),
                     'next_reconciliation_at' => $payment->next_reconciliation_at?->toIso8601String(),
                     'attention_reason' => $attentionReason,
+                    'events' => $payment->reconciliationEvents->map(fn ($event) => [
+                        'event_type' => $event->event_type,
+                        'outcome' => $event->outcome,
+                        'message' => $event->message,
+                        'attempt_number' => $event->attempt_number,
+                        'created_at' => $event->created_at?->toIso8601String(),
+                    ])->values(),
                     'refunds' => $payment->refunds->map(fn ($refund) => [
                         'reference' => $refund->reference,
                         'amount' => (string) $refund->amount,
