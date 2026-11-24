@@ -14,6 +14,7 @@ type Payment = {
     provider: string;
     payment_method: string | null;
     provider_reference: string | null;
+    provider_transaction_reference: string | null;
     checkout_request_id: string | null;
     amount: string;
     currency: string;
@@ -152,6 +153,7 @@ export default function PaymentReconciliation({ payments, stats, filters }: Prop
                                                 </td>
                                                 <td className="max-w-64 break-all px-4 py-4 text-xs">
                                                     <p><span className="text-[#806D70]">Receipt:</span> {payment.provider_reference ?? 'Not attached'}</p>
+                                                    <p className="mt-2"><span className="text-[#806D70]">Provider transaction:</span> {payment.provider_transaction_reference ?? '—'}</p>
                                                     <p className="mt-2"><span className="text-[#806D70]">Checkout ID:</span> {payment.checkout_request_id ?? '—'}</p>
                                                 </td>
                                                 <td className="whitespace-nowrap px-4 py-4 font-semibold">{money(payment.amount, payment.currency)}</td>
