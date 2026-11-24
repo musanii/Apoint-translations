@@ -28,15 +28,16 @@ class PaymentReconciliationController extends Controller
                 $query->where(function (Builder $nested) use ($search): void {
                     $nested->where('reference', 'like', '%'.$search.'%')
                         ->orWhere('provider_reference', 'like', '%'.$search.'%')
+                        ->orWhere('provider_transaction_reference', 'like', '%'.$search.'%')
                         ->orWhereHas('order', fn (Builder $order) => $order->where('reference', 'like', '%'.$search.'%')->orWhereHas('user', fn (Builder $user) => $user->where('name', 'like', '%'.$search.'%')->orWhere('email', 'like', '%'.$search.'%')));
                 });
             })->latest()->get();
 
         return response()->streamDownload(function () use ($payments): void {
             $output = fopen('php://output', 'w');
-            fputcsv($output, ['Payment reference', 'Order reference', 'Customer', 'Email', 'Provider', 'Method', 'Provider receipt', 'Checkout request ID', 'Amount', 'Currency', 'Payment status', 'Order payment status', 'Created at', 'Paid at']);
+            fputcsv($output, ['Payment reference', 'Order reference', 'Customer', 'Email', 'Provider', 'Method', 'Provider receipt', 'Provider transaction reference', 'Checkout request ID', 'Amount', 'Currency', 'Payment status', 'Order payment status', 'Created at', 'Paid at']);
             foreach ($payments as $payment) {
-                fputcsv($output, [$payment->reference, $payment->order?->reference, $payment->order?->user?->name, $payment->order?->user?->email, $payment->provider, $payment->payment_method, $payment->provider_reference, $payment->provider_checkout_request_id, $payment->amount, $payment->currency?->code, $payment->status, $payment->order?->payment_status, $payment->created_at?->toIso8601String(), $payment->paid_at?->toIso8601String()]);
+                fputcsv($output, [$payment->reference, $payment->order?->reference, $payment->order?->user?->name, $payment->order?->user?->email, $payment->provider, $payment->payment_method, $payment->provider_reference, $payment->provider_transaction_reference, $payment->provider_checkout_request_id, $payment->amount, $payment->currency?->code, $payment->status, $payment->order?->payment_status, $payment->created_at?->toIso8601String(), $payment->paid_at?->toIso8601String()]);
             }
             fclose($output);
         }, 'apoint-payment-reconciliation-'.now()->format('Y-m-d-His').'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
@@ -127,6 +128,7 @@ class PaymentReconciliationController extends Controller
                     'provider' => $payment->provider,
                     'payment_method' => $payment->payment_method,
                     'provider_reference' => $payment->provider_reference,
+                    'provider_transaction_reference' => $payment->provider_transaction_reference,
                     'checkout_request_id' => $payment->provider_checkout_request_id,
                     'amount' => (string) $payment->amount,
                     'currency' => $payment->currency?->code ?? '',
