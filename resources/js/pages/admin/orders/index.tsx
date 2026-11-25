@@ -10,6 +10,7 @@ type OrderRow = {
     email: string;
     service: string;
     status: string;
+    delivery_method: string;
     payment_status: string;
     total: string;
     currency: string;
@@ -30,7 +31,7 @@ type Props = {
 };
 
 type SharedProps = Record<string, unknown> & {
-    errors?: { order?: string };
+    errors?: { order?: string; documents?: string; 'documents.0'?: string };
     flash?: { success?: string };
 };
 
@@ -46,6 +47,11 @@ const statuses = [
 export default function AdminOrdersIndex({ orders, filters }: Props) {
     const [search, setSearch] = useState(filters.search);
     const [status, setStatus] = useState(filters.status);
+    const [pendingAction, setPendingAction] = useState<{ url: string; title: string; description: string; confirmLabel: string } | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [uploadingOrder, setUploadingOrder] = useState<OrderRow | null>(null);
+    const [deliveryFiles, setDeliveryFiles] = useState<File[]>([]);
+    const [isUploading, setIsUploading] = useState(false);
     const { errors, flash } = usePage<SharedProps>().props;
 
     function filter(event: FormEvent<HTMLFormElement>) {
@@ -57,10 +63,32 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
         );
     }
 
-    function transition(url: string, label: string) {
-        if (window.confirm(label)) {
-            router.post(url, {}, { preserveScroll: true });
-        }
+    function confirmTransition(url: string, title: string, description: string, confirmLabel: string) {
+        setPendingAction({ url, title, description, confirmLabel });
+    }
+
+    function submitDelivery() {
+        if (!uploadingOrder || deliveryFiles.length === 0 || isUploading) return;
+        router.post(`/admin/orders/${uploadingOrder.id}/delivery-documents`, { documents: deliveryFiles }, {
+            forceFormData: true,
+            preserveScroll: true,
+            onStart: () => setIsUploading(true),
+            onSuccess: () => { setUploadingOrder(null); setDeliveryFiles([]); },
+            onFinish: () => setIsUploading(false),
+        });
+    }
+
+    function submitTransition() {
+        if (!pendingAction || isSubmitting) return;
+
+        router.post(pendingAction.url, {}, {
+            preserveScroll: true,
+            onStart: () => setIsSubmitting(true),
+            onFinish: () => {
+                setIsSubmitting(false);
+                setPendingAction(null);
+            },
+        });
     }
 
     return (
@@ -201,9 +229,11 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
                                                         {order.status === 'confirmed' && (
                                                             <button
                                                                 onClick={() =>
-                                                                    transition(
+                                                                    confirmTransition(
                                                                         `/admin/orders/${order.id}/start-processing`,
-                                                                        'Start processing this order? The customer will receive an in-app notification.',
+                                                                        'Start processing this order?',
+                                                                        'This will move the order into processing and notify the customer that work has started.',
+                                                                        'Start processing',
                                                                     )
                                                                 }
                                                                 className="rounded-full bg-[#3A091A] px-3 py-1.5 text-xs font-semibold text-white"
@@ -211,14 +241,22 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
                                                                 Start work
                                                             </button>
                                                         )}
-                                                        {order.status === 'in_progress' && (
+                                                        {order.status === 'in_progress' && order.delivery_method === 'digital' && (
                                                             <button
-                                                                onClick={() =>
-                                                                    transition(
-                                                                        `/admin/orders/${order.id}/complete`,
-                                                                        'Mark this order as completed? The customer will receive an email.',
-                                                                    )
-                                                                }
+                                                                onClick={() => { setUploadingOrder(order); setDeliveryFiles([]); }}
+                                                                className="rounded-full bg-[#3A091A] px-3 py-1.5 text-xs font-semibold text-white"
+                                                            >
+                                                                Upload & deliver files
+                                                            </button>
+                                                        )}
+                                                        {order.status === 'in_progress' && order.delivery_method !== 'digital' && (
+                                                            <button
+                                                                onClick={() => confirmTransition(
+                                                                    `/admin/orders/${order.id}/complete`,
+                                                                    'Mark this order as complete?',
+                                                                    'Confirm the physical work is finished. The customer will receive an email update with the next collection or dispatch steps.',
+                                                                    'Mark complete',
+                                                                )}
                                                                 className="rounded-full bg-[#3A091A] px-3 py-1.5 text-xs font-semibold text-white"
                                                             >
                                                                 Complete
@@ -228,9 +266,11 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
                                                             order.payment_status === 'unpaid' && (
                                                                 <button
                                                                     onClick={() =>
-                                                                        transition(
+                                                                        confirmTransition(
                                                                             `/admin/orders/${order.id}/cancel`,
-                                                                            'Cancel this order? The customer will be notified by email.',
+                                                                            'Cancel this order?',
+                                                                            'This order has not had a payment attempt. The customer will be notified by email.',
+                                                                            'Cancel order',
                                                                         )
                                                                     }
                                                                     className="rounded-full border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700"
@@ -271,6 +311,47 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
                     </section>
                 </div>
             </main>
+            {uploadingOrder && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#210610]/60 p-4 backdrop-blur-sm">
+                    <section role="dialog" aria-modal="true" aria-labelledby="delivery-title" className="w-full max-w-xl rounded-3xl border border-[#D4AF37]/30 bg-[#FAF6F0] p-6 shadow-2xl">
+                        <div className="grid size-12 place-items-center rounded-2xl bg-[#E8B4B8]/35 text-[#3A091A]"><ShoppingBag className="size-6"/></div>
+                        <h2 id="delivery-title" className="mt-5 font-serif text-2xl text-[#3A091A]">Deliver completed documents</h2>
+                        <p className="mt-2 text-sm leading-6 text-[#705B60]">Order {uploadingOrder.reference} · {uploadingOrder.customer}. Upload the final client-ready files. Once uploaded, the order will be marked complete and the customer will receive an email and an in-app notification.</p>
+                        <label className="mt-5 block rounded-2xl border-2 border-dashed border-[#A76D78]/40 bg-white p-6 text-center">
+                            <span className="block text-sm font-semibold text-[#3A091A]">Choose final documents</span>
+                            <span className="mt-1 block text-xs text-[#806D70]">PDF, Word, images, spreadsheets, PowerPoint or ZIP · Up to 10 MB each · 10 files maximum</span>
+                            <input type="file" multiple accept=".pdf,.docx,.jpg,.jpeg,.png,.xlsx,.csv,.pptx,.zip" onChange={event => setDeliveryFiles(Array.from(event.target.files ?? []))} className="mt-4 block w-full text-sm"/>
+                        </label>
+                        {deliveryFiles.length > 0 && <div className="mt-3 rounded-xl bg-white p-3 text-sm"><p className="font-semibold">{deliveryFiles.length} file(s) selected</p><ul className="mt-2 space-y-1 text-xs text-[#705B60]">{deliveryFiles.map((file,index)=><li key={index} className="truncate">{file.name} · {(file.size/1024/1024).toFixed(2)} MB</li>)}</ul></div>}
+                        {(errors?.documents || errors?.['documents.0']) && <p role="alert" className="mt-3 text-sm text-red-700">{errors.documents || errors['documents.0']}</p>}
+                        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                            <button type="button" disabled={isUploading} onClick={()=>{setUploadingOrder(null);setDeliveryFiles([]);}} className="rounded-full border border-[#3A091A]/20 bg-white px-5 py-3 text-sm font-semibold text-[#3A091A]">Cancel</button>
+                            <button type="button" disabled={isUploading || deliveryFiles.length===0} onClick={submitDelivery} className="rounded-full bg-[#3A091A] px-5 py-3 text-sm font-semibold text-white disabled:opacity-50">{isUploading?'Uploading securely…':'Upload & notify customer'}</button>
+                        </div>
+                    </section>
+                </div>
+            )}
+            {pendingAction && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-[#210610]/55 p-4 backdrop-blur-sm"
+                    onMouseDown={(event) => {
+                        if (event.target === event.currentTarget && !isSubmitting) setPendingAction(null);
+                    }}
+                >
+                    <section role="dialog" aria-modal="true" aria-labelledby="order-action-title" aria-describedby="order-action-description" className="w-full max-w-md rounded-3xl border border-[#D4AF37]/30 bg-[#FAF6F0] p-6 shadow-2xl">
+                        <div className="grid size-12 place-items-center rounded-2xl bg-[#E8B4B8]/35 text-[#3A091A]"><ShoppingBag className="size-6" /></div>
+                        <h2 id="order-action-title" className="mt-5 font-serif text-2xl text-[#3A091A]">{pendingAction.title}</h2>
+                        <p id="order-action-description" className="mt-2 text-sm leading-6 text-[#705B60]">{pendingAction.description}</p>
+                        <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                            <button type="button" disabled={isSubmitting} onClick={() => setPendingAction(null)} className="rounded-full border border-[#3A091A]/20 bg-white px-5 py-3 text-sm font-semibold text-[#3A091A] transition hover:bg-[#FAF6F0] disabled:cursor-not-allowed disabled:opacity-50">Cancel</button>
+                            <button type="button" disabled={isSubmitting} onClick={submitTransition} className="inline-flex items-center justify-center gap-2 rounded-full bg-[#3A091A] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4A1525] disabled:cursor-not-allowed disabled:opacity-60">
+                                {isSubmitting && <span className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />}
+                                {isSubmitting ? 'Please wait…' : pendingAction.confirmLabel}
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            )}
         </>
     );
 }

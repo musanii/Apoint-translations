@@ -5,22 +5,43 @@ use App\Http\Controllers\Admin\QuoteDraftController;
 use App\Http\Controllers\Admin\QuoteRequestController as AdminQuoteRequestController;
 use App\Http\Controllers\Admin\QuoteRequestDocumentController as AdminQuoteRequestDocumentController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\PaymentReconciliationController;
+use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
+use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
+use App\Http\Controllers\Admin\CurrencyController as AdminCurrencyController;
+use App\Http\Controllers\Admin\PricingRuleController as AdminPricingRuleController;
+use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
+use App\Http\Controllers\Admin\OrderDeliveryController as AdminOrderDeliveryController;
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CustomerQuoteController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderDeliveryDocumentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\MpesaCallbackController;
 use App\Http\Controllers\PayHeroCallbackController;
 use App\Http\Controllers\QuoteRequestController;
 use App\Http\Controllers\QuoteRequestDocumentController;
 use App\Models\Service;
+use App\Models\Testimonial;
+use App\Models\Language;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', fn () => Inertia::render('welcome', [
     'services' => Service::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'slug', 'description']),
+    'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(['id', 'name', 'code', 'native_name', 'region']),
+    'testimonials' => Testimonial::query()->where('is_published', true)->orderByDesc('is_featured')->orderBy('sort_order')->orderByDesc('created_at')->get()->map(fn (Testimonial $testimonial) => [
+        'id' => $testimonial->id,
+        'customer_name' => $testimonial->customer_name,
+        'company' => $testimonial->company,
+        'service' => $testimonial->service,
+        'quote' => $testimonial->quote,
+        'rating' => $testimonial->rating,
+        'avatar_url' => $testimonial->avatar_path ? asset('storage/'.$testimonial->avatar_path) : null,
+        'is_featured' => $testimonial->is_featured,
+    ]),
 ]))->name('home');
 Route::get('/calculator/options', [CalculatorController::class, 'options'])->name('calculator.options');
 Route::get('/calculator/calculate', [CalculatorController::class, 'calculate'])->name('calculator.calculate');
@@ -33,6 +54,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/quotes/{quote}/accept', [CustomerQuoteController::class, 'accept'])->name('quotes.accept');
     Route::post('/quotes/{quote}/reject', [CustomerQuoteController::class, 'reject'])->name('quotes.reject');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order}/documents/{document}/preview', [OrderDeliveryDocumentController::class, 'preview'])->name('orders.documents.preview');
+    Route::get('/orders/{order}/documents/{document}/download', [OrderDeliveryDocumentController::class, 'download'])->name('orders.documents.download');
     Route::post('/orders/{order}/payments', [PaymentController::class, 'store'])->name('orders.payments.store');
     Route::post('/quote-requests', [QuoteRequestController::class, 'store'])->name('quote-requests.store');
     Route::get('/quote-requests/{quoteRequest}', [QuoteRequestController::class, 'show'])->name('quote-requests.show');
@@ -44,9 +67,29 @@ Route::middleware(['auth', 'can:admin'])->prefix('admin')->name('admin.')->group
     Route::get('/', AdminDashboardController::class)->name('dashboard');
     Route::get('/quote-requests', [AdminQuoteRequestController::class, 'index'])->name('quote-requests.index');
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('/payments/reconciliation', [PaymentReconciliationController::class, 'index'])->name('payments.reconciliation');
+    Route::get('/payments/reconciliation/export', [PaymentReconciliationController::class, 'export'])->name('payments.reconciliation.export');
     Route::post('/orders/{order}/start-processing', [AdminOrderController::class, 'startProcessing'])->name('orders.start-processing');
     Route::post('/orders/{order}/complete', [AdminOrderController::class, 'complete'])->name('orders.complete');
+    Route::post('/orders/{order}/delivery-documents', [AdminOrderDeliveryController::class, 'store'])->name('orders.delivery-documents.store');
     Route::post('/orders/{order}/cancel', [AdminOrderController::class, 'cancel'])->name('orders.cancel');
+    Route::get('/services', [AdminServiceController::class, 'index'])->name('services.index');
+    Route::post('/services', [AdminServiceController::class, 'store'])->name('services.store');
+    Route::put('/services/{service}', [AdminServiceController::class, 'update'])->name('services.update');
+    Route::get('/testimonials', [AdminTestimonialController::class, 'index'])->name('testimonials.index');
+    Route::get('/languages', [AdminLanguageController::class, 'index'])->name('languages.index');
+    Route::post('/languages', [AdminLanguageController::class, 'store'])->name('languages.store');
+    Route::put('/languages/{language}', [AdminLanguageController::class, 'update'])->name('languages.update');
+    Route::get('/currencies', [AdminCurrencyController::class, 'index'])->name('currencies.index');
+    Route::post('/currencies', [AdminCurrencyController::class, 'store'])->name('currencies.store');
+    Route::put('/currencies/{currency}', [AdminCurrencyController::class, 'update'])->name('currencies.update');
+    Route::get('/pricing-rules', [AdminPricingRuleController::class, 'index'])->name('pricing-rules.index');
+    Route::post('/pricing-rules', [AdminPricingRuleController::class, 'store'])->name('pricing-rules.store');
+    Route::put('/pricing-rules/{pricingRule}', [AdminPricingRuleController::class, 'update'])->name('pricing-rules.update');
+    Route::delete('/pricing-rules/{pricingRule}', [AdminPricingRuleController::class, 'destroy'])->name('pricing-rules.destroy');
+    Route::post('/testimonials', [AdminTestimonialController::class, 'store'])->name('testimonials.store');
+    Route::put('/testimonials/{testimonial}', [AdminTestimonialController::class, 'update'])->name('testimonials.update');
+    Route::delete('/testimonials/{testimonial}', [AdminTestimonialController::class, 'destroy'])->name('testimonials.destroy');
     Route::get('/quote-requests/{quoteRequest}', [AdminQuoteRequestController::class, 'show'])->name('quote-requests.show');
     Route::post('/quote-requests/{quoteRequest}/review', [AdminQuoteRequestController::class, 'markUnderReview'])->name('quote-requests.review');
     Route::post('/quote-requests/{quoteRequest}/quotes', [QuoteDraftController::class, 'store'])->name('quote-requests.quotes.store');

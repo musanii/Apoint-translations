@@ -30,6 +30,7 @@ it('allows administrators to move a paid order through fulfilment', function () 
     $order = Order::factory()->create([
         'status' => Order::STATUS_CONFIRMED,
         'payment_status' => Order::PAYMENT_STATUS_PAID,
+        'delivery_method' => 'physical',
     ]);
 
     $this->actingAs($admin)

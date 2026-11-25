@@ -75,13 +75,19 @@ class OrderStatusService
                 );
             }
 
+            if ($order->delivery_method === 'digital' && ! $order->deliveryDocuments()->exists()) {
+                throw new InvalidArgumentException('Upload the completed documents before completing a digital-delivery order.');
+            }
+
             $order->update([
                 'status' => Order::STATUS_COMPLETED,
             ]);
             $this->notifyCustomer(
                 $order,
-                'Your order is complete',
-                'Order '.$order->reference.' has been completed. Please contact Apoint to arrange collection or delivery.',
+                $order->delivery_method === 'digital' ? 'Your documents are ready' : 'Your order is complete',
+                $order->delivery_method === 'digital'
+                    ? 'Your completed documents for order '.$order->reference.' are now available in your Apoint account. Open your order to view or download them.'
+                    : 'The work for order '.$order->reference.' is complete. Please contact Apoint to arrange collection or confirm the dispatch of your physical documents.',
                 'order',
                 true,
             );

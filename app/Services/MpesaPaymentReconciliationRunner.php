@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Payment;
+use App\Models\PaymentReconciliationEvent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -89,8 +90,24 @@ class MpesaPaymentReconciliationRunner
             }
             $processed++;
             try {
-                $this->reconciliationService->reconcile($payment);
+                $result = $this->reconciliationService->reconcile($payment);
+                PaymentReconciliationEvent::query()->create([
+                    'payment_id' => $payment->id,
+                    'event_type' => 'automatic_check',
+                    'outcome' => $result->status === Payment::STATUS_PENDING ? 'pending' : $result->status,
+                    'message' => $result->status === Payment::STATUS_PENDING
+                        ? 'Daraja has not reported a final payment result yet.'
+                        : 'Daraja payment status checked successfully.',
+                    'attempt_number' => $payment->reconciliation_attempts,
+                ]);
             } catch (\Throwable $exception) {
+                PaymentReconciliationEvent::query()->create([
+                    'payment_id' => $payment->id,
+                    'event_type' => 'automatic_check',
+                    'outcome' => 'error',
+                    'message' => 'Provider verification could not be completed. See application logs for technical details.',
+                    'attempt_number' => $payment->reconciliation_attempts,
+                ]);
                 Log::error('M-Pesa payment reconciliation failed.', [
                     'payment_id' => $payment->id,
                     'attempt' => $payment->reconciliation_attempts,

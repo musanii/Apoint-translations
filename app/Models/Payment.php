@@ -71,4 +71,9 @@ class Payment extends Model
     {
         return $this->hasMany(Refund::class);
     }
+
+    public function reconciliationEvents(): HasMany
+    {
+        return $this->hasMany(PaymentReconciliationEvent::class);
+    }
 }

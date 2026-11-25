@@ -39,6 +39,7 @@ it('completes an order that is in progress', function () {
     $order = Order::factory()->create([
         'status' => Order::STATUS_IN_PROGRESS,
         'payment_status' => Order::PAYMENT_STATUS_PAID,
+        'delivery_method' => 'physical',
     ]);
 
     $service = app(OrderStatusService::class);

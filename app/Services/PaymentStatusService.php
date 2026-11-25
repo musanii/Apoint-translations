@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\PaymentReconciliationEvent;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -42,6 +43,7 @@ class PaymentStatusService
                 'provider_reference' => $providerReference,
                 'paid_at' => now(),
             ]);
+            $this->recordReconciliationEvent($payment, 'payment_status', 'successful', 'Payment success was confirmed by the provider callback or reconciliation check.');
 
             $order = Order::query()
                 ->lockForUpdate()
@@ -143,6 +145,7 @@ class PaymentStatusService
                 'paid_at' => now(),
                 'failure_reason' => null,
             ]);
+            $this->recordReconciliationEvent($payment, 'payment_status', 'successful', 'A previously failed payment was recovered after independent provider verification.');
 
             $order->update([
                 'payment_status' => Order::PAYMENT_STATUS_PAID,
@@ -178,6 +181,7 @@ class PaymentStatusService
                 'status' => Payment::STATUS_FAILED,
                 'failure_reason' => $failureReason,
             ]);
+            $this->recordReconciliationEvent($payment, 'payment_status', 'failed', 'The provider reported an unsuccessful payment attempt.');
 
             $order = Order::query()
                 ->lockForUpdate()
@@ -254,9 +258,24 @@ class PaymentStatusService
             $payment->update([
                 'provider_reference' => $providerReference,
             ]);
+            $this->recordReconciliationEvent($payment, 'provider_reference', 'attached', 'The provider transaction receipt was attached to the payment record.');
 
             return $payment->refresh();
         });
+    }
+
+    private function recordReconciliationEvent(
+        Payment $payment,
+        string $eventType,
+        string $outcome,
+        string $message,
+    ): void {
+        PaymentReconciliationEvent::query()->create([
+            'payment_id' => $payment->id,
+            'event_type' => $eventType,
+            'outcome' => $outcome,
+            'message' => $message,
+        ]);
     }
 
     private function notifyCustomer(

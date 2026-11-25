@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { ClipboardList, LayoutGrid, Plus, ShoppingBag } from 'lucide-react';
+import { ClipboardList, BriefcaseBusiness, Coins, Languages, LayoutGrid, MessageSquareQuote, Plus, Settings2, ShoppingBag, WalletCards } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -21,38 +21,20 @@ export function AppSidebar() {
 
     const mainNavItems: NavItem[] = isAdmin
         ? [
-              {
-                  title: 'Admin dashboard',
-                  href: '/admin',
-                  icon: LayoutGrid,
-              },
-              {
-                  title: 'Quote requests inbox',
-                  href: '/admin/quote-requests',
-                  icon: ClipboardList,
-              },
-              {
-                  title: 'Orders',
-                  href: '/admin/orders',
-                  icon: ShoppingBag,
-              },
+              { title: 'Admin dashboard', href: '/admin', icon: LayoutGrid },
+              { title: 'Quote requests inbox', href: '/admin/quote-requests', icon: ClipboardList },
+              { title: 'Orders', href: '/admin/orders', icon: ShoppingBag },
+              { title: 'Payments & reconciliation', href: '/admin/payments/reconciliation', icon: WalletCards },
+              { title: 'Services', href: '/admin/services', icon: BriefcaseBusiness },
+              { title: 'Testimonials', href: '/admin/testimonials', icon: MessageSquareQuote },
+              { title: 'Languages', href: '/admin/languages', icon: Languages },
+              { title: 'Currencies', href: '/admin/currencies', icon: Coins },
+              { title: 'Pricing rules', href: '/admin/pricing-rules', icon: Settings2 },
           ]
         : [
-              {
-                  title: 'My dashboard',
-                  href: dashboard(),
-                  icon: LayoutGrid,
-              },
-              {
-                  title: 'My requests',
-                  href: '/dashboard#requests',
-                  icon: ClipboardList,
-              },
-              {
-                  title: 'New quote request',
-                  href: '/quote-requests/create',
-                  icon: Plus,
-              },
+              { title: 'My dashboard', href: dashboard(), icon: LayoutGrid },
+              { title: 'My requests', href: '/dashboard#requests', icon: ClipboardList },
+              { title: 'New quote request', href: '/quote-requests/create', icon: Plus },
           ];
 
     return (
@@ -68,12 +50,8 @@ export function AppSidebar() {
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
-            <SidebarContent>
-                <NavMain items={mainNavItems} />
-            </SidebarContent>
-            <SidebarFooter>
-                <NavUser />
-            </SidebarFooter>
+            <SidebarContent><NavMain items={mainNavItems} /></SidebarContent>
+            <SidebarFooter><NavUser /></SidebarFooter>
         </Sidebar>
     );
 }

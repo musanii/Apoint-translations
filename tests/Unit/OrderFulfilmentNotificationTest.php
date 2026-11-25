@@ -17,6 +17,7 @@ it('notifies the customer when fulfilment starts and emails them when it complet
     $order = Order::factory()->create([
         'status' => Order::STATUS_CONFIRMED,
         'payment_status' => Order::PAYMENT_STATUS_PAID,
+        'delivery_method' => 'physical',
     ]);
     $customer = User::query()->findOrFail($order->user_id);
     $service = app(OrderStatusService::class);
